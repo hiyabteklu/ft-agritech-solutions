@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FT Agri-Tech Solutions</title>
-    <!-- Version 6 ready for the upcoming CSS -->
-    <link rel="stylesheet" href="style.css?v=6">
+    <!-- Version 7 ready for the upcoming CSS with collapsible styles -->
+    <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
@@ -14,7 +14,6 @@
         <div class="logo-wrapper">
             <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="site-logo">
         </div>
-        <!-- New Bold Animated Title -->
         <h1 class="brand-title animated-gradient-text">FT-Agri-Tech solutions</h1>
     </header>
 
@@ -60,96 +59,7 @@
         </div>
     </section>
 
-    <!-- Innovation Framework Section -->
-    <section class="framework-section">
-        <div class="section-container">
-            <h2 class="section-title">Innovation Framework</h2>
-            <p class="framework-intro">Every innovation at FT Agri-Tech follows the same process:</p>
-            
-            <div class="framework-timeline">
-                
-                <!-- Step 1 -->
-                <div class="timeline-step">
-                    <div class="step-content">
-                        <h3>Research</h3>
-                        <ul>
-                            <li>Field studies</li>
-                            <li>Data collection</li>
-                            <li>Government priorities</li>
-                            <li>Customer requests</li>
-                            <li>Global trends</li>
-                            <li>Case studies</li>
-                        </ul>
-                    </div>
-                    <div class="flow-arrow">↓</div>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="timeline-step">
-                    <div class="step-content">
-                        <h3>Problem Identification</h3>
-                        <ul>
-                            <li>Root-cause analysis</li>
-                            <li>Economic impact</li>
-                            <li>Technical feasibility</li>
-                            <li>Priority ranking</li>
-                        </ul>
-                    </div>
-                    <div class="flow-arrow">↓</div>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="timeline-step">
-                    <div class="step-content">
-                        <h3>Engineering</h3>
-                        <ul>
-                            <li>Hardware</li>
-                            <li>Embedded systems</li>
-                            <li>AI & Machine Learning</li>
-                            <li>IoT</li>
-                            <li>Robotics</li>
-                            <li>Software</li>
-                            <li>Automation</li>
-                        </ul>
-                    </div>
-                    <div class="flow-arrow">↓</div>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="timeline-step final-step">
-                    <div class="step-content">
-                        <h3>Deployment</h3>
-                        <ul>
-                            <li>Manufacturing</li>
-                            <li>Installation</li>
-                            <li>Training</li>
-                            <li>Maintenance</li>
-                            <li>Continuous improvement</li>
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Core Values Section -->
-    <section class="values-section">
-        <div class="section-container">
-            <h2 class="section-title">Core Values</h2>
-            <div class="values-grid">
-                <div class="value-item">Purpose before profit.</div>
-                <div class="value-item">Research before engineering.</div>
-                <div class="value-item">Practicality over complexity.</div>
-                <div class="value-item">Innovation driven by real demand.</div>
-                <div class="value-item">Long-term partnership with customers.</div>
-                <div class="value-item">Continuous learning from the field.</div>
-                <div class="value-item">Engineering with measurable impact.</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Our Solutions (7 Categories) -->
+    <!-- Our Solutions (7 Categories) - MOVED ABOVE FRAMEWORK -->
     <section class="solutions-section">
         <div class="section-container">
             <h2 class="section-title">Our Solutions</h2>
@@ -246,6 +156,95 @@
                     </div>
                 </a>
             </div>
+        </div>
+    </section>
+
+    <!-- Innovation Framework & Core Values (COLLAPSIBLE SECTION) -->
+    <section class="collapsible-data-section">
+        <div class="section-container">
+            
+            <!-- Innovation Framework -->
+            <h2 class="section-title">Innovation Framework</h2>
+            <p class="framework-intro">Every innovation at FT Agri-Tech follows the same process:</p>
+            
+            <div class="accordion-group">
+                <!-- Step 1 -->
+                <details class="premium-accordion">
+                    <summary>Research</summary>
+                    <div class="accordion-content">
+                        <ul class="crystal-list">
+                            <li><span>🔮</span> Field studies</li>
+                            <li><span>🔮</span> Data collection</li>
+                            <li><span>🔮</span> Government priorities</li>
+                            <li><span>🔮</span> Customer requests</li>
+                            <li><span>🔮</span> Global trends</li>
+                            <li><span>🔮</span> Case studies</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <!-- Step 2 -->
+                <details class="premium-accordion">
+                    <summary>Problem Identification</summary>
+                    <div class="accordion-content">
+                        <ul class="crystal-list">
+                            <li><span>🔮</span> Root-cause analysis</li>
+                            <li><span>🔮</span> Economic impact</li>
+                            <li><span>🔮</span> Technical feasibility</li>
+                            <li><span>🔮</span> Priority ranking</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <!-- Step 3 -->
+                <details class="premium-accordion">
+                    <summary>Engineering</summary>
+                    <div class="accordion-content">
+                        <ul class="crystal-list">
+                            <li><span>🔮</span> Hardware</li>
+                            <li><span>🔮</span> Embedded systems</li>
+                            <li><span>🔮</span> AI & Machine Learning</li>
+                            <li><span>🔮</span> IoT</li>
+                            <li><span>🔮</span> Robotics</li>
+                            <li><span>🔮</span> Software</li>
+                            <li><span>🔮</span> Automation</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <!-- Step 4 -->
+                <details class="premium-accordion">
+                    <summary>Deployment</summary>
+                    <div class="accordion-content">
+                        <ul class="crystal-list">
+                            <li><span>🔮</span> Manufacturing</li>
+                            <li><span>🔮</span> Installation</li>
+                            <li><span>🔮</span> Training</li>
+                            <li><span>🔮</span> Maintenance</li>
+                            <li><span>🔮</span> Continuous improvement</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Core Values -->
+            <div class="accordion-group" style="margin-top: 4rem;">
+                <details class="premium-accordion">
+                    <summary>Core Values</summary>
+                    <div class="accordion-content">
+                        <ul class="crystal-list">
+                            <li><span>🔮</span> Purpose before profit.</li>
+                            <li><span>🔮</span> Research before engineering.</li>
+                            <li><span>🔮</span> Practicality over complexity.</li>
+                            <li><span>🔮</span> Innovation driven by real demand.</li>
+                            <li><span>🔮</span> Long-term partnership with customers.</li>
+                            <li><span>🔮</span> Continuous learning from the field.</li>
+                            <li><span>🔮</span> Engineering with measurable impact.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+
         </div>
     </section>
 
