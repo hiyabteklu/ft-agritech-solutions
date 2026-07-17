@@ -1,9 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FT Agritech Solutions</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- NAVIGATION & LOGO PLACEMENT -->
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="ftagritech1.jpg" alt="FT Agritech Logo" class="site-logo">
+            <h1 class="logo-text">FT <span class="gold-accent">AGRITECH</span></h1>
+        </div>
+        <nav class="desktop-nav">
+            <ul>
+                <li><a href="#origin">The Origin</a></li>
+                <li><a href="#divisions">Engineering Divisions</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- COMPREHENSIVE VIDEO HERO SECTION -->
+    <section id="origin" class="hero-section">
+        <div class="video-wrapper">
+            <video class="master-video" controls>
+                <source src="assets/videos/origin-story.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="hero-text-box">
+            <h2 class="hero-title">From the Soil Up.</h2>
+            <p class="hero-subtitle">Engineering the infrastructure of Ethiopian agriculture through rugged, autonomous hardware.</p>
+        </div>
+    </section>
+
     <!-- 7 CATEGORY GRID SECTION -->
     <section id="divisions" class="divisions-section">
         <h2 class="section-title">Engineering Divisions</h2>
         <div class="category-grid">
             
-            <!-- Category 1: Apiculture -->
             <div class="category-card" onclick="openModal('apiculture')">
                 <img src="assets/images/cat1.jpg" alt="Apiculture">
                 <div class="card-overlay">
@@ -12,16 +48,14 @@
                 </div>
             </div>
 
-            <!-- Category 2: Poultry -->
             <div class="category-card" onclick="openModal('poultry')">
-                <img src="assets/images/cat2.jpg" alt="Poultry & Aviculture">
+                <img src="assets/images/cat2.jpg" alt="Aviculture">
                 <div class="card-overlay">
                     <h3>02 | Aviculture</h3>
                     <p>Grid-Failover Incubation</p>
                 </div>
             </div>
 
-            <!-- Category 3: Horticulture -->
             <div class="category-card" onclick="openModal('horticulture')">
                 <img src="assets/images/cat3.jpg" alt="Horticulture">
                 <div class="card-overlay">
@@ -30,25 +64,22 @@
                 </div>
             </div>
 
-            <!-- Category 4: Livestock -->
             <div class="category-card" onclick="openModal('livestock')">
-                <img src="assets/images/cat4.jpg" alt="Livestock & Dairy">
+                <img src="assets/images/cat4.jpg" alt="Livestock">
                 <div class="card-overlay">
                     <h3>04 | Livestock</h3>
                     <p>Biometric Rangeland Tags</p>
                 </div>
             </div>
 
-            <!-- Category 5: Export Crops -->
             <div class="category-card" onclick="openModal('export')">
-                <img src="assets/images/cat5.jpg" alt="High-Value Exports">
+                <img src="assets/images/cat5.jpg" alt="Export Crops">
                 <div class="card-overlay">
                     <h3>05 | Export Crops</h3>
                     <p>Fermentation pH Nodes</p>
                 </div>
             </div>
 
-            <!-- Category 6: Staple Grains -->
             <div class="category-card" onclick="openModal('grains')">
                 <img src="assets/images/cat6.jpg" alt="Staple Grains">
                 <div class="card-overlay">
@@ -57,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Category 7: Aquaculture -->
             <div class="category-card" onclick="openModal('aquaculture')">
                 <img src="assets/images/cat7.jpg" alt="Aquaculture">
                 <div class="card-overlay">
@@ -68,3 +98,103 @@
 
         </div>
     </section>
+
+    <!-- EXPANSION MODAL (Hidden by default) -->
+    <div id="categoryModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle" class="modal-title">Category Title</h2>
+            
+            <div class="modal-body">
+                <!-- Section 1: Background -->
+                <div class="modal-section full-width">
+                    <h3 class="gold-accent">1. The Ethiopian Context</h3>
+                    <p id="modalContext">Context text loads here...</p>
+                </div>
+
+                <!-- Sections 2 & 3: Side by Side -->
+                <div class="split-section">
+                    <div class="split-box problem-box">
+                        <h3 class="gold-accent">2. The Problem Identified</h3>
+                        <p id="modalProblem">Problem text loads here...</p>
+                    </div>
+                    <div class="split-box solution-box">
+                        <h3 class="gold-accent">3. The Engineered Solution</h3>
+                        <p id="modalSolution">Solution text loads here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT FOR MODAL LOGIC -->
+    <script>
+        const categoryData = {
+            'apiculture': {
+                title: '01 | Apiculture (Honey & Wax Systems)',
+                context: 'Ethiopia has immense potential in beekeeping, ranging from traditional forest hives to modern box hives. However, reliance on manual observation limits scale and yields.',
+                problem: 'Beekeepers face unpredictable swarms, severe temperature fluctuations inside the hives, and physical security threats in remote forest areas, leading to massive losses in gold-grade honey and refined wax production.',
+                solution: 'Deployment of acoustic monitoring arrays for swarm prediction, internal automated temperature regulation hardware, and remote hive telemetry for instant security alerts.'
+            },
+            'poultry': {
+                title: '02 | Poultry & Aviculture',
+                context: 'Commercial hatcheries and meat production (broilers) are critical for urban food security, requiring exact environmental conditions to operate at scale.',
+                problem: 'Sudden grid power failures and poor ventilation lead to catastrophic heat stress. Manual feeding and watering are inefficient, and manual egg counting lacks data precision.',
+                solution: 'Installation of grid-failover ventilation systems, automated feed and water dispensing logic boards, precise egg-counting optics, and real-time heat-stress telemetry.'
+            },
+            'horticulture': {
+                title: '03 | Horticulture & Floriculture',
+                context: 'Vegetables, fruits, and cut flowers are highly perishable, high-value crops requiring delicate handling, strict greenhouse environments, and absolute cold chain integrity.',
+                problem: 'Transit damage on rough roads, climate inconsistency inside greenhouses, and poor post-harvest cooling lead to massive rejection rates in export markets.',
+                solution: 'Integration of transit-shock logging sensors, automated greenhouse climate control systems, robotic picking end-effectors, and localized post-harvest chilling hubs.'
+            },
+            'livestock': {
+                title: '04 | Livestock & Dairy',
+                context: 'Ethiopia possesses massive herds, spanning pastoral rangeland herding, commercial dairy milking, and meat processing sectors.',
+                problem: 'Lost herds across vast terrains, late detection of highly contagious diseases, and inefficient, unmonitored commercial milking processes degrade value.',
+                solution: 'Engineering biometric ear tags for health tracking, GPS rangeland geofencing, automated dairy flow sensors, and early disease-detection wearables.'
+            },
+            'export': {
+                title: '05 | High-Value Export Crops',
+                context: 'For coffee, sesame, and spices, the final global market price is determined by exact chemical profiles and flawless processing execution.',
+                problem: 'Inconsistent fermentation environments, improper drying techniques due to weather, and flawed optical grading ruin the premium quality of the harvest.',
+                solution: 'Deployment of fermentation pH monitoring nodes, automated optical sorting hardware, and solar-powered rapid-drying telemetry.'
+            },
+            'grains': {
+                title: '06 | Staple Grains & Cereals',
+                context: 'Broad-acre farming of teff, maize, and wheat requires massive bulk storage and efficient harvesting to feed the population.',
+                problem: 'Post-harvest losses are devastating. Poor threshing calibration damages the yield, while unmonitored silo atmospheres breed mold and highly toxic aflatoxin.',
+                solution: 'Implementation of threshing machinery calibration sensors, automated moisture measurement, and silo atmospheric monitoring to instantly detect and prevent mold.'
+            },
+            'aquaculture': {
+                title: '07 | Aquaculture',
+                context: 'Controlled breeding of tilapia and catfish in artificial ponds or lakes represents a massive frontier for protein production.',
+                problem: 'Undetected drops in oxygen levels and poor water quality can wipe out entire populations in hours before manual testing can catch the issue.',
+                solution: 'Submerged dissolved oxygen arrays and automated water quality logic circuits providing real-time data directly to a centralized dashboard.'
+            }
+        };
+
+        function openModal(catKey) {
+            const data = categoryData[catKey];
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalContext').innerText = data.context;
+            document.getElementById('modalProblem').innerText = data.problem;
+            document.getElementById('modalSolution').innerText = data.solution;
+            document.getElementById('categoryModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside the box
+        window.onclick = function(event) {
+            const modal = document.getElementById('categoryModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>
