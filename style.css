@@ -7,8 +7,6 @@
     --gold-glow: rgba(212, 175, 55, 0.4);
     --green: #10B981;
     --red: #EF4444;
-    --orange: #F59E0B;
-    --blue: #3B82F6;
     --text-main: #F3F4F6;
     --text-muted: #9CA3AF;
     --border-color: rgba(255, 255, 255, 0.05);
@@ -89,99 +87,6 @@ body {
     background-color: #000;
 }
 
-/* --- DUAL PANEL (PROBLEMS VS SOLUTIONS) --- */
-.dual-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 3rem;
-}
-
-.analysis-card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 2.5rem;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.analysis-card h2 {
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 1rem;
-}
-
-.problem-card h2 { color: var(--red); }
-.solution-card h2 { color: var(--green); }
-
-/* Urgency Bars */
-.list-item { margin-bottom: 1.8rem; }
-.item-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    align-items: center;
-}
-.item-title { font-weight: 600; font-size: 1.1rem; }
-.urgency-label {
-    font-size: 0.75rem;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-.urgency-label.critical { background: rgba(239, 68, 68, 0.1); color: var(--red); }
-.urgency-label.high { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
-.urgency-label.medium { background: rgba(59, 130, 246, 0.1); color: var(--blue); }
-
-.urgency-bar {
-    width: 100%;
-    height: 8px;
-    background: #232E42;
-    border-radius: 4px;
-    overflow: hidden;
-}
-.fill { height: 100%; border-radius: 4px; }
-.critical-fill { background: var(--red); box-shadow: 0 0 10px var(--red); }
-.high-fill { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
-.medium-fill { background: var(--blue); }
-
-/* Solution Tags & Feedback */
-.solution-item {
-    background: #1B2436;
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-    border-left: 4px solid var(--green);
-}
-.tags {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 1rem;
-}
-.tag {
-    font-size: 0.8rem;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-weight: 600;
-}
-.tag.hardware { background: #2D3748; color: #E2E8F0; }
-.tag.software { background: #2B6CB0; color: #EBF8FF; }
-.tag.deployed { background: rgba(16, 185, 129, 0.2); color: var(--green); border: 1px solid var(--green); }
-.tag.iterating { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold); }
-
-.aesthetic-label {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 0.5rem;
-}
-.feedback-text {
-    font-style: italic;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-}
-
 /* --- 7 CATEGORIES GRID --- */
 .main-title {
     text-align: center;
@@ -193,8 +98,9 @@ body {
 
 .solutions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2.5rem; /* Spacious gap to prevent merging */
+    /* Increased base size from 300px to 400px so cards are significantly bigger */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem; 
 }
 
 .solution-grid-card {
@@ -203,16 +109,38 @@ body {
     background: linear-gradient(145deg, var(--bg-card) 0%, #111724 100%);
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    aspect-ratio: 4 / 3;
+    /* Aspect ratio is 1:1, perfectly matching the image size so nothing is cropped out */
+    aspect-ratio: 1 / 1;
     position: relative;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* --- BACKGROUND IMAGES & OVERLAYS --- */
+.card-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Cover will now respect the 1:1 square ratio entirely */
+    object-fit: cover; 
+    opacity: 0.35; 
+    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 0;
+}
+
+.card-overlay-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(21, 28, 43, 0.95) 0%, rgba(21, 28, 43, 0.1) 100%);
+    z-index: 1;
+}
+
 .card-content {
     position: absolute;
     inset: 0;
-    padding: 2rem;
+    padding: 2.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -221,7 +149,7 @@ body {
 
 .solution-grid-card h3 {
     color: white;
-    font-size: 1.6rem;
+    font-size: 2rem;
     transition: color 0.3s ease;
 }
 
@@ -235,8 +163,8 @@ body {
 }
 
 .pulsing-dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background-color: var(--gold);
     border-radius: 50%;
     animation: pulse 1.5s infinite;
@@ -244,7 +172,7 @@ body {
 
 .coming-soon-text {
     color: var(--gold);
-    font-size: 0.9rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 600;
@@ -257,24 +185,16 @@ body {
     box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
 }
 
+.solution-grid-card:hover .card-bg-img {
+    opacity: 0.6; 
+    transform: scale(1.08); 
+}
+
 .solution-grid-card:hover h3 {
     color: var(--gold);
 }
 
 .solution-grid-card:hover .coming-soon-wrapper {
-    opacity: 1;
-}
-
-.solution-grid-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 120%, var(--gold-glow) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.solution-grid-card:hover::before {
     opacity: 1;
 }
 
@@ -325,6 +245,7 @@ body {
     padding: 2.5rem;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .skeleton-card.full-width {
@@ -332,10 +253,15 @@ body {
 }
 
 .skeleton-card h2 {
-    color: white;
     margin-bottom: 1.5rem;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+    color: white;
 }
+
+.problem-card h2 { color: var(--red); border-bottom-color: rgba(239, 68, 68, 0.3); }
+.solution-card h2 { color: var(--green); border-bottom-color: rgba(16, 185, 129, 0.3); }
 
 /* Skeleton Lines */
 .skeleton-text-block {
@@ -362,18 +288,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(21, 28, 43, 0.8);
+    background: rgba(21, 28, 43, 0.85);
     backdrop-filter: blur(4px);
 }
 
 .large-pulse {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: var(--gold);
     border: 2px solid var(--gold);
     padding: 15px 30px;
     border-radius: 8px;
     background: rgba(212, 175, 55, 0.1);
     animation: textPulse 2s infinite;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* --- ANIMATIONS --- */
@@ -404,5 +332,4 @@ footer {
 @media (max-width: 768px) {
     .skeleton-grid { grid-template-columns: 1fr; }
     .main-title { font-size: 2.2rem; }
-    .dual-grid { gap: 2rem; }
 }
