@@ -1,0 +1,80 @@
+/* --- DIVISIONS GRID SECTION --- */
+.divisions-section {
+    padding: 5rem 5%;
+    background-color: var(--bg-dark);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--gold-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.category-grid {
+    display: grid;
+    /* Automatically creates responsive columns */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.category-card {
+    position: relative;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #1a2233;
+    aspect-ratio: 4/3; /* Keeps the cards uniform */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.4s ease;
+}
+
+/* Hover Effects */
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
+    border-color: var(--gold-accent);
+}
+
+.category-card:hover img {
+    opacity: 0.3; /* Dims the image so text pops */
+}
+
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(15, 20, 30, 1) 0%, rgba(15, 20, 30, 0) 100%);
+    transform: translateY(30px);
+    transition: transform 0.4s ease;
+}
+
+.category-card:hover .card-overlay {
+    transform: translateY(0); /* Slides text up slightly on hover */
+}
+
+.card-overlay h3 {
+    color: var(--gold-accent);
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.card-overlay p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
