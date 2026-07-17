@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FT Agri-Tech Solutions</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <!-- Version 6 ready for the upcoming CSS -->
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 
@@ -13,16 +14,137 @@
         <div class="logo-wrapper">
             <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="site-logo">
         </div>
+        <!-- New Bold Animated Title -->
+        <h1 class="brand-title animated-gradient-text">FT-Agri-Tech solutions</h1>
     </header>
 
-    <!-- Introduction Video Section -->
+    <!-- Introduction Video Section (Encircled in a box with the title) -->
     <section class="hero-section">
         <div class="section-container">
-            <div class="video-container">
-                <video controls class="intro-video">
-                    <source src="yorda.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+            <div class="video-presentation-box">
+                <h2 class="video-title">Where It All Began</h2>
+                <div class="video-container">
+                    <video controls class="intro-video">
+                        <source src="yorda.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Corporate Identity: Vision, Mission, Why We Exist, Philosophy -->
+    <section class="identity-section">
+        <div class="section-container identity-grid">
+            
+            <div class="identity-card">
+                <h3>Vision</h3>
+                <p>To make Ethiopia the world's leading example of technology-driven agriculture by innovating practical solutions to every major agricultural challenge.</p>
+            </div>
+
+            <div class="identity-card">
+                <h3>Mission</h3>
+                <p>FT Agri-Tech exists to identify real agricultural challenges through research, field engagement, and data, then design, build, deploy, and continuously improve engineering solutions that create measurable value for farmers, businesses, and institutions.</p>
+            </div>
+
+            <div class="identity-card">
+                <h3>Why We Exist</h3>
+                <p>FT Agri-Tech was born from lived experience. We grew up watching hardworking farmers lose harvests to pests, wildlife, unpredictable weather, disease, and problems that often had practical solutions but no one built them.</p>
+            </div>
+
+            <div class="identity-card highlight-card">
+                <h3>Philosophy</h3>
+                <p>We don't invent technology and search for a use.<br>We find the problem first, then build exactly what the situation demands.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Innovation Framework Section -->
+    <section class="framework-section">
+        <div class="section-container">
+            <h2 class="section-title">Innovation Framework</h2>
+            <p class="framework-intro">Every innovation at FT Agri-Tech follows the same process:</p>
+            
+            <div class="framework-timeline">
+                
+                <!-- Step 1 -->
+                <div class="timeline-step">
+                    <div class="step-content">
+                        <h3>Research</h3>
+                        <ul>
+                            <li>Field studies</li>
+                            <li>Data collection</li>
+                            <li>Government priorities</li>
+                            <li>Customer requests</li>
+                            <li>Global trends</li>
+                            <li>Case studies</li>
+                        </ul>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="timeline-step">
+                    <div class="step-content">
+                        <h3>Problem Identification</h3>
+                        <ul>
+                            <li>Root-cause analysis</li>
+                            <li>Economic impact</li>
+                            <li>Technical feasibility</li>
+                            <li>Priority ranking</li>
+                        </ul>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="timeline-step">
+                    <div class="step-content">
+                        <h3>Engineering</h3>
+                        <ul>
+                            <li>Hardware</li>
+                            <li>Embedded systems</li>
+                            <li>AI & Machine Learning</li>
+                            <li>IoT</li>
+                            <li>Robotics</li>
+                            <li>Software</li>
+                            <li>Automation</li>
+                        </ul>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="timeline-step final-step">
+                    <div class="step-content">
+                        <h3>Deployment</h3>
+                        <ul>
+                            <li>Manufacturing</li>
+                            <li>Installation</li>
+                            <li>Training</li>
+                            <li>Maintenance</li>
+                            <li>Continuous improvement</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values Section -->
+    <section class="values-section">
+        <div class="section-container">
+            <h2 class="section-title">Core Values</h2>
+            <div class="values-grid">
+                <div class="value-item">Purpose before profit.</div>
+                <div class="value-item">Research before engineering.</div>
+                <div class="value-item">Practicality over complexity.</div>
+                <div class="value-item">Innovation driven by real demand.</div>
+                <div class="value-item">Long-term partnership with customers.</div>
+                <div class="value-item">Continuous learning from the field.</div>
+                <div class="value-item">Engineering with measurable impact.</div>
             </div>
         </div>
     </section>
@@ -30,7 +152,7 @@
     <!-- Our Solutions (7 Categories) -->
     <section class="solutions-section">
         <div class="section-container">
-            <h1 class="main-title">Our Solutions</h1>
+            <h2 class="section-title">Our Solutions</h2>
             
             <div class="solutions-grid">
                 <!-- Card 1 -->
@@ -127,8 +249,16 @@
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 FT Agri-Tech Solutions. All systems operational.</p>
+    <!-- Footer & Contact Section -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <h2>Contact us</h2>
+            <div class="contact-links">
+                <a href="https://t.me/FT_Agri_Tech" target="_blank" class="contact-btn telegram-btn">Telegram</a>
+                <a href="https://www.linkedin.com/company/ft-agritech-solutions/" target="_blank" class="contact-btn linkedin-btn">LinkedIn</a>
+            </div>
+            <p class="copyright">&copy; 2026 FT Agri-Tech Solutions. All systems operational.</p>
+        </div>
     </footer>
 
 </body>
