@@ -4,34 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solution Details - FT Agri-Tech</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body class="skeleton-body">
 
     <div class="skeleton-container">
         <header class="skeleton-header">
-            <h1 class="animated-gradient-text">Division Overview</h1>
+            <!-- This ID allows JavaScript to replace the text dynamically -->
+            <h1 id="dynamic-title" class="animated-gradient-text">Division Overview</h1>
             <p class="skeleton-subtitle">Detailed documentation is currently in development.</p>
         </header>
 
         <div class="skeleton-grid">
-            <!-- Background Skeleton -->
-            <div class="skeleton-card">
-                <h2>Background</h2>
+            <!-- Background / Scope Skeleton (Full Width) -->
+            <div class="skeleton-card full-width">
+                <h2>Background / Scope</h2>
                 <div class="skeleton-text-block">
                     <div class="skeleton-line full"></div>
                     <div class="skeleton-line medium"></div>
                     <div class="skeleton-line long"></div>
                     <div class="skeleton-line short"></div>
+                    <div class="skeleton-line full"></div>
                 </div>
                 <div class="coming-soon-overlay">
                     <span class="coming-soon-text large-pulse">Data Pending Compilation</span>
                 </div>
             </div>
 
-            <!-- Research Skeleton -->
-            <div class="skeleton-card">
-                <h2>Research Data</h2>
+            <!-- Problems Identified Skeleton -->
+            <div class="skeleton-card problem-card">
+                <h2>Problems Identified</h2>
                 <div class="skeleton-text-block">
                     <div class="skeleton-line long"></div>
                     <div class="skeleton-line full"></div>
@@ -42,14 +44,13 @@
                 </div>
             </div>
 
-            <!-- Scope Skeleton -->
-            <div class="skeleton-card full-width">
-                <h2>Project Scope & Architecture</h2>
+            <!-- Solutions Developed Skeleton -->
+            <div class="skeleton-card solution-card">
+                <h2>Solutions Developed</h2>
                 <div class="skeleton-text-block">
                     <div class="skeleton-line full"></div>
-                    <div class="skeleton-line long"></div>
-                    <div class="skeleton-line full"></div>
                     <div class="skeleton-line medium"></div>
+                    <div class="skeleton-line long"></div>
                 </div>
                 <div class="coming-soon-overlay">
                     <span class="coming-soon-text large-pulse">Blueprint Under Review</span>
@@ -57,6 +58,17 @@
             </div>
         </div>
     </div>
+
+    <!-- Script to dynamically update the title based on the clicked card -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryTitle = urlParams.get('title');
+        
+        if (categoryTitle) {
+            document.getElementById('dynamic-title').innerText = categoryTitle;
+            document.title = categoryTitle + " - FT Agri-Tech";
+        }
+    </script>
 
 </body>
 </html>
