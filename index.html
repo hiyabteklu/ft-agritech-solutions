@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FT Agri-Tech Solutions</title>
-    <!-- Version 8 ready for the upcoming advanced CSS -->
-    <link rel="stylesheet" href="style.css?v=8">
+    <!-- Version 9 ready for the upcoming CSS fixes -->
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
-    <!-- 1. NEW: Glassmorphism Sticky Navbar -->
+    <!-- 1. Glassmorphism Sticky Navbar -->
     <nav class="glass-navbar">
         <div class="nav-brand">
             <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="nav-logo">
@@ -24,17 +24,10 @@
         </div>
     </nav>
 
-    <!-- 2. Hero Section with Telemetry -->
+    <!-- 2. Hero Section (Telemetry Removed) -->
     <section class="hero-section">
         <div class="section-container">
             <div class="video-presentation-box">
-                
-                <!-- NEW: System Telemetry Overlay -->
-                <div class="telemetry-overlay">
-                    <span class="status-dot"></span>
-                    <span id="telemetry-text">SYSTEM.INIT() // SECURE</span>
-                </div>
-
                 <h2 class="video-title">Where It All Began</h2>
                 <div class="video-container">
                     <video controls class="intro-video">
@@ -199,7 +192,7 @@
         </div>
     </section>
 
-    <!-- NEW: Strategic Partners Marquee -->
+    <!-- Strategic Partners Marquee -->
     <section class="partners-section">
         <div class="section-container">
             <h2 class="section-title" style="font-size: 2.2rem; margin-bottom: 2rem;">Strategic Partners</h2>
@@ -242,7 +235,7 @@
         </div>
     </footer>
 
-    <!-- NEW: Restricted Client Portal Modal -->
+    <!-- Restricted Client Portal Modal -->
     <div id="auth-modal-overlay" class="custom-modal-overlay">
         <div class="auth-modal">
             <button class="close-auth" onclick="closeAuthModal()">✕</button>
@@ -262,7 +255,7 @@
         </div>
     </div>
 
-    <!-- JS Logic for New Features -->
+    <!-- JS Logic -->
     <script>
         // 1. Live Search Logic
         function filterSolutions() {
@@ -286,7 +279,7 @@
         // 2. Auth Modal Logic
         function openAuthModal() {
             document.getElementById('auth-modal-overlay').classList.add('active');
-            document.getElementById('dev-alert').style.display = 'none'; // reset warning
+            document.getElementById('dev-alert').style.display = 'none';
         }
         function closeAuthModal() {
             document.getElementById('auth-modal-overlay').classList.remove('active');
@@ -295,32 +288,18 @@
             document.getElementById('dev-alert').style.display = 'block';
         }
 
-        // 3. Telemetry Overlay Logic
-        const telemetryTexts = [
-            "SYSTEM.INIT() // SECURE",
-            "CONNECTING TO IOT_NODE_04...",
-            "WEATHER API: SYNCED",
-            "THREAT DETECTION: STANDBY",
-            "DATA LINK: STABLE"
-        ];
-        let tIndex = 0;
-        setInterval(() => {
-            tIndex = (tIndex + 1) % telemetryTexts.length;
-            document.getElementById('telemetry-text').innerText = telemetryTexts[tIndex];
-        }, 2500);
-
-        // 4. 3D Hover Tilt Physics for Cards
+        // 3. 3D Hover Tilt Physics for Cards
         const cards = document.querySelectorAll('.tilt-card');
         cards.forEach(card => {
             card.addEventListener('mousemove', e => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; // x position within the element.
-                const y = e.clientY - rect.top;  // y position within the element.
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;  
                 
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
                 
-                const rotateX = ((y - centerY) / centerY) * -10; // Max rotation 10deg
+                const rotateX = ((y - centerY) / centerY) * -10; 
                 const rotateY = ((x - centerX) / centerX) * 10;
                 
                 card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
