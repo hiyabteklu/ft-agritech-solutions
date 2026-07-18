@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FT Agri-Tech Solutions</title>
-    <!-- Version 9 ready for the upcoming CSS fixes -->
-    <link rel="stylesheet" href="style.css?v=9">
+    <!-- Version 10 ready for the upcoming responsive CSS fixes -->
+    <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 
@@ -20,7 +20,8 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" id="solution-search" placeholder="Search solutions..." onkeyup="filterSolutions()">
             </div>
-            <button class="portal-btn" onclick="openAuthModal()">Client Portal <span class="lock">🔒</span></button>
+            <!-- UPDATED: Button Name -->
+            <button class="portal-btn" onclick="openAuthModal()">Register / Log In <span class="lock">🔒</span></button>
         </div>
     </nav>
 
@@ -235,22 +236,22 @@
         </div>
     </footer>
 
-    <!-- Restricted Client Portal Modal -->
+    <!-- UPDATED: Register / Log In Modal (Blue Theme Structure) -->
     <div id="auth-modal-overlay" class="custom-modal-overlay">
         <div class="auth-modal">
             <button class="close-auth" onclick="closeAuthModal()">✕</button>
             <div class="auth-header">
-                <span class="auth-icon">🛑</span>
-                <h3>Client Authentication Required</h3>
-                <p>Please log in to your FT Agri-Tech portal to initiate a hardware deployment order.</p>
+                <span class="auth-icon">👤</span> <!-- Neutral user icon instead of red stop sign -->
+                <h3>Register / Log In</h3>
+                <p>Access your FT Agri-Tech portal to manage operations or deploy hardware.</p>
             </div>
             <div class="auth-form">
                 <input type="email" placeholder="Corporate Email / Partner ID" class="auth-input">
-                <input type="password" placeholder="Access Key" class="auth-input">
-                <button class="auth-submit-btn" onclick="triggerDevAlert()">Authenticate Connection</button>
+                <input type="password" placeholder="Password / Access Key" class="auth-input">
+                <button class="auth-submit-btn" onclick="triggerDevAlert()">Log In / Create Account</button>
             </div>
             <div id="dev-alert" class="dev-alert-box">
-                ⚠️ Error: Client Portal is currently under development. Please contact administration.
+                ⚠️ Notice: Registration and Login systems are currently under development. Please check back later.
             </div>
         </div>
     </div>
