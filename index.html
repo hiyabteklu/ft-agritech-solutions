@@ -4,23 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FT Agri-Tech Solutions</title>
-    <!-- Version 7 ready for the upcoming CSS with collapsible styles -->
-    <link rel="stylesheet" href="style.css?v=7">
+    <!-- Version 8 ready for the upcoming advanced CSS -->
+    <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
-    <!-- Header & Logo -->
-    <header class="main-header">
-        <div class="logo-wrapper">
-            <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="site-logo">
+    <!-- 1. NEW: Glassmorphism Sticky Navbar -->
+    <nav class="glass-navbar">
+        <div class="nav-brand">
+            <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="nav-logo">
+            <span class="nav-title">FT-Agri-Tech</span>
         </div>
-        <h1 class="brand-title animated-gradient-text">FT-Agri-Tech solutions</h1>
-    </header>
+        <div class="nav-controls">
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="solution-search" placeholder="Search solutions..." onkeyup="filterSolutions()">
+            </div>
+            <button class="portal-btn" onclick="openAuthModal()">Client Portal <span class="lock">🔒</span></button>
+        </div>
+    </nav>
 
-    <!-- Introduction Video Section (Encircled in a box with the title) -->
+    <!-- 2. Hero Section with Telemetry -->
     <section class="hero-section">
         <div class="section-container">
             <div class="video-presentation-box">
+                
+                <!-- NEW: System Telemetry Overlay -->
+                <div class="telemetry-overlay">
+                    <span class="status-dot"></span>
+                    <span id="telemetry-text">SYSTEM.INIT() // SECURE</span>
+                </div>
+
                 <h2 class="video-title">Where It All Began</h2>
                 <div class="video-container">
                     <video controls class="intro-video">
@@ -32,41 +46,36 @@
         </div>
     </section>
 
-    <!-- Corporate Identity: Vision, Mission, Why We Exist, Philosophy -->
-    <section class="identity-section">
+    <!-- Corporate Identity -->
+    <section id="identity" class="identity-section">
         <div class="section-container identity-grid">
-            
             <div class="identity-card">
                 <h3>Vision</h3>
                 <p>To make Ethiopia the world's leading example of technology-driven agriculture by innovating practical solutions to every major agricultural challenge.</p>
             </div>
-
             <div class="identity-card">
                 <h3>Mission</h3>
                 <p>FT Agri-Tech exists to identify real agricultural challenges through research, field engagement, and data, then design, build, deploy, and continuously improve engineering solutions that create measurable value for farmers, businesses, and institutions.</p>
             </div>
-
             <div class="identity-card">
                 <h3>Why We Exist</h3>
                 <p>FT Agri-Tech was born from lived experience. We grew up watching hardworking farmers lose harvests to pests, wildlife, unpredictable weather, disease, and problems that often had practical solutions but no one built them.</p>
             </div>
-
             <div class="identity-card highlight-card">
                 <h3>Philosophy</h3>
                 <p>We don't invent technology and search for a use.<br>We find the problem first, then build exactly what the situation demands.</p>
             </div>
-
         </div>
     </section>
 
-    <!-- Our Solutions (7 Categories) - MOVED ABOVE FRAMEWORK -->
-    <section class="solutions-section">
+    <!-- Our Solutions (Searchable Grid) -->
+    <section id="solutions" class="solutions-section">
         <div class="section-container">
             <h2 class="section-title">Our Solutions</h2>
             
-            <div class="solutions-grid">
-                <!-- Card 1 -->
-                <a href="category.html?title=01 | Apiculture" target="_blank" class="solution-grid-card">
+            <div class="solutions-grid" id="solutions-grid">
+                <!-- Cards have data-title for the search filter and tilt-card class for 3D hover -->
+                <a href="category.html?title=01 | Apiculture" target="_blank" class="solution-grid-card tilt-card" data-title="apiculture bees honey">
                     <img src="assets/images/cat1.jpg" alt="Apiculture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -78,8 +87,7 @@
                     </div>
                 </a>
 
-                <!-- Card 2 -->
-                <a href="category.html?title=02 | Aviculture" target="_blank" class="solution-grid-card">
+                <a href="category.html?title=02 | Aviculture" target="_blank" class="solution-grid-card tilt-card" data-title="aviculture poultry birds chickens">
                     <img src="assets/images/cat2.jpg" alt="Aviculture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -91,8 +99,7 @@
                     </div>
                 </a>
 
-                <!-- Card 3 -->
-                <a href="category.html?title=03 | Horticulture" target="_blank" class="solution-grid-card">
+                <a href="category.html?title=03 | Horticulture" target="_blank" class="solution-grid-card tilt-card" data-title="horticulture plants vegetables fruits">
                     <img src="assets/images/cat3.jpg" alt="Horticulture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -104,8 +111,7 @@
                     </div>
                 </a>
 
-                <!-- Card 4 -->
-                <a href="category.html?title=04 | Livestock" target="_blank" class="solution-grid-card">
+                <a href="category.html?title=04 | Livestock" target="_blank" class="solution-grid-card tilt-card" data-title="livestock cattle cows animals">
                     <img src="assets/images/cat4.jpg" alt="Livestock" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -117,8 +123,7 @@
                     </div>
                 </a>
 
-                <!-- Card 5 -->
-                <a href="category.html?title=05 | Export Crops" target="_blank" class="solution-grid-card">
+                <a href="category.html?title=05 | Export Crops" target="_blank" class="solution-grid-card tilt-card" data-title="export crops coffee sesame international">
                     <img src="assets/images/cat5.jpg" alt="Export Crops" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -130,8 +135,7 @@
                     </div>
                 </a>
 
-                <!-- Card 6 -->
-                <a href="category.html?title=06 | Staple Grains" target="_blank" class="solution-grid-card">
+                <a href="category.html?title=06 | Staple Grains" target="_blank" class="solution-grid-card tilt-card" data-title="staple grains teff wheat corn">
                     <img src="assets/images/cat6.jpg" alt="Staple Grains" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -143,8 +147,7 @@
                     </div>
                 </a>
 
-                <!-- Card 7 -->
-                <a href="category.html?title=07 | Aquaculture" target="_blank" class="solution-grid-card">
+                <a href="category.html?title=07 | Aquaculture" target="_blank" class="solution-grid-card tilt-card" data-title="aquaculture fish farming water">
                     <img src="assets/images/cat7.jpg" alt="Aquaculture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -156,78 +159,27 @@
                     </div>
                 </a>
             </div>
+            
+            <!-- Shows if search has no results -->
+            <div id="no-results" style="display:none; text-align:center; padding: 2rem; color: var(--text-muted);">
+                No solutions found matching your search.
+            </div>
         </div>
     </section>
 
-    <!-- Innovation Framework & Core Values (COLLAPSIBLE SECTION) -->
-    <section class="collapsible-data-section">
+    <!-- Innovation Framework & Core Values -->
+    <section id="framework" class="collapsible-data-section">
         <div class="section-container">
-            
-            <!-- Innovation Framework -->
             <h2 class="section-title">Innovation Framework</h2>
             <p class="framework-intro">Every innovation at FT Agri-Tech follows the same process:</p>
             
             <div class="accordion-group">
-                <!-- Step 1 -->
-                <details class="premium-accordion">
-                    <summary>Research</summary>
-                    <div class="accordion-content">
-                        <ul class="crystal-list">
-                            <li><span>🔮</span> Field studies</li>
-                            <li><span>🔮</span> Data collection</li>
-                            <li><span>🔮</span> Government priorities</li>
-                            <li><span>🔮</span> Customer requests</li>
-                            <li><span>🔮</span> Global trends</li>
-                            <li><span>🔮</span> Case studies</li>
-                        </ul>
-                    </div>
-                </details>
-
-                <!-- Step 2 -->
-                <details class="premium-accordion">
-                    <summary>Problem Identification</summary>
-                    <div class="accordion-content">
-                        <ul class="crystal-list">
-                            <li><span>🔮</span> Root-cause analysis</li>
-                            <li><span>🔮</span> Economic impact</li>
-                            <li><span>🔮</span> Technical feasibility</li>
-                            <li><span>🔮</span> Priority ranking</li>
-                        </ul>
-                    </div>
-                </details>
-
-                <!-- Step 3 -->
-                <details class="premium-accordion">
-                    <summary>Engineering</summary>
-                    <div class="accordion-content">
-                        <ul class="crystal-list">
-                            <li><span>🔮</span> Hardware</li>
-                            <li><span>🔮</span> Embedded systems</li>
-                            <li><span>🔮</span> AI & Machine Learning</li>
-                            <li><span>🔮</span> IoT</li>
-                            <li><span>🔮</span> Robotics</li>
-                            <li><span>🔮</span> Software</li>
-                            <li><span>🔮</span> Automation</li>
-                        </ul>
-                    </div>
-                </details>
-
-                <!-- Step 4 -->
-                <details class="premium-accordion">
-                    <summary>Deployment</summary>
-                    <div class="accordion-content">
-                        <ul class="crystal-list">
-                            <li><span>🔮</span> Manufacturing</li>
-                            <li><span>🔮</span> Installation</li>
-                            <li><span>🔮</span> Training</li>
-                            <li><span>🔮</span> Maintenance</li>
-                            <li><span>🔮</span> Continuous improvement</li>
-                        </ul>
-                    </div>
-                </details>
+                <details class="premium-accordion"><summary>Research</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Field studies</li><li><span>🔮</span> Data collection</li><li><span>🔮</span> Government priorities</li><li><span>🔮</span> Customer requests</li><li><span>🔮</span> Global trends</li><li><span>🔮</span> Case studies</li></ul></div></details>
+                <details class="premium-accordion"><summary>Problem Identification</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Root-cause analysis</li><li><span>🔮</span> Economic impact</li><li><span>🔮</span> Technical feasibility</li><li><span>🔮</span> Priority ranking</li></ul></div></details>
+                <details class="premium-accordion"><summary>Engineering</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Hardware</li><li><span>🔮</span> Embedded systems</li><li><span>🔮</span> AI & Machine Learning</li><li><span>🔮</span> IoT</li><li><span>🔮</span> Robotics</li><li><span>🔮</span> Software</li><li><span>🔮</span> Automation</li></ul></div></details>
+                <details class="premium-accordion"><summary>Deployment</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Manufacturing</li><li><span>🔮</span> Installation</li><li><span>🔮</span> Training</li><li><span>🔮</span> Maintenance</li><li><span>🔮</span> Continuous improvement</li></ul></div></details>
             </div>
 
-            <!-- Core Values -->
             <div class="accordion-group" style="margin-top: 4rem;">
                 <details class="premium-accordion">
                     <summary>Core Values</summary>
@@ -244,11 +196,41 @@
                     </div>
                 </details>
             </div>
-
         </div>
     </section>
 
-    <!-- Footer & Contact Section -->
+    <!-- NEW: Strategic Partners Marquee -->
+    <section class="partners-section">
+        <div class="section-container">
+            <h2 class="section-title" style="font-size: 2.2rem; margin-bottom: 2rem;">Strategic Partners</h2>
+            <div class="marquee-white-container">
+                <div class="marquee-track">
+                    <!-- First set of logos -->
+                    <div class="marquee-items">
+                        <div class="partner-logo"><img src="1000145667.png" alt="Wisdom Tower"></div>
+                        <div class="partner-logo"><img src="1000145666.png" alt="Ministry of Agriculture"></div>
+                        <div class="partner-logo"><img src="1000145664.png" alt="EDI"></div>
+                        <div class="partner-logo"><img src="1000145661.png" alt="INSA"></div>
+                        <div class="partner-logo"><img src="1000145658.png" alt="MinT"></div>
+                        <div class="partner-logo"><img src="1000145656.png" alt="Orbit Innovation Hub"></div>
+                        <div class="partner-logo"><img src="1000145654.png" alt="Mastercard"></div>
+                    </div>
+                    <!-- Duplicate set for seamless scrolling -->
+                    <div class="marquee-items">
+                        <div class="partner-logo"><img src="1000145667.png" alt="Wisdom Tower"></div>
+                        <div class="partner-logo"><img src="1000145666.png" alt="Ministry of Agriculture"></div>
+                        <div class="partner-logo"><img src="1000145664.png" alt="EDI"></div>
+                        <div class="partner-logo"><img src="1000145661.png" alt="INSA"></div>
+                        <div class="partner-logo"><img src="1000145658.png" alt="MinT"></div>
+                        <div class="partner-logo"><img src="1000145656.png" alt="Orbit Innovation Hub"></div>
+                        <div class="partner-logo"><img src="1000145654.png" alt="Mastercard"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="main-footer">
         <div class="footer-container">
             <h2>Contact us</h2>
@@ -260,5 +242,94 @@
         </div>
     </footer>
 
+    <!-- NEW: Restricted Client Portal Modal -->
+    <div id="auth-modal-overlay" class="custom-modal-overlay">
+        <div class="auth-modal">
+            <button class="close-auth" onclick="closeAuthModal()">✕</button>
+            <div class="auth-header">
+                <span class="auth-icon">🛑</span>
+                <h3>Client Authentication Required</h3>
+                <p>Please log in to your FT Agri-Tech portal to initiate a hardware deployment order.</p>
+            </div>
+            <div class="auth-form">
+                <input type="email" placeholder="Corporate Email / Partner ID" class="auth-input">
+                <input type="password" placeholder="Access Key" class="auth-input">
+                <button class="auth-submit-btn" onclick="triggerDevAlert()">Authenticate Connection</button>
+            </div>
+            <div id="dev-alert" class="dev-alert-box">
+                ⚠️ Error: Client Portal is currently under development. Please contact administration.
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic for New Features -->
+    <script>
+        // 1. Live Search Logic
+        function filterSolutions() {
+            let input = document.getElementById('solution-search').value.toLowerCase();
+            let cards = document.getElementsByClassName('solution-grid-card');
+            let hasVisibleCards = false;
+
+            for (let i = 0; i < cards.length; i++) {
+                let searchData = cards[i].getAttribute('data-title');
+                if (searchData.includes(input)) {
+                    cards[i].style.display = "";
+                    hasVisibleCards = true;
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+            
+            document.getElementById('no-results').style.display = hasVisibleCards ? "none" : "block";
+        }
+
+        // 2. Auth Modal Logic
+        function openAuthModal() {
+            document.getElementById('auth-modal-overlay').classList.add('active');
+            document.getElementById('dev-alert').style.display = 'none'; // reset warning
+        }
+        function closeAuthModal() {
+            document.getElementById('auth-modal-overlay').classList.remove('active');
+        }
+        function triggerDevAlert() {
+            document.getElementById('dev-alert').style.display = 'block';
+        }
+
+        // 3. Telemetry Overlay Logic
+        const telemetryTexts = [
+            "SYSTEM.INIT() // SECURE",
+            "CONNECTING TO IOT_NODE_04...",
+            "WEATHER API: SYNCED",
+            "THREAT DETECTION: STANDBY",
+            "DATA LINK: STABLE"
+        ];
+        let tIndex = 0;
+        setInterval(() => {
+            tIndex = (tIndex + 1) % telemetryTexts.length;
+            document.getElementById('telemetry-text').innerText = telemetryTexts[tIndex];
+        }, 2500);
+
+        // 4. 3D Hover Tilt Physics for Cards
+        const cards = document.querySelectorAll('.tilt-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x position within the element.
+                const y = e.clientY - rect.top;  // y position within the element.
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; // Max rotation 10deg
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+            });
+        });
+    </script>
 </body>
 </html>
