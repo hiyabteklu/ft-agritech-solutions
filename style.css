@@ -136,7 +136,7 @@ body {
     box-shadow: 0 8px 20px var(--gold-glow);
 }
 
-/* --- HERO & TELEMETRY OVERLAY --- */
+/* --- HERO SECTION --- */
 .hero-section {
     padding-top: 100px; /* Offset for fixed navbar */
 }
@@ -150,43 +150,11 @@ body {
     max-width: 1100px;
     margin: 0 auto;
     transition: border-color 0.5s ease;
-    position: relative; /* For Telemetry */
+    position: relative; 
 }
 
 .video-presentation-box:hover {
     border-color: rgba(212, 175, 55, 0.3);
-}
-
-.telemetry-overlay {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    background: rgba(0, 15, 0, 0.8);
-    border: 1px solid var(--green);
-    padding: 8px 16px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 10;
-    font-family: 'Courier New', Courier, monospace;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: blink 1.5s infinite;
-    box-shadow: 0 0 10px var(--green);
-}
-
-#telemetry-text {
-    color: var(--green);
-    font-size: 0.85rem;
-    font-weight: bold;
-    letter-spacing: 1px;
 }
 
 .video-title {
@@ -275,7 +243,6 @@ body {
     aspect-ratio: 1 / 1;
     position: relative;
     overflow: hidden;
-    /* 3D Properties */
     transform-style: preserve-3d;
     transition: transform 0.1s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -295,7 +262,7 @@ body {
 }
 
 .tilt-card:hover .card-bg-img {
-    transform: scale(1.15) translateZ(-20px); /* 3D Depth */
+    transform: scale(1.15) translateZ(-20px);
 }
 
 .card-overlay-gradient {
@@ -317,7 +284,7 @@ body {
 }
 
 .tilt-card:hover .card-content {
-    transform: translateZ(40px); /* Pops text forward in 3D */
+    transform: translateZ(40px);
 }
 
 .solution-grid-card h3 {
@@ -422,16 +389,18 @@ body {
 }
 
 .marquee-white-container {
-    background: rgba(255, 255, 255, 0.9);
+    /* Changed to a weak blue with glass effect */
+    background: rgba(225, 235, 255, 0.9);
     backdrop-filter: blur(10px);
-    padding: 3rem 0;
+    /* Increased padding to make the track wider */
+    padding: 4.5rem 0;
     width: 100vw;
     position: relative;
     left: 50%; right: 50%;
     margin-left: -50vw; margin-right: -50vw;
     display: flex;
     overflow: hidden;
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
     border-top: 2px solid var(--gold);
     border-bottom: 2px solid var(--gold);
 }
@@ -461,14 +430,13 @@ body {
 }
 
 .partner-logo img {
-    height: 65px;
+    /* Increased size and removed grayscale filter */
+    height: 90px;
     width: auto;
-    filter: grayscale(100%) opacity(0.6);
-    transition: filter 0.4s ease, transform 0.4s ease;
+    transition: transform 0.4s ease;
 }
 
 .partner-logo img:hover {
-    filter: grayscale(0%) opacity(1);
     transform: scale(1.15);
 }
 
@@ -505,33 +473,22 @@ body {
 
 /* Auth Modal Specifics */
 .auth-modal {
-    background: #111;
-    border: 1px solid var(--red);
-    padding: 3rem;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 450px;
-    text-align: center;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(239, 68, 68, 0.15);
-    transform: translateY(30px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: #111; border: 1px solid var(--red); padding: 3rem;
+    border-radius: 16px; width: 90%; max-width: 450px; text-align: center;
+    position: relative; box-shadow: 0 20px 60px rgba(239, 68, 68, 0.15);
+    transform: translateY(30px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .custom-modal-overlay.active .auth-modal { transform: translateY(0) scale(1); }
-
 .close-auth {
     position: absolute; top: 15px; right: 20px; background: none;
     border: none; color: var(--text-muted); font-size: 1.5rem;
     cursor: pointer; transition: color 0.3s;
 }
 .close-auth:hover { color: var(--red); }
-
 .auth-header { margin-bottom: 2rem; }
 .auth-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
 .auth-header h3 { color: white; font-size: 1.4rem; margin-bottom: 10px; }
 .auth-header p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
-
 .auth-form { display: flex; flex-direction: column; gap: 15px; }
 .auth-input {
     background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-color);
@@ -539,7 +496,6 @@ body {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 .auth-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
-
 .auth-submit-btn {
     background: var(--red); color: white; border: none; padding: 15px;
     border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;
@@ -547,7 +503,6 @@ body {
     letter-spacing: 1px; margin-top: 10px;
 }
 .auth-submit-btn:hover { background: #DC2626; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
-
 .dev-alert-box {
     margin-top: 20px; background: rgba(212, 175, 55, 0.1);
     border: 1px solid var(--gold); color: var(--gold); padding: 15px;
@@ -587,7 +542,6 @@ body {
 /* --- ANIMATIONS --- */
 @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 @keyframes scrollMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* --- MOBILE RESPONSIVENESS --- */
@@ -597,8 +551,7 @@ body {
     #solution-search { width: 100%; }
     #solution-search:focus { width: 100%; }
     .hero-section { padding-top: 150px; }
-    .telemetry-overlay { top: 10px; right: 10px; padding: 5px 10px; }
-    #telemetry-text { font-size: 0.7rem; }
     .marquee-items { gap: 2rem; padding-right: 2rem; }
-    .partner-logo img { height: 45px; }
+    /* Mobile logos adjusted for new size ratio */
+    .partner-logo img { height: 60px; } 
 }
