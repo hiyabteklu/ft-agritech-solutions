@@ -7,6 +7,7 @@
     --gold-glow: rgba(212, 175, 55, 0.4);
     --green: #10B981;
     --red: #EF4444;
+    --blue: #3B82F6; /* Added for the new modal theme */
     --text-main: #F3F4F6;
     --text-muted: #9CA3AF;
     --border-color: rgba(255, 255, 255, 0.05);
@@ -406,6 +407,7 @@ body {
 .marquee-track {
     display: flex;
     width: max-content;
+    flex-wrap: nowrap; /* Forces logos to stay in a row, preventing stacking flash */
     animation: scrollMarquee 40s linear infinite;
 }
 
@@ -419,12 +421,14 @@ body {
     justify-content: space-around;
     gap: 4rem;
     padding-right: 4rem; 
+    flex-wrap: nowrap; /* Forces logos to stay in a row */
 }
 
 .partner-logo {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 0 0 auto; /* Prevents logos from shrinking */
 }
 
 .partner-logo img {
@@ -548,11 +552,14 @@ body {
 }
 .custom-modal-overlay.active { opacity: 1; visibility: visible; }
 
-/* Auth Modal Specifics */
+/* Auth Modal Specifics - UPDATED TO BLUE THEME */
 .auth-modal {
-    background: #111; border: 1px solid var(--red); padding: 3rem;
+    background: #111; 
+    border: 1px solid var(--blue); /* Blue border */
+    padding: 3rem;
     border-radius: 16px; width: 90%; max-width: 450px; text-align: center;
-    position: relative; box-shadow: 0 20px 60px rgba(239, 68, 68, 0.15);
+    position: relative; 
+    box-shadow: 0 20px 60px rgba(59, 130, 246, 0.15); /* Blue glow */
     transform: translateY(30px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .custom-modal-overlay.active .auth-modal { transform: translateY(0) scale(1); }
@@ -561,7 +568,7 @@ body {
     border: none; color: var(--text-muted); font-size: 1.5rem;
     cursor: pointer; transition: color 0.3s;
 }
-.close-auth:hover { color: var(--red); }
+.close-auth:hover { color: var(--blue); } /* Blue hover */
 .auth-header { margin-bottom: 2rem; }
 .auth-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
 .auth-header h3 { color: white; font-size: 1.4rem; margin-bottom: 10px; }
@@ -572,17 +579,29 @@ body {
     padding: 15px; border-radius: 8px; color: white; font-size: 1rem;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
-.auth-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+.auth-input:focus { 
+    outline: none; 
+    border-color: var(--blue); /* Blue focus border */
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); /* Blue focus shadow */
+}
 .auth-submit-btn {
-    background: var(--red); color: white; border: none; padding: 15px;
+    background: var(--blue); /* Blue button */
+    color: white; border: none; padding: 15px;
     border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;
     transition: background 0.3s, transform 0.3s; text-transform: uppercase;
     letter-spacing: 1px; margin-top: 10px;
 }
-.auth-submit-btn:hover { background: #DC2626; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
+.auth-submit-btn:hover { 
+    background: #2563EB; /* Darker blue on hover */
+    transform: translateY(-2px); 
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); 
+}
 .dev-alert-box {
-    margin-top: 20px; background: rgba(212, 175, 55, 0.1);
-    border: 1px solid var(--gold); color: var(--gold); padding: 15px;
+    margin-top: 20px; 
+    background: rgba(212, 175, 55, 0.1); /* Yellow/Gold background */
+    border: 1px solid var(--gold); /* Yellow/Gold border */
+    color: var(--gold); /* Yellow/Gold text */
+    padding: 15px;
     border-radius: 8px; font-size: 0.9rem; text-align: left;
     display: none; animation: fadeInDown 0.3s ease;
 }
@@ -627,7 +646,18 @@ body {
     .nav-controls { flex-direction: column; width: 100%; }
     #solution-search { width: 100%; }
     #solution-search:focus { width: 100%; }
+    
     .hero-section { padding-top: 150px; }
+    
+    .section-container {
+        padding: 3rem 1.5rem; /* Smoother margins on mobile screen */
+    }
+    
+    /* THE FIX: Re-write grid columns so it perfectly fits screen width on mobile */
+    .solutions-grid { 
+        grid-template-columns: 1fr; /* This stops the horizontal overflow */
+    }
+    
     .marquee-items { gap: 2rem; padding-right: 2rem; }
     .partner-logo img { height: 60px; } 
     .skeleton-grid { grid-template-columns: 1fr; }
