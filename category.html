@@ -4,68 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solution Details - FT Agri-Tech</title>
-    <!-- Updated to v=6 to perfectly sync with the new CSS -->
-    <link rel="stylesheet" href="style.css?v=6">
+    <!-- Make sure this points to your updated style.css -->
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body class="skeleton-body">
 
     <div class="skeleton-container">
-        <header class="skeleton-header">
-            <h1 id="dynamic-title" class="animated-gradient-text">Division Overview</h1>
+        
+        <!-- Header Section -->
+        <div class="skeleton-header">
+            <h1 id="page-title" style="color: var(--gold); font-size: 2.5rem;">Category Title</h1>
             <p class="skeleton-subtitle">Detailed documentation is currently in development.</p>
-        </header>
+        </div>
 
+        <!-- Content Cards Grid -->
         <div class="skeleton-grid">
-            <!-- Background / Scope Skeleton (Full Width) -->
+            
+            <!-- Background / Scope Card (Full Width, Yellow) -->
             <div class="skeleton-card full-width">
                 <h2>Background / Scope</h2>
                 <div class="skeleton-text-block">
                     <div class="skeleton-line full"></div>
-                    <div class="skeleton-line medium"></div>
                     <div class="skeleton-line long"></div>
-                    <div class="skeleton-line short"></div>
-                    <div class="skeleton-line full"></div>
+                    <div class="skeleton-line medium"></div>
                 </div>
-                <!-- Interactive Button -->
-                <button class="pending-btn" onclick="alert('Insight module is currently being compiled. Please check back later.')">Data Pending Compilation</button>
+                <button class="pending-btn" style="color: var(--gold); border-color: var(--gold);" onclick="showModal('yellow', 'Detailed field data is currently being compiled. Documentation pending.')">DATA PENDING COMPILATION</button>
             </div>
 
-            <!-- Problems Identified Skeleton -->
+            <!-- Problems Identified Card (Half Width, Red) -->
             <div class="skeleton-card problem-card">
                 <h2>Problems Identified</h2>
                 <div class="skeleton-text-block">
-                    <div class="skeleton-line long"></div>
                     <div class="skeleton-line full"></div>
                     <div class="skeleton-line medium"></div>
                 </div>
-                <!-- Interactive Button -->
-                <button class="pending-btn" onclick="alert('Awaiting final metric clearance for problem analysis. Updates imminent.')">Awaiting Metric Clearance</button>
+                <button class="pending-btn" style="color: var(--red); border-color: var(--red);" onclick="showModal('red', 'Awaiting final metric clearance for problem analysis. Updates imminent.')">AWAITING METRIC CLEARANCE</button>
             </div>
 
-            <!-- Solutions Developed Skeleton -->
+            <!-- Solutions Developed Card (Half Width, Green) -->
             <div class="skeleton-card solution-card">
                 <h2>Solutions Developed</h2>
                 <div class="skeleton-text-block">
                     <div class="skeleton-line full"></div>
                     <div class="skeleton-line medium"></div>
-                    <div class="skeleton-line long"></div>
                 </div>
-                <!-- Interactive Button -->
-                <button class="pending-btn" onclick="alert('Solution blueprint is currently under architectural review.')">Blueprint Under Review</button>
+                <button class="pending-btn" style="color: var(--green); border-color: var(--green);" onclick="showModal('green', 'Engineering blueprints and physical prototypes are currently under executive review.')">BLUEPRINT UNDER REVIEW</button>
             </div>
+
         </div>
     </div>
 
-    <!-- Script to dynamically update the title based on the clicked card -->
+    <!-- Custom UI Popup Overlay (Hidden by default) -->
+    <div id="custom-modal-overlay" class="custom-modal-overlay">
+        <div id="custom-modal" class="custom-modal">
+            <div id="custom-modal-icon" class="modal-icon"></div>
+            <h3 id="custom-modal-title">Notice</h3>
+            <p id="custom-modal-text">Message goes here.</p>
+            <button class="modal-close-btn" onclick="closeModal()">Understood</button>
+        </div>
+    </div>
+
+    <!-- Scripts for Dynamic Title and Popup Logic -->
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryTitle = urlParams.get('title');
-        
-        if (categoryTitle) {
-            document.getElementById('dynamic-title').innerText = categoryTitle;
-            document.title = categoryTitle + " - FT Agri-Tech";
+        // Grabs the '?title=' from the URL and sets the H1 text dynamically
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('title');
+            if (title) {
+                document.getElementById('page-title').innerText = title;
+                document.title = title + " - FT Agri-Tech";
+            }
+        };
+
+        // Custom Modal Popup Controller
+        function showModal(type, text) {
+            const overlay = document.getElementById('custom-modal-overlay');
+            const modal = document.getElementById('custom-modal');
+            const textEl = document.getElementById('custom-modal-text');
+            const titleEl = document.getElementById('custom-modal-title');
+            const iconEl = document.getElementById('custom-modal-icon');
+
+            // Reset modal classes
+            modal.className = 'custom-modal';
+            
+            // Apply colors and icons based on the button clicked
+            if (type === 'yellow') {
+                modal.classList.add('modal-yellow');
+                titleEl.innerText = 'Background Scope';
+                iconEl.innerHTML = '⚠️';
+            } else if (type === 'red') {
+                modal.classList.add('modal-red');
+                titleEl.innerText = 'Problem Analysis';
+                iconEl.innerHTML = '🛑';
+            } else if (type === 'green') {
+                modal.classList.add('modal-green');
+                titleEl.innerText = 'Solution Developed';
+                iconEl.innerHTML = '✅';
+            }
+
+            // Insert text and show the modal
+            textEl.innerText = text;
+            overlay.classList.add('active');
+        }
+
+        // Close Modal Controller
+        function closeModal() {
+            document.getElementById('custom-modal-overlay').classList.remove('active');
         }
     </script>
-
 </body>
 </html>
