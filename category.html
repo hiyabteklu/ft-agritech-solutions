@@ -64,7 +64,7 @@
             
             <div class="solutions-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                 
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
                     <img id="img-hand" src="" alt="Locally Developed" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -76,7 +76,7 @@
                     </div>
                 </a>
 
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
                     <img id="img-import" src="" alt="Imported Solutions" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
@@ -88,8 +88,9 @@
                     </div>
                 </a>
 
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
-                    <img id="img-dev" src="" alt="Request Custom Design" class="card-bg-img">
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
+                    <!-- The common shared image is hardcoded directly here in the src -->
+                    <img id="img-dev" src="assets/images/custom_design_lab.jpg" alt="Request Custom Design" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
                         <h3 style="font-size: 1.8rem;">Request Custom Design</h3>
@@ -252,10 +253,10 @@
                     });
                     grid.innerHTML = problemHTML;
 
-                    // 5. Inject Image Paths dynamically based on the prefix (e.g., "assets/images/hort_hand.jpg")
+                    // 5. Inject Image Paths dynamically
                     document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg`;
                     document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg`;
-                    document.getElementById('img-dev').src = `assets/images/${data.imgPrefix}_dev.jpg`;
+                    // The custom design image is already hardcoded in the HTML above, no need to inject it via JS!
                 } else {
                     document.getElementById('page-title').innerText = "Sector Not Found";
                 }
