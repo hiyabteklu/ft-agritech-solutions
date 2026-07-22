@@ -1,304 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solutions - FT Agri-Tech</title>
-    <link rel="stylesheet" href="style.css"> 
-</head>
-<body>
+Require('dotenv').config();
 
-    <!-- Glassmorphism Sticky Navbar -->
-    <nav class="glass-navbar">
-        <div class="nav-brand">
-            <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="nav-logo">
-            <span class="nav-title">FT-Agri-Tech</span>
-        </div>
-        <div class="nav-controls">
-            <button class="portal-btn" onclick="window.location.href='index.html'">← Back to Portal</button>
-        </div>
-    </nav>
+const express = require('express');
+const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const rateLimit = require('express-rate-limit');
+const db = require('./db');
 
-    <!-- Page Header -->
-    <section class="hero-section" style="padding-bottom: 2rem;">
-        <div class="section-container" style="text-align: center;">
-            <h1 id="page-title" style="color: var(--gold); font-size: 3.5rem; letter-spacing: -1px; margin-bottom: 1rem;">Loading Sector...</h1>
-            <p id="page-subtitle" style="color: var(--text-muted); font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
-                Loading specialized engineering interventions...
-            </p>
-        </div>
-    </section>
+const app = express();
+const PORT = process.env.PORT || 5000;
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many requests. Please try again later.'
+  }
+});
 
-    <!-- 1. Background / Scope Section -->
-    <section id="background" style="padding-top: 0;">
-        <div class="section-container">
-            <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 10px;">Background & Scope in Ethiopia</h2>
-            
-            <div class="dynamic-blue-card" id="scope-content">
-                <!-- Injected via JS -->
-            </div>
-        </div>
-    </section>
+const allowedOrigins = ['https://hiyab.tech', 'http://localhost:5000'];
 
-    <!-- 2. Problems Identified Section -->
-    <section id="problems" class="identity-section" style="padding-top: 2rem;">
-        <div class="section-container">
-            <h2 style="font-size: 2.2rem; color: white; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px; margin-bottom: 3rem;">Problems Identified</h2>
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
 
-            <div class="identity-grid" id="problems-grid">
-                <!-- Injected via JS -->
-            </div>
+      const isAllowedOrigin = allowedOrigins.includes(origin);
+      const isGithubPagesOrigin = /^https:\/\/([a-z0-9-]+\.)*github\.io$/i.test(origin);
 
-            <!-- Centralized Large Report Button -->
-            <div style="text-align: center; width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 3rem; padding-top: 2rem;">
-                <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 1.1rem;">Have you identified an unlisted inefficiency in the field?</p>
-                <button class="large-report-btn" onclick="openProblemModal()">+ Report New Problem</button>
-            </div>
-        </div>
-    </section>
+      if (isAllowedOrigin || isGithubPagesOrigin) {
+        return callback(null, true);
+      }
 
-    <!-- 3. Solutions Available Section (3 Clickable Cards) -->
-    <section id="solutions" class="solutions-section" style="padding-top: 2rem; padding-bottom: 6rem;">
-        <div class="section-container">
-            <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;">Solutions Available</h2>
-            
-            <div class="solutions-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-                
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
-                    <img id="img-hand" src="" alt="Locally Developed" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3 style="font-size: 1.8rem;">Locally Developed</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Ready to Deploy</span>
-                        </div>
-                    </div>
-                </a>
+      return callback(new Error('Not allowed by CORS'));
+    }
+  })
+);
+app.use(express.json());
 
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
-                    <img id="img-import" src="" alt="Imported Solutions" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3 style="font-size: 1.8rem;">Imported Solutions</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--blue); box-shadow: 0 0 8px var(--blue);"></span>
-                            <span class="coming-soon-text" style="color: var(--blue);">Global Sourcing</span>
-                        </div>
-                    </div>
-                </a>
+app.post('/api/auth/register', apiLimiter, async (req, res) => {
+  const { email, password } = req.body;
 
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
-                    <!-- Path updated to point to assets/images with a cache buster -->
-                    <img id="img-dev" src="assets/images/custom_design_lab.jpg?v=finalfix" alt="Request Custom Design" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3 style="font-size: 1.8rem;">Request Custom Design</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot"></span>
-                            <span class="coming-soon-text">Custom R&D Request</span>
-                        </div>
-                    </div>
-                </a>
+  if (!email || !password) {
+    return res.status(400).json({ success: false, message: 'Email and password are required.' });
+  }
 
-            </div>
-        </div>
-    </section>
+  try {
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    <!-- Form: Report Problem Modal -->
-    <div id="problem-modal-overlay" class="custom-modal-overlay">
-        <div class="auth-modal" style="border-color: var(--red); box-shadow: 0 20px 60px rgba(239, 68, 68, 0.15);">
-            <button class="close-auth" onclick="closeProblemModal()">✕</button>
-            <div class="auth-header">
-                <span class="auth-icon">⚙️</span>
-                <h3 style="color: var(--red);">Report an Engineering Problem</h3>
-                <p>Submit the parameters below so our engineering team can analyze a solution.</p>
-            </div>
-            <div class="auth-form">
-                <input type="text" id="report-title" placeholder="Problem Title (e.g., Sensor Failure)" class="auth-input">
-                <textarea id="report-description" placeholder="Describe the technical issue and its impact..." class="auth-input" style="height: 100px; resize: none; font-family: inherit;"></textarea>
-                <button class="auth-submit-btn" style="background: var(--red);" onclick="submitProblemForm()">Submit to R&D</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Alert: Under Development Modal -->
-    <div id="dev-modal-overlay" class="custom-modal-overlay">
-        <div id="custom-modal" class="custom-modal modal-yellow">
-            <div class="modal-icon">⚠️</div>
-            <h3>Notice</h3>
-            <p style="color: white; font-size: 1.2rem; font-weight: bold;">Website under development.</p>
-            <p style="margin-bottom: 1.5rem; font-size: 1rem;">This database architecture is currently being finalized.</p>
-            <button class="modal-close-btn" onclick="closeDevModal()">Understood</button>
-        </div>
-    </div>
-
-    <!-- The Brain: Dynamic Content Router -->
-    <script>
-        const API_BASE_URL = 'https://ft-agritech-solutions-1.onrender.com';
-
-        const sectorDatabase = {
-            "apiculture": {
-                title: "Apiculture",
-                subtitle: "Advanced engineering interventions for honey, beeswax, and apiary management.",
-                scope: "<p>Ethiopia holds a deeply rooted tradition of beekeeping and stands as Africa's largest honey producer. For generations, the sector has relied on traditional forest hive systems that, while culturally significant, yield vastly below their true ecological potential. As global demand for high-quality organic honey and beeswax surges, there is a critical national push to transition toward modern, scalable apiary management that can meet strict export standards.</p>",
-                imgPrefix: "api",
-                problems: [
-                    { title: "Micro-Climate Volatility", text: "Inability to track internal hive temperature and humidity causes colony collapse during unexpected weather shifts." },
-                    { title: "Pest Intrusion", text: "Undetected Varroa mite and wax moth infestations silently destroy colonies before visual inspections catch them." },
-                    { title: "Harvest Yield Loss", text: "Traditional and crude modern extraction methods result in significant comb destruction, forcing bees to waste energy rebuilding." },
-                    { title: "Forage Tracking", text: "Lack of geospatial data regarding floral blooms forces blind hive placement, reducing potential nectar yields." }
-                ]
-            },
-            "aviculture": {
-                title: "Aviculture",
-                subtitle: "Automated solutions for poultry farming, egg production, and hatchery efficiency.",
-                scope: "<p>Driven by rapid urbanization and a growing middle class, Ethiopia's demand for poultry and eggs has skyrocketed over the past decade. This shift has rapidly transformed the sector from scattered backyard farming into intensive, large-scale commercial operations. To sustain this incredible growth trajectory and ensure national food security, the industry is increasingly seeking advanced environmental controls and precise operational frameworks to maximize efficiency.</p>",
-                imgPrefix: "avi",
-                problems: [
-                    { title: "Brooder Temp Control", text: "Manual heating systems fail overnight, causing massive chick mortality due to cold stress or overheating." },
-                    { title: "Feed Ration Waste", text: "Uncalibrated manual feeding systems lead to unequal distribution, causing poor flock uniformity and massive feed waste." },
-                    { title: "Disease Outbreak", text: "Lack of airborne pathogen sensors and automated biosecurity locks allow rapid spread of diseases like Newcastle." },
-                    { title: "Egg Sorting & Breakage", text: "Manual collection and grading result in high breakage rates and inconsistent market sizing." }
-                ]
-            },
-            "horticulture": {
-                title: "Horticulture",
-                subtitle: "Advanced engineering interventions for fruit, vegetable, and flower production.",
-                scope: "<p>Uniquely positioned with diverse agro-ecological zones and highly fertile soils, Ethiopia’s horticulture sector has emerged as a rapidly growing pillar of the national economy. The cultivation of high-value fruits, vegetables, and export-grade flowers has attracted significant global investment. Expanding this sector requires highly synchronized supply chains, precise climate management, and robust infrastructure to maintain the pristine quality of perishable goods from the highland farms to international markets.</p>",
-                imgPrefix: "hort",
-                problems: [
-                    { title: "Micro-Climate Volatility", text: "Unpredictable weather and sudden frost in high-altitude zones routinely destroy temperature-sensitive crops." },
-                    { title: "Post-Harvest Degradation", text: "A severe lack of decentralized, reliable cold-chain infrastructure causes up to 35% of perishable produce to spoil." },
-                    { title: "Pest & Pathogen Outbreaks", text: "Delayed visual detection of diseases and pests forces farmers into excessive, inefficient chemical pesticide use." },
-                    { title: "Irrigation Inefficiency", text: "Over-reliance on blindly scheduled watering depletes water resources and stresses root systems, lowering yield." }
-                ]
-            },
-            "livestock": {
-                title: "Livestock",
-                subtitle: "Smart hardware and tracking systems for cattle, dairy, and rangeland management.",
-                scope: "<p>Holding the largest livestock population in Africa, Ethiopia's cattle, sheep, and goat herds are a critical cornerstone for both domestic sustenance and major export revenue. The sector is currently undergoing a massive structural shift from traditional pastoral open-grazing to more controlled, intensive feedlot and dairy cooperative models. This evolution demands modernized logistics, enhanced herd monitoring, and streamlined supply chains to fully capitalize on the immense scale of the nation's livestock resources.</p>",
-                imgPrefix: "live",
-                problems: [
-                    { title: "Dairy Cold-Chain Loss", text: "Lack of off-grid chilling solutions at the cooperative level results in massive daily milk rejection rates." },
-                    { title: "Rangeland Tracking", text: "Inability to map cattle movement leads to overgrazing, loss of animals, and inefficient resource allocation." },
-                    { title: "Early Disease Detection", text: "Visual diagnosis of illnesses like Foot and Mouth Disease happens too late, leading to herd-wide infection." },
-                    { title: "Feed Conversion", text: "Manual feed mixing in feedlots results in inconsistent nutrition, stalling optimal weight gain for market." }
-                ]
-            },
-            "export crops": {
-                title: "Export Crops",
-                subtitle: "Precision processing and quality control for coffee, sesame, and high-value exports.",
-                scope: "<p>Export commodities, particularly Arabica coffee, oilseeds, and sesame, act as the vital lifeblood of Ethiopia’s foreign exchange ecosystem. Grown predominantly by smallholder farming cooperatives, these crops consistently command premium prices on the global market due to their unique, world-renowned flavor profiles. However, as international markets enforce increasingly strict traceability and quality grading standards, the sector must adopt highly accurate, standardized processing methods to secure and expand its international dominance.</p>",
-                imgPrefix: "exp",
-                problems: [
-                    { title: "Drying Inconsistencies", text: "Unmonitored drying beds lead to moisture variance, causing mold growth and subsequent export rejection." },
-                    { title: "Grading Subjectivity", text: "Manual sorting based on visual inspection allows defective beans/seeds to slip through, lowering grade." },
-                    { title: "Traceability Data", text: "Lack of digital farm-to-port tracking prevents farmers from capitalizing on premium EU sustainability markets." },
-                    { title: "Pest Outbreaks", text: "Invasive species like the Coffee Berry Borer destroy yields before regional spraying protocols are activated." }
-                ]
-            },
-            "staple grains": {
-                title: "Staple Grains",
-                subtitle: "Mechanization and moisture tracking for teff, wheat, maize, and sorghum.",
-                scope: "<p>Staple grains such as teff, wheat, maize, and sorghum form the absolute foundation of Ethiopia's national food security. In recent years, aggressive national initiatives have been launched to dramatically expand wheat cultivation and achieve self-sufficiency, reducing reliance on foreign imports. Achieving these ambitious national targets requires maximizing field yields, optimizing harvesting timelines, and protecting the harvested grains through robust, climate-resilient storage networks.</p>",
-                imgPrefix: "grain",
-                problems: [
-                    { title: "Threshing & Harvest Loss", text: "Traditional ox-trampling or manual harvesting shatters grains, causing up to 20% loss directly in the field." },
-                    { title: "Soil Moisture Deficit", text: "Without subsurface sensors, farmers miscalculate planting windows and suffer severe drought stress." },
-                    { title: "Storage Infestation", text: "Poorly sealed silos lacking atmospheric control allow weevils and fungi to decimate stored reserves." },
-                    { title: "Weed Proliferation", text: "Inefficient manual weeding consumes massive labor hours, stunting grain growth during critical early stages." }
-                ]
-            },
-            "aquaculture": {
-                title: "Aquaculture",
-                subtitle: "Water quality sensors and automated systems for intensive fish farming.",
-                scope: "<p>Aquaculture represents a highly promising and rapidly emerging sector within Ethiopia, pivoting away from traditional wild lake capture towards controlled, commercial pond and cage farming. As the national population expands, the demand for accessible, high-quality protein has catalyzed investment into intensive fish farming models. Cultivating aquatic life at high densities requires immense precision, stable aquatic environments, and strict biological management to ensure sustainable and profitable harvests.</p>",
-                imgPrefix: "aqua",
-                problems: [
-                    { title: "Water Quality Spikes", text: "Undetected drops in dissolved oxygen or spikes in ammonia lead to rapid, catastrophic fish kills." },
-                    { title: "Temperature Shock", text: "Lack of thermal monitoring in shallow ponds stresses fish, stunting growth and suppressing immune systems." },
-                    { title: "Manual Feeding Waste", text: "Inconsistent broadcast feeding results in uneaten pellets rotting at the bottom, destroying water quality." },
-                    { title: "Predator Intrusion", text: "Without automated perimeter deterrents, avian and aquatic predators significantly reduce harvest yields." }
-                ]
-            }
-        };
-
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const rawTitle = urlParams.get('title');
-            
-            if (rawTitle) {
-                const cleanName = rawTitle.replace(/[0-9]+\s*\|\s*/g, '').trim().toLowerCase();
-                const data = sectorDatabase[cleanName];
-
-                if (data) {
-                    document.getElementById('page-title').innerText = data.title;
-                    document.getElementById('page-subtitle').innerText = data.subtitle;
-                    document.title = data.title + " - FT Agri-Tech";
-                    document.getElementById('scope-content').innerHTML = data.scope;
-
-                    const grid = document.getElementById('problems-grid');
-                    let problemHTML = "";
-                    data.problems.forEach(prob => {
-                        problemHTML += `
-                        <div class="dynamic-blue-card" style="border-top: 3px solid var(--red);">
-                            <h3 style="color: var(--red); border-bottom-color: rgba(239, 68, 68, 0.2);">${prob.title}</h3>
-                            <p>${prob.text}</p>
-                        </div>`;
-                    });
-                    grid.innerHTML = problemHTML;
-
-                    const cacheVersion = Date.now();
-                    document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg?v=${cacheVersion}`;
-                    document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg?v=${cacheVersion}`;
-                } else {
-                    document.getElementById('page-title').innerText = "Sector Not Found";
-                }
-            }
-        };
-
-        function openProblemModal() { document.getElementById('problem-modal-overlay').classList.add('active'); }
-        function closeProblemModal() { document.getElementById('problem-modal-overlay').classList.remove('active'); }
-        function showDevModal(event) { if(event) event.preventDefault(); document.getElementById('dev-modal-overlay').classList.add('active'); }
-        function closeDevModal() { document.getElementById('dev-modal-overlay').classList.remove('active'); }
-        
-        async function submitProblemForm() {
-            const title = document.getElementById('report-title').value;
-            const description = document.getElementById('report-description').value;
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/reports/submit`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, description })
-                });
-                const data = await response.json();
-                console.log('Report response:', data);
-            } catch (error) {
-                console.error('API Error:', error);
-            }
-
-            closeProblemModal();
-            setTimeout(() => { showDevModal(); }, 300);
+    db.run(
+      'INSERT INTO users (email, password_hash) VALUES (?, ?)',
+      [email, passwordHash],
+      function onInsert(err) {
+        if (err) {
+          const isDuplicate = err.message.includes('UNIQUE constraint failed');
+          return res.status(isDuplicate ? 409 : 500).json({
+            success: false,
+            message: isDuplicate ? 'User already exists.' : 'Failed to register user.'
+          });
         }
 
-        const cards = document.querySelectorAll('.tilt-card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; 
-                const y = e.clientY - rect.top;  
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -10; 
-                const rotateY = ((x - centerX) / centerX) * 10;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
-            });
+        return res.status(201).json({
+          success: true,
+          message: 'User registered successfully.',
+          userId: this.lastID
         });
-    </script>
-</body>
-</html>
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Unexpected server error.' });
+  }
+});
+
+app.post('/api/reports/submit', apiLimiter, (req, res) => {
+  const { title, description } = req.body;
+
+  if (!title || !description) {
+    return res.status(400).json({ success: false, message: 'Title and description are required.' });
+  }
+
+  db.run(
+    'INSERT INTO problem_reports (title, description) VALUES (?, ?)',
+    [title, description],
+    function onInsert(err) {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Failed to submit report.' });
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: 'Problem report submitted successfully.',
+        reportId: this.lastID
+      });
+    }
+  );
+});
+
+app.get('/health', (_req, res) => {
+  res.json({ success: true, message: 'Backend server is running.' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
