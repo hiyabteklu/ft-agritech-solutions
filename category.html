@@ -3,8 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horticulture Solutions - FT Agri-Tech</title>
+    <title>Solutions - FT Agri-Tech</title>
     <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* High-Contrast Blue & 3D Alive Styling for this page */
+        .dynamic-blue-card {
+            background: linear-gradient(145deg, #0B162C 0%, #152542 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 2px 15px rgba(255,255,255,0.05);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dynamic-blue-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 20px rgba(59, 130, 246, 0.2);
+            border-color: var(--blue);
+            z-index: 10;
+        }
+
+        .dynamic-blue-card h3 {
+            color: #60A5FA; /* Bright accessible blue */
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        .dynamic-blue-card p {
+            color: #F8FAFC; /* Crisp white text for contrast */
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+
+        .large-report-btn {
+            background: linear-gradient(135deg, var(--red), #991B1B);
+            color: white;
+            border: 2px solid #F87171;
+            padding: 18px 45px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: 2rem;
+        }
+
+        .large-report-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(239, 68, 68, 0.5);
+            background: linear-gradient(135deg, #F87171, var(--red));
+        }
+    </style>
 </head>
 <body>
 
@@ -22,9 +79,9 @@
     <!-- Page Header -->
     <section class="hero-section" style="padding-bottom: 2rem;">
         <div class="section-container" style="text-align: center;">
-            <h1 id="page-title" style="color: var(--gold); font-size: 3.5rem; letter-spacing: -1px; margin-bottom: 1rem;">Horticulture</h1>
-            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
-                Advanced engineering interventions for fruit, vegetable, and flower production in Ethiopia.
+            <h1 id="page-title" style="color: var(--gold); font-size: 3.5rem; letter-spacing: -1px; margin-bottom: 1rem;">Loading Sector...</h1>
+            <p id="page-subtitle" style="color: var(--text-muted); font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
+                Loading specialized engineering interventions...
             </p>
         </div>
     </section>
@@ -34,16 +91,8 @@
         <div class="section-container">
             <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 10px;">Background & Scope in Ethiopia</h2>
             
-            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 1.5rem; line-height: 1.8;">
-                    Ethiopia’s horticulture sector is a rapidly growing pillar of the national economy, uniquely positioned due to the country's diverse agro-ecological zones, fertile soils, and favorable climates. The industry encompasses the high-yield commercial production of fruits, vegetables, flowers, and herbs.
-                </p>
-                <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 1.5rem; line-height: 1.8;">
-                    <strong>Market Demand:</strong> While export markets—particularly floriculture bound for Europe and the Middle East—drive significant foreign exchange, domestic demand for high-quality, safe vegetables and fruits is simultaneously surging among growing urban populations. 
-                </p>
-                <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.8;">
-                    <strong>The Engineering Gap:</strong> Despite massive potential, the sector operates below optimal efficiency. A heavy reliance on manual labor, lack of precision agriculture data, and poor post-harvest infrastructure create massive vulnerabilities. FT Agri-Tech identifies these gaps not as permanent limitations, but as prime targets for automated, data-driven engineering solutions.
-                </p>
+            <div class="dynamic-blue-card" id="scope-content">
+                <!-- Injected via JS -->
             </div>
         </div>
     </section>
@@ -51,29 +100,16 @@
     <!-- 2. Problems Identified Section -->
     <section id="problems" class="identity-section" style="padding-top: 2rem;">
         <div class="section-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px; margin-bottom: 3rem;">
-                <h2 style="font-size: 2.2rem; color: white;">Problems Identified</h2>
-                <button class="portal-btn" style="background: linear-gradient(135deg, var(--red), #8B0000); color: white;" onclick="openProblemModal()">+ Report New Problem</button>
+            <h2 style="font-size: 2.2rem; color: white; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px; margin-bottom: 3rem;">Problems Identified</h2>
+
+            <div class="identity-grid" id="problems-grid">
+                <!-- Injected via JS -->
             </div>
 
-            <!-- Using the Identity Grid for beautiful problem cards -->
-            <div class="identity-grid">
-                <div class="identity-card" style="border-top: 3px solid var(--red);">
-                    <h3 style="color: var(--red);">Micro-Climate Volatility</h3>
-                    <p>Unpredictable weather patterns and sudden frost in high-altitude zones routinely destroy temperature-sensitive crops like flowers and export-grade vegetables. Current manual monitoring is too slow to trigger defensive measures.</p>
-                </div>
-                <div class="identity-card" style="border-top: 3px solid var(--red);">
-                    <h3 style="color: var(--red);">Post-Harvest Degradation</h3>
-                    <p>Due to a severe lack of decentralized, reliable cold-chain infrastructure, up to 35% of perishable horticultural produce spoils during storage and transit before ever reaching the consumer market.</p>
-                </div>
-                <div class="identity-card" style="border-top: 3px solid var(--red);">
-                    <h3 style="color: var(--red);">Pest & Pathogen Outbreaks</h3>
-                    <p>Delayed visual detection of destructive diseases (like late blight) and pests (like thrips and spider mites) results in massive crop loss and forces farmers into excessive, inefficient chemical pesticide use.</p>
-                </div>
-                <div class="identity-card" style="border-top: 3px solid var(--red);">
-                    <h3 style="color: var(--red);">Irrigation Inefficiency</h3>
-                    <p>Over-reliance on manual or blindly scheduled watering depletes vital water resources, washes away soil nutrients, and stresses root systems, directly lowering the overall yield quality.</p>
-                </div>
+            <!-- Centralized Large Report Button -->
+            <div style="text-align: center; width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 3rem; padding-top: 2rem;">
+                <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 1.1rem;">Have you identified an unlisted inefficiency in the field?</p>
+                <button class="large-report-btn" onclick="openProblemModal()">+ Report New Problem</button>
             </div>
         </div>
     </section>
@@ -83,12 +119,10 @@
         <div class="section-container">
             <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;">Solutions Available</h2>
             
-            <!-- Using the 3D Tilt Grid for Solutions -->
             <div class="solutions-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                 
-                <!-- Card 1 -->
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;">
-                    <img src="solutions_in_hand.jpg" alt="Solutions In Hand" class="card-bg-img">
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
+                    <img id="img-hand" src="" alt="Solutions In Hand" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
                         <h3 style="font-size: 1.8rem;">Solutions In Hand</h3>
@@ -99,9 +133,8 @@
                     </div>
                 </a>
 
-                <!-- Card 2 -->
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;">
-                    <img src="solutions_to_be_imported.jpg" alt="Solutions to be Imported" class="card-bg-img">
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
+                    <img id="img-import" src="" alt="Solutions to be Imported" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
                         <h3 style="font-size: 1.8rem;">Imported Solutions</h3>
@@ -112,15 +145,14 @@
                     </div>
                 </a>
 
-                <!-- Card 3 -->
-                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;">
-                    <img src="solutions_locally_developed.jpg" alt="Locally Developed Solutions" class="card-bg-img">
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
+                    <img id="img-dev" src="" alt="Locally Developed Solutions" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
                         <h3 style="font-size: 1.8rem;">Locally Developed</h3>
                         <div class="coming-soon-wrapper">
                             <span class="pulsing-dot"></span>
-                            <span class="coming-soon-text">Custom R&D</span>
+                            <span class="coming-soon-text">Custom R&D Request</span>
                         </div>
                     </div>
                 </a>
@@ -129,38 +161,165 @@
         </div>
     </section>
 
-    <!-- Report Problem Modal -->
+    <!-- Form: Report Problem Modal -->
     <div id="problem-modal-overlay" class="custom-modal-overlay">
         <div class="auth-modal" style="border-color: var(--red); box-shadow: 0 20px 60px rgba(239, 68, 68, 0.15);">
             <button class="close-auth" onclick="closeProblemModal()">✕</button>
             <div class="auth-header">
                 <span class="auth-icon">⚙️</span>
                 <h3 style="color: var(--red);">Report an Engineering Problem</h3>
-                <p>Have you identified an inefficiency in the field? Submit the parameters below so our engineering team can analyze a solution.</p>
+                <p>Submit the parameters below so our engineering team can analyze a solution.</p>
             </div>
             <div class="auth-form">
-                <input type="text" placeholder="Problem Title (e.g., Tractor Sensor Failure)" class="auth-input">
+                <input type="text" placeholder="Problem Title (e.g., Sensor Failure)" class="auth-input">
                 <textarea placeholder="Describe the technical issue and its impact..." class="auth-input" style="height: 100px; resize: none; font-family: inherit;"></textarea>
-                <button class="auth-submit-btn" style="background: var(--red);" onclick="alert('Submission received. Engineering review initiated.')">Submit to R&D</button>
+                <button class="auth-submit-btn" style="background: var(--red);" onclick="submitProblemForm()">Submit to R&D</button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Alert: Under Development Modal -->
+    <div id="dev-modal-overlay" class="custom-modal-overlay">
+        <div id="custom-modal" class="custom-modal modal-yellow">
+            <div class="modal-icon">⚠️</div>
+            <h3>Notice</h3>
+            <p style="color: white; font-size: 1.2rem; font-weight: bold;">Website under development.</p>
+            <p style="margin-bottom: 1.5rem; font-size: 1rem;">This database architecture is currently being finalized.</p>
+            <button class="modal-close-btn" onclick="closeDevModal()">Understood</button>
+        </div>
+    </div>
+
+    <!-- The Brain: Dynamic Content Router -->
     <script>
-        // Set dynamic title if passed via URL, else default to Horticulture
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const title = urlParams.get('title');
-            if (title) {
-                // Strip the "03 | " numbers if they exist for a cleaner header
-                const cleanTitle = title.replace(/[0-9]+\s*\|\s*/g, '');
-                document.getElementById('page-title').innerText = cleanTitle;
-                document.title = cleanTitle + " - FT Agri-Tech Solutions";
+        const sectorDatabase = {
+            "apiculture": {
+                title: "Apiculture",
+                subtitle: "Advanced engineering interventions for honey, beeswax, and apiary management.",
+                scope: "<p>Ethiopia is Africa's largest honey producer and possesses a rich tradition of beekeeping. However, the sector is heavily reliant on traditional forest hive systems that yield vastly below their potential.</p><p><strong>The Engineering Gap:</strong> The transition to modern frame hives is slow due to a lack of localized technological support. The inability to monitor hive health, protect against emerging pests, and automate harvesting without destroying colonies represents a massive opportunity for IoT, sensor integration, and precise engineering.</p>",
+                imgPrefix: "api",
+                problems: [
+                    { title: "Micro-Climate Volatility", text: "Inability to track internal hive temperature and humidity causes colony collapse during unexpected weather shifts." },
+                    { title: "Pest Intrusion", text: "Undetected Varroa mite and wax moth infestations silently destroy colonies before visual inspections catch them." },
+                    { title: "Harvest Yield Loss", text: "Traditional and crude modern extraction methods result in significant comb destruction, forcing bees to waste energy rebuilding." },
+                    { title: "Forage Tracking", text: "Lack of geospatial data regarding floral blooms forces blind hive placement, reducing potential nectar yields." }
+                ]
+            },
+            "aviculture": {
+                title: "Aviculture",
+                subtitle: "Automated solutions for poultry farming, egg production, and hatchery efficiency.",
+                scope: "<p>With rapid urbanization, Ethiopia's demand for poultry and eggs has skyrocketed, shifting the sector from backyard farming to intensive commercial operations.</p><p><strong>The Engineering Gap:</strong> High mortality rates and feed inefficiencies plague commercial farms. Complete reliance on imported, highly expensive automation systems limits growth. FT Agri-Tech views poultry farming as an exact science requiring strict environmental controls, automated rationing, and localized biosecurity hardware.</p>",
+                imgPrefix: "avi",
+                problems: [
+                    { title: "Brooder Temp Control", text: "Manual heating systems fail overnight, causing massive chick mortality due to cold stress or overheating." },
+                    { title: "Feed Ration Waste", text: "Uncalibrated manual feeding systems lead to unequal distribution, causing poor flock uniformity and massive feed waste." },
+                    { title: "Disease Outbreak", text: "Lack of airborne pathogen sensors and automated biosecurity locks allow rapid spread of diseases like Newcastle." },
+                    { title: "Egg Sorting & Breakage", text: "Manual collection and grading result in high breakage rates and inconsistent market sizing." }
+                ]
+            },
+            "horticulture": {
+                title: "Horticulture",
+                subtitle: "Advanced engineering interventions for fruit, vegetable, and flower production.",
+                scope: "<p>Ethiopia’s horticulture sector is a rapidly growing pillar of the national economy, uniquely positioned due to the country's diverse agro-ecological zones and fertile soils.</p><p><strong>The Engineering Gap:</strong> Despite massive potential, the sector relies heavily on manual labor, lacks precision agriculture data, and suffers from poor post-harvest infrastructure. FT Agri-Tech identifies these gaps as prime targets for automated, data-driven engineering solutions.</p>",
+                imgPrefix: "hort",
+                problems: [
+                    { title: "Micro-Climate Volatility", text: "Unpredictable weather and sudden frost in high-altitude zones routinely destroy temperature-sensitive crops." },
+                    { title: "Post-Harvest Degradation", text: "A severe lack of decentralized, reliable cold-chain infrastructure causes up to 35% of perishable produce to spoil." },
+                    { title: "Pest & Pathogen Outbreaks", text: "Delayed visual detection of diseases and pests forces farmers into excessive, inefficient chemical pesticide use." },
+                    { title: "Irrigation Inefficiency", text: "Over-reliance on blindly scheduled watering depletes water resources and stresses root systems, lowering yield." }
+                ]
+            },
+            "livestock": {
+                title: "Livestock",
+                subtitle: "Smart hardware and tracking systems for cattle, dairy, and rangeland management.",
+                scope: "<p>Ethiopia holds the largest livestock population in Africa, serving as a critical cornerstone for both domestic sustenance and export revenue.</p><p><strong>The Engineering Gap:</strong> The vast majority of livestock relies on open grazing with zero data tracking. The dairy sector suffers from critical milk spoilage, while the meat sector struggles with traceability and weight optimization. Engineering interventions in cold-chain logistics, GPS tracking, and health sensors are urgently needed.</p>",
+                imgPrefix: "live",
+                problems: [
+                    { title: "Dairy Cold-Chain Loss", text: "Lack of off-grid chilling solutions at the cooperative level results in massive daily milk rejection rates." },
+                    { title: "Rangeland Tracking", text: "Inability to map cattle movement leads to overgrazing, loss of animals, and inefficient resource allocation." },
+                    { title: "Early Disease Detection", text: "Visual diagnosis of illnesses like Foot and Mouth Disease happens too late, leading to herd-wide infection." },
+                    { title: "Feed Conversion", text: "Manual feed mixing in feedlots results in inconsistent nutrition, stalling optimal weight gain for market." }
+                ]
+            },
+            "export crops": {
+                title: "Export Crops",
+                subtitle: "Precision processing and quality control for coffee, sesame, and high-value exports.",
+                scope: "<p>Export crops like Arabica coffee and sesame are the lifeblood of Ethiopia’s foreign exchange, commanding premium prices on the global market.</p><p><strong>The Engineering Gap:</strong> International markets are enforcing strict traceability and quality standards. Traditional sun-drying and manual sorting are highly subjective and prone to contamination. Automating the grading, drying, and tracing processes ensures Ethiopian crops maintain their premium global status.</p>",
+                imgPrefix: "exp",
+                problems: [
+                    { title: "Drying Inconsistencies", text: "Unmonitored drying beds lead to moisture variance, causing mold growth and subsequent export rejection." },
+                    { title: "Grading Subjectivity", text: "Manual sorting based on visual inspection allows defective beans/seeds to slip through, lowering grade." },
+                    { title: "Traceability Data", text: "Lack of digital farm-to-port tracking prevents farmers from capitalizing on premium EU sustainability markets." },
+                    { title: "Pest Outbreaks", text: "Invasive species like the Coffee Berry Borer destroy yields before regional spraying protocols are activated." }
+                ]
+            },
+            "staple grains": {
+                title: "Staple Grains",
+                subtitle: "Mechanization and moisture tracking for teff, wheat, maize, and sorghum.",
+                scope: "<p>Staple grains form the foundation of national food security. While initiatives to expand wheat and maize production are scaling up, the harvesting processes remain largely traditional.</p><p><strong>The Engineering Gap:</strong> Staggering post-harvest losses occur during threshing and storage. Furthermore, reliance on rain-fed agriculture without localized soil moisture data leads to crop failure. Developing rugged, scaled-down mechanization specifically for Ethiopian topography is essential.</p>",
+                imgPrefix: "grain",
+                problems: [
+                    { title: "Threshing & Harvest Loss", text: "Traditional ox-trampling or manual harvesting shatters grains, causing up to 20% loss directly in the field." },
+                    { title: "Soil Moisture Deficit", text: "Without subsurface sensors, farmers miscalculate planting windows and suffer severe drought stress." },
+                    { title: "Storage Infestation", text: "Poorly sealed silos lacking atmospheric control allow weevils and fungi to decimate stored reserves." },
+                    { title: "Weed Proliferation", text: "Inefficient manual weeding consumes massive labor hours, stunting grain growth during critical early stages." }
+                ]
+            },
+            "aquaculture": {
+                title: "Aquaculture",
+                subtitle: "Water quality sensors and automated systems for intensive fish farming.",
+                scope: "<p>Aquaculture is an emerging sector in Ethiopia, shifting from wild lake capture to controlled pond and cage farming to meet rising protein demands.</p><p><strong>The Engineering Gap:</strong> Fish are highly sensitive to microscopic environmental changes. Manual feeding and visual water checks are insufficient for commercial scale. The industry requires robust IoT sensors for water chemistry, automated feeders, and aeration systems to maximize stocking density safely.</p>",
+                imgPrefix: "aqua",
+                problems: [
+                    { title: "Water Quality Spikes", text: "Undetected drops in dissolved oxygen or spikes in ammonia lead to rapid, catastrophic fish kills." },
+                    { title: "Temperature Shock", text: "Lack of thermal monitoring in shallow ponds stresses fish, stunting growth and suppressing immune systems." },
+                    { title: "Manual Feeding Waste", text: "Inconsistent broadcast feeding results in uneaten pellets rotting at the bottom, destroying water quality." },
+                    { title: "Predator Intrusion", text: "Without automated perimeter deterrents, avian and aquatic predators significantly reduce harvest yields." }
+                ]
             }
         };
 
-        // Report Problem Modal Logic
+        window.onload = function() {
+            // 1. Get the title from URL (e.g., "?title=03 | Horticulture")
+            const urlParams = new URLSearchParams(window.location.search);
+            const rawTitle = urlParams.get('title');
+            
+            if (rawTitle) {
+                // Strip numbers and formatting to get the pure key (e.g., "horticulture")
+                const cleanName = rawTitle.replace(/[0-9]+\s*\|\s*/g, '').trim().toLowerCase();
+                const data = sectorDatabase[cleanName];
+
+                if (data) {
+                    // 2. Inject Titles
+                    document.getElementById('page-title').innerText = data.title;
+                    document.getElementById('page-subtitle').innerText = data.subtitle;
+                    document.title = data.title + " - FT Agri-Tech";
+
+                    // 3. Inject Scope
+                    document.getElementById('scope-content').innerHTML = data.scope;
+
+                    // 4. Inject 4 Problems dynamically with Blue 3D Cards
+                    const grid = document.getElementById('problems-grid');
+                    let problemHTML = "";
+                    data.problems.forEach(prob => {
+                        problemHTML += `
+                        <div class="dynamic-blue-card" style="border-top: 3px solid var(--red);">
+                            <h3 style="color: var(--red); border-bottom-color: rgba(239, 68, 68, 0.2);">${prob.title}</h3>
+                            <p>${prob.text}</p>
+                        </div>`;
+                    });
+                    grid.innerHTML = problemHTML;
+
+                    // 5. Inject Image Paths dynamically based on the prefix (e.g., "assets/images/hort_hand.jpg")
+                    document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg`;
+                    document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg`;
+                    document.getElementById('img-dev').src = `assets/images/${data.imgPrefix}_dev.jpg`;
+                } else {
+                    document.getElementById('page-title').innerText = "Sector Not Found";
+                }
+            }
+        };
+
+        // Modal Controls
         function openProblemModal() {
             document.getElementById('problem-modal-overlay').classList.add('active');
         }
@@ -168,7 +327,23 @@
             document.getElementById('problem-modal-overlay').classList.remove('active');
         }
 
-        // 3D Hover Tilt Physics (Reused from Index)
+        function showDevModal(event) {
+            if(event) event.preventDefault(); // Stop link from jumping to top of page
+            document.getElementById('dev-modal-overlay').classList.add('active');
+        }
+        function closeDevModal() {
+            document.getElementById('dev-modal-overlay').classList.remove('active');
+        }
+
+        function submitProblemForm() {
+            // Close the report form and open the yellow warning modal
+            closeProblemModal();
+            setTimeout(() => {
+                showDevModal();
+            }, 300); // Small delay for smooth transition
+        }
+
+        // 3D Hover Tilt Physics for the bottom 3 Solution Cards
         const cards = document.querySelectorAll('.tilt-card');
         cards.forEach(card => {
             card.addEventListener('mousemove', e => {
