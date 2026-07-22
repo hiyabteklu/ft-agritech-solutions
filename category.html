@@ -89,8 +89,8 @@
                 </a>
 
                 <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
-                    <!-- The common shared image is hardcoded directly here in the src -->
-                    <img id="img-dev" src="assets/images/custom_design_lab.jpg" alt="Request Custom Design" class="card-bg-img">
+                    <!-- Cache-busting parameter added to the shared image -->
+                    <img id="img-dev" src="assets/images/custom_design_lab.jpg?v=forceupdate1" alt="Request Custom Design" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
                         <h3 style="font-size: 1.8rem;">Request Custom Design</h3>
@@ -223,25 +223,19 @@
         };
 
         window.onload = function() {
-            // 1. Get the title from URL (e.g., "?title=03 | Horticulture")
             const urlParams = new URLSearchParams(window.location.search);
             const rawTitle = urlParams.get('title');
             
             if (rawTitle) {
-                // Strip numbers and formatting to get the pure key (e.g., "horticulture")
                 const cleanName = rawTitle.replace(/[0-9]+\s*\|\s*/g, '').trim().toLowerCase();
                 const data = sectorDatabase[cleanName];
 
                 if (data) {
-                    // 2. Inject Titles
                     document.getElementById('page-title').innerText = data.title;
                     document.getElementById('page-subtitle').innerText = data.subtitle;
                     document.title = data.title + " - FT Agri-Tech";
-
-                    // 3. Inject Scope
                     document.getElementById('scope-content').innerHTML = data.scope;
 
-                    // 4. Inject 4 Problems dynamically with Blue 3D Cards
                     const grid = document.getElementById('problems-grid');
                     let problemHTML = "";
                     data.problems.forEach(prob => {
@@ -253,41 +247,25 @@
                     });
                     grid.innerHTML = problemHTML;
 
-                    // 5. Inject Image Paths dynamically
-                    document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg`;
-                    document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg`;
-                    // The custom design image is already hardcoded in the HTML above, no need to inject it via JS!
+                    // CACHE BUSTER: This randomly generated number tricks the browser into downloading fresh images
+                    const cacheVersion = Date.now();
+                    document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg?v=${cacheVersion}`;
+                    document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg?v=${cacheVersion}`;
                 } else {
                     document.getElementById('page-title').innerText = "Sector Not Found";
                 }
             }
         };
 
-        // Modal Controls
-        function openProblemModal() {
-            document.getElementById('problem-modal-overlay').classList.add('active');
-        }
-        function closeProblemModal() {
-            document.getElementById('problem-modal-overlay').classList.remove('active');
-        }
-
-        function showDevModal(event) {
-            if(event) event.preventDefault(); // Stop link from jumping to top of page
-            document.getElementById('dev-modal-overlay').classList.add('active');
-        }
-        function closeDevModal() {
-            document.getElementById('dev-modal-overlay').classList.remove('active');
-        }
-
+        function openProblemModal() { document.getElementById('problem-modal-overlay').classList.add('active'); }
+        function closeProblemModal() { document.getElementById('problem-modal-overlay').classList.remove('active'); }
+        function showDevModal(event) { if(event) event.preventDefault(); document.getElementById('dev-modal-overlay').classList.add('active'); }
+        function closeDevModal() { document.getElementById('dev-modal-overlay').classList.remove('active'); }
         function submitProblemForm() {
-            // Close the report form and open the yellow warning modal
             closeProblemModal();
-            setTimeout(() => {
-                showDevModal();
-            }, 300); // Small delay for smooth transition
+            setTimeout(() => { showDevModal(); }, 300);
         }
 
-        // 3D Hover Tilt Physics for the bottom 3 Solution Cards
         const cards = document.querySelectorAll('.tilt-card');
         cards.forEach(card => {
             card.addEventListener('mousemove', e => {
