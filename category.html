@@ -5,63 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solutions - FT Agri-Tech</title>
     <link rel="stylesheet" href="style.css"> 
-    <style>
-        /* High-Contrast Blue & 3D Alive Styling for this page */
-        .dynamic-blue-card {
-            background: linear-gradient(145deg, #0B162C 0%, #152542 100%);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 16px;
-            padding: 2.5rem;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 2px 15px rgba(255,255,255,0.05);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .dynamic-blue-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 20px rgba(59, 130, 246, 0.2);
-            border-color: var(--blue);
-            z-index: 10;
-        }
-
-        .dynamic-blue-card h3 {
-            color: #60A5FA; /* Bright accessible blue */
-            font-size: 1.6rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            padding-bottom: 0.5rem;
-        }
-
-        .dynamic-blue-card p {
-            color: #F8FAFC; /* Crisp white text for contrast */
-            font-size: 1.15rem;
-            line-height: 1.8;
-        }
-
-        .large-report-btn {
-            background: linear-gradient(135deg, var(--red), #991B1B);
-            color: white;
-            border: 2px solid #F87171;
-            padding: 18px 45px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
-            transition: all 0.3s ease;
-            display: inline-block;
-            margin-top: 2rem;
-        }
-
-        .large-report-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(239, 68, 68, 0.5);
-            background: linear-gradient(135deg, #F87171, var(--red));
-        }
-    </style>
 </head>
 <body>
 
@@ -122,10 +65,10 @@
             <div class="solutions-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                 
                 <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
-                    <img id="img-hand" src="" alt="Solutions In Hand" class="card-bg-img">
+                    <img id="img-hand" src="" alt="Locally Developed" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3 style="font-size: 1.8rem;">Solutions In Hand</h3>
+                        <h3 style="font-size: 1.8rem;">Locally Developed</h3>
                         <div class="coming-soon-wrapper">
                             <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
                             <span class="coming-soon-text" style="color: var(--green);">Ready to Deploy</span>
@@ -134,7 +77,7 @@
                 </a>
 
                 <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
-                    <img id="img-import" src="" alt="Solutions to be Imported" class="card-bg-img">
+                    <img id="img-import" src="" alt="Imported Solutions" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
                         <h3 style="font-size: 1.8rem;">Imported Solutions</h3>
@@ -146,10 +89,10 @@
                 </a>
 
                 <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;" onclick="showDevModal(event)">
-                    <img id="img-dev" src="" alt="Locally Developed Solutions" class="card-bg-img">
+                    <img id="img-dev" src="" alt="Request Custom Design" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3 style="font-size: 1.8rem;">Locally Developed</h3>
+                        <h3 style="font-size: 1.8rem;">Request Custom Design</h3>
                         <div class="coming-soon-wrapper">
                             <span class="pulsing-dot"></span>
                             <span class="coming-soon-text">Custom R&D Request</span>
@@ -195,7 +138,7 @@
             "apiculture": {
                 title: "Apiculture",
                 subtitle: "Advanced engineering interventions for honey, beeswax, and apiary management.",
-                scope: "<p>Ethiopia is Africa's largest honey producer and possesses a rich tradition of beekeeping. However, the sector is heavily reliant on traditional forest hive systems that yield vastly below their potential.</p><p><strong>The Engineering Gap:</strong> The transition to modern frame hives is slow due to a lack of localized technological support. The inability to monitor hive health, protect against emerging pests, and automate harvesting without destroying colonies represents a massive opportunity for IoT, sensor integration, and precise engineering.</p>",
+                scope: "<p>Ethiopia holds a deeply rooted tradition of beekeeping and stands as Africa's largest honey producer. For generations, the sector has relied on traditional forest hive systems that, while culturally significant, yield vastly below their true ecological potential. As global demand for high-quality organic honey and beeswax surges, there is a critical national push to transition toward modern, scalable apiary management that can meet strict export standards.</p>",
                 imgPrefix: "api",
                 problems: [
                     { title: "Micro-Climate Volatility", text: "Inability to track internal hive temperature and humidity causes colony collapse during unexpected weather shifts." },
@@ -207,7 +150,7 @@
             "aviculture": {
                 title: "Aviculture",
                 subtitle: "Automated solutions for poultry farming, egg production, and hatchery efficiency.",
-                scope: "<p>With rapid urbanization, Ethiopia's demand for poultry and eggs has skyrocketed, shifting the sector from backyard farming to intensive commercial operations.</p><p><strong>The Engineering Gap:</strong> High mortality rates and feed inefficiencies plague commercial farms. Complete reliance on imported, highly expensive automation systems limits growth. FT Agri-Tech views poultry farming as an exact science requiring strict environmental controls, automated rationing, and localized biosecurity hardware.</p>",
+                scope: "<p>Driven by rapid urbanization and a growing middle class, Ethiopia's demand for poultry and eggs has skyrocketed over the past decade. This shift has rapidly transformed the sector from scattered backyard farming into intensive, large-scale commercial operations. To sustain this incredible growth trajectory and ensure national food security, the industry is increasingly seeking advanced environmental controls and precise operational frameworks to maximize efficiency.</p>",
                 imgPrefix: "avi",
                 problems: [
                     { title: "Brooder Temp Control", text: "Manual heating systems fail overnight, causing massive chick mortality due to cold stress or overheating." },
@@ -219,7 +162,7 @@
             "horticulture": {
                 title: "Horticulture",
                 subtitle: "Advanced engineering interventions for fruit, vegetable, and flower production.",
-                scope: "<p>Ethiopia’s horticulture sector is a rapidly growing pillar of the national economy, uniquely positioned due to the country's diverse agro-ecological zones and fertile soils.</p><p><strong>The Engineering Gap:</strong> Despite massive potential, the sector relies heavily on manual labor, lacks precision agriculture data, and suffers from poor post-harvest infrastructure. FT Agri-Tech identifies these gaps as prime targets for automated, data-driven engineering solutions.</p>",
+                scope: "<p>Uniquely positioned with diverse agro-ecological zones and highly fertile soils, Ethiopia’s horticulture sector has emerged as a rapidly growing pillar of the national economy. The cultivation of high-value fruits, vegetables, and export-grade flowers has attracted significant global investment. Expanding this sector requires highly synchronized supply chains, precise climate management, and robust infrastructure to maintain the pristine quality of perishable goods from the highland farms to international markets.</p>",
                 imgPrefix: "hort",
                 problems: [
                     { title: "Micro-Climate Volatility", text: "Unpredictable weather and sudden frost in high-altitude zones routinely destroy temperature-sensitive crops." },
@@ -231,7 +174,7 @@
             "livestock": {
                 title: "Livestock",
                 subtitle: "Smart hardware and tracking systems for cattle, dairy, and rangeland management.",
-                scope: "<p>Ethiopia holds the largest livestock population in Africa, serving as a critical cornerstone for both domestic sustenance and export revenue.</p><p><strong>The Engineering Gap:</strong> The vast majority of livestock relies on open grazing with zero data tracking. The dairy sector suffers from critical milk spoilage, while the meat sector struggles with traceability and weight optimization. Engineering interventions in cold-chain logistics, GPS tracking, and health sensors are urgently needed.</p>",
+                scope: "<p>Holding the largest livestock population in Africa, Ethiopia's cattle, sheep, and goat herds are a critical cornerstone for both domestic sustenance and major export revenue. The sector is currently undergoing a massive structural shift from traditional pastoral open-grazing to more controlled, intensive feedlot and dairy cooperative models. This evolution demands modernized logistics, enhanced herd monitoring, and streamlined supply chains to fully capitalize on the immense scale of the nation's livestock resources.</p>",
                 imgPrefix: "live",
                 problems: [
                     { title: "Dairy Cold-Chain Loss", text: "Lack of off-grid chilling solutions at the cooperative level results in massive daily milk rejection rates." },
@@ -243,7 +186,7 @@
             "export crops": {
                 title: "Export Crops",
                 subtitle: "Precision processing and quality control for coffee, sesame, and high-value exports.",
-                scope: "<p>Export crops like Arabica coffee and sesame are the lifeblood of Ethiopia’s foreign exchange, commanding premium prices on the global market.</p><p><strong>The Engineering Gap:</strong> International markets are enforcing strict traceability and quality standards. Traditional sun-drying and manual sorting are highly subjective and prone to contamination. Automating the grading, drying, and tracing processes ensures Ethiopian crops maintain their premium global status.</p>",
+                scope: "<p>Export commodities, particularly Arabica coffee, oilseeds, and sesame, act as the vital lifeblood of Ethiopia’s foreign exchange ecosystem. Grown predominantly by smallholder farming cooperatives, these crops consistently command premium prices on the global market due to their unique, world-renowned flavor profiles. However, as international markets enforce increasingly strict traceability and quality grading standards, the sector must adopt highly accurate, standardized processing methods to secure and expand its international dominance.</p>",
                 imgPrefix: "exp",
                 problems: [
                     { title: "Drying Inconsistencies", text: "Unmonitored drying beds lead to moisture variance, causing mold growth and subsequent export rejection." },
@@ -255,7 +198,7 @@
             "staple grains": {
                 title: "Staple Grains",
                 subtitle: "Mechanization and moisture tracking for teff, wheat, maize, and sorghum.",
-                scope: "<p>Staple grains form the foundation of national food security. While initiatives to expand wheat and maize production are scaling up, the harvesting processes remain largely traditional.</p><p><strong>The Engineering Gap:</strong> Staggering post-harvest losses occur during threshing and storage. Furthermore, reliance on rain-fed agriculture without localized soil moisture data leads to crop failure. Developing rugged, scaled-down mechanization specifically for Ethiopian topography is essential.</p>",
+                scope: "<p>Staple grains such as teff, wheat, maize, and sorghum form the absolute foundation of Ethiopia's national food security. In recent years, aggressive national initiatives have been launched to dramatically expand wheat cultivation and achieve self-sufficiency, reducing reliance on foreign imports. Achieving these ambitious national targets requires maximizing field yields, optimizing harvesting timelines, and protecting the harvested grains through robust, climate-resilient storage networks.</p>",
                 imgPrefix: "grain",
                 problems: [
                     { title: "Threshing & Harvest Loss", text: "Traditional ox-trampling or manual harvesting shatters grains, causing up to 20% loss directly in the field." },
@@ -267,7 +210,7 @@
             "aquaculture": {
                 title: "Aquaculture",
                 subtitle: "Water quality sensors and automated systems for intensive fish farming.",
-                scope: "<p>Aquaculture is an emerging sector in Ethiopia, shifting from wild lake capture to controlled pond and cage farming to meet rising protein demands.</p><p><strong>The Engineering Gap:</strong> Fish are highly sensitive to microscopic environmental changes. Manual feeding and visual water checks are insufficient for commercial scale. The industry requires robust IoT sensors for water chemistry, automated feeders, and aeration systems to maximize stocking density safely.</p>",
+                scope: "<p>Aquaculture represents a highly promising and rapidly emerging sector within Ethiopia, pivoting away from traditional wild lake capture towards controlled, commercial pond and cage farming. As the national population expands, the demand for accessible, high-quality protein has catalyzed investment into intensive fish farming models. Cultivating aquatic life at high densities requires immense precision, stable aquatic environments, and strict biological management to ensure sustainable and profitable harvests.</p>",
                 imgPrefix: "aqua",
                 problems: [
                     { title: "Water Quality Spikes", text: "Undetected drops in dissolved oxygen or spikes in ammonia lead to rapid, catastrophic fish kills." },
