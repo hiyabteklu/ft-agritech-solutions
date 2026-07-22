@@ -3,31 +3,21 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const rateLimit = require('express-rate-limit');
 const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const requestLog = new Map();
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const RATE_LIMIT_MAX_REQUESTS = 20;
-
-function rateLimit(req, res, next) {
-  const ip = req.ip || req.socket.remoteAddress || 'unknown';
-  const now = Date.now();
-  const requests = requestLog.get(ip) || [];
-  const recentRequests = requests.filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS);
-
-  if (recentRequests.length >= RATE_LIMIT_MAX_REQUESTS) {
-    return res.status(429).json({
-      success: false,
-      message: 'Too many requests. Please try again later.'
-    });
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many requests. Please try again later.'
   }
-
-  recentRequests.push(now);
-  requestLog.set(ip, recentRequests);
-  return next();
-}
+});
 
 app.use(
   cors({
@@ -36,7 +26,7 @@ app.use(
 );
 app.use(express.json());
 
-app.post('/api/auth/register', rateLimit, async (req, res) => {
+app.post('/api/auth/register', apiLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -70,7 +60,7 @@ app.post('/api/auth/register', rateLimit, async (req, res) => {
   }
 });
 
-app.post('/api/reports/submit', rateLimit, (req, res) => {
+app.post('/api/reports/submit', apiLimiter, (req, res) => {
   const { title, description } = req.body;
 
   if (!title || !description) {
