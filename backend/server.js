@@ -19,9 +19,24 @@ const apiLimiter = rateLimit({
   }
 });
 
+const allowedOrigins = ['https://hiyab.tech', 'http://localhost:5000'];
+
 app.use(
   cors({
-    origin: 'https://hiyab.tech'
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const isAllowedOrigin = allowedOrigins.includes(origin);
+      const isGithubPagesOrigin = /^https:\/\/([a-z0-9-]+\.)*github\.io$/i.test(origin);
+
+      if (isAllowedOrigin || isGithubPagesOrigin) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Not allowed by CORS'));
+    }
   })
 );
 app.use(express.json());
