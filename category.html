@@ -3,114 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solution Details - FT Agri-Tech</title>
-    <!-- Make sure this points to your updated style.css -->
+    <title>Horticulture Solutions - FT Agri-Tech</title>
     <link rel="stylesheet" href="style.css"> 
 </head>
-<body class="skeleton-body">
+<body>
 
-    <div class="skeleton-container">
-        
-        <!-- Header Section -->
-        <div class="skeleton-header">
-            <h1 id="page-title" style="color: var(--gold); font-size: 2.5rem;">Category Title</h1>
-            <p class="skeleton-subtitle">Detailed documentation is currently in development.</p>
+    <!-- Glassmorphism Sticky Navbar -->
+    <nav class="glass-navbar">
+        <div class="nav-brand">
+            <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="nav-logo">
+            <span class="nav-title">FT-Agri-Tech</span>
         </div>
+        <div class="nav-controls">
+            <button class="portal-btn" onclick="window.location.href='index.html'">← Back to Portal</button>
+        </div>
+    </nav>
 
-        <!-- Content Cards Grid -->
-        <div class="skeleton-grid">
+    <!-- Page Header -->
+    <section class="hero-section" style="padding-bottom: 2rem;">
+        <div class="section-container" style="text-align: center;">
+            <h1 id="page-title" style="color: var(--gold); font-size: 3.5rem; letter-spacing: -1px; margin-bottom: 1rem;">Horticulture</h1>
+            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
+                Advanced engineering interventions for fruit, vegetable, and flower production in Ethiopia.
+            </p>
+        </div>
+    </section>
+
+    <!-- 1. Background / Scope Section -->
+    <section id="background" style="padding-top: 0;">
+        <div class="section-container">
+            <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 10px;">Background & Scope in Ethiopia</h2>
             
-            <!-- Background / Scope Card (Full Width, Yellow) -->
-            <div class="skeleton-card full-width">
-                <h2>Background / Scope</h2>
-                <div class="skeleton-text-block">
-                    <div class="skeleton-line full"></div>
-                    <div class="skeleton-line long"></div>
-                    <div class="skeleton-line medium"></div>
-                </div>
-                <button class="pending-btn" style="color: var(--gold); border-color: var(--gold);" onclick="showModal('yellow', 'Detailed field data is currently being compiled. Documentation pending.')">DATA PENDING COMPILATION</button>
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 1.5rem; line-height: 1.8;">
+                    Ethiopia’s horticulture sector is a rapidly growing pillar of the national economy, uniquely positioned due to the country's diverse agro-ecological zones, fertile soils, and favorable climates. The industry encompasses the high-yield commercial production of fruits, vegetables, flowers, and herbs.
+                </p>
+                <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 1.5rem; line-height: 1.8;">
+                    <strong>Market Demand:</strong> While export markets—particularly floriculture bound for Europe and the Middle East—drive significant foreign exchange, domestic demand for high-quality, safe vegetables and fruits is simultaneously surging among growing urban populations. 
+                </p>
+                <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.8;">
+                    <strong>The Engineering Gap:</strong> Despite massive potential, the sector operates below optimal efficiency. A heavy reliance on manual labor, lack of precision agriculture data, and poor post-harvest infrastructure create massive vulnerabilities. FT Agri-Tech identifies these gaps not as permanent limitations, but as prime targets for automated, data-driven engineering solutions.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Problems Identified Section -->
+    <section id="problems" class="identity-section" style="padding-top: 2rem;">
+        <div class="section-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px; margin-bottom: 3rem;">
+                <h2 style="font-size: 2.2rem; color: white;">Problems Identified</h2>
+                <button class="portal-btn" style="background: linear-gradient(135deg, var(--red), #8B0000); color: white;" onclick="openProblemModal()">+ Report New Problem</button>
             </div>
 
-            <!-- Problems Identified Card (Half Width, Red) -->
-            <div class="skeleton-card problem-card">
-                <h2>Problems Identified</h2>
-                <div class="skeleton-text-block">
-                    <div class="skeleton-line full"></div>
-                    <div class="skeleton-line medium"></div>
+            <!-- Using the Identity Grid for beautiful problem cards -->
+            <div class="identity-grid">
+                <div class="identity-card" style="border-top: 3px solid var(--red);">
+                    <h3 style="color: var(--red);">Micro-Climate Volatility</h3>
+                    <p>Unpredictable weather patterns and sudden frost in high-altitude zones routinely destroy temperature-sensitive crops like flowers and export-grade vegetables. Current manual monitoring is too slow to trigger defensive measures.</p>
                 </div>
-                <button class="pending-btn" style="color: var(--red); border-color: var(--red);" onclick="showModal('red', 'Awaiting final metric clearance for problem analysis. Updates imminent.')">AWAITING METRIC CLEARANCE</button>
-            </div>
-
-            <!-- Solutions Developed Card (Half Width, Green) -->
-            <div class="skeleton-card solution-card">
-                <h2>Solutions Developed</h2>
-                <div class="skeleton-text-block">
-                    <div class="skeleton-line full"></div>
-                    <div class="skeleton-line medium"></div>
+                <div class="identity-card" style="border-top: 3px solid var(--red);">
+                    <h3 style="color: var(--red);">Post-Harvest Degradation</h3>
+                    <p>Due to a severe lack of decentralized, reliable cold-chain infrastructure, up to 35% of perishable horticultural produce spoils during storage and transit before ever reaching the consumer market.</p>
                 </div>
-                <button class="pending-btn" style="color: var(--green); border-color: var(--green);" onclick="showModal('green', 'Engineering blueprints and physical prototypes are currently under executive review.')">BLUEPRINT UNDER REVIEW</button>
+                <div class="identity-card" style="border-top: 3px solid var(--red);">
+                    <h3 style="color: var(--red);">Pest & Pathogen Outbreaks</h3>
+                    <p>Delayed visual detection of destructive diseases (like late blight) and pests (like thrips and spider mites) results in massive crop loss and forces farmers into excessive, inefficient chemical pesticide use.</p>
+                </div>
+                <div class="identity-card" style="border-top: 3px solid var(--red);">
+                    <h3 style="color: var(--red);">Irrigation Inefficiency</h3>
+                    <p>Over-reliance on manual or blindly scheduled watering depletes vital water resources, washes away soil nutrients, and stresses root systems, directly lowering the overall yield quality.</p>
+                </div>
             </div>
+        </div>
+    </section>
 
+    <!-- 3. Solutions Available Section (3 Clickable Cards) -->
+    <section id="solutions" class="solutions-section" style="padding-top: 2rem; padding-bottom: 6rem;">
+        <div class="section-container">
+            <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;">Solutions Available</h2>
+            
+            <!-- Using the 3D Tilt Grid for Solutions -->
+            <div class="solutions-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                
+                <!-- Card 1 -->
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;">
+                    <img src="solutions_in_hand.jpg" alt="Solutions In Hand" class="card-bg-img">
+                    <div class="card-overlay-gradient"></div>
+                    <div class="card-content">
+                        <h3 style="font-size: 1.8rem;">Solutions In Hand</h3>
+                        <div class="coming-soon-wrapper">
+                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
+                            <span class="coming-soon-text" style="color: var(--green);">Ready to Deploy</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 2 -->
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;">
+                    <img src="solutions_to_be_imported.jpg" alt="Solutions to be Imported" class="card-bg-img">
+                    <div class="card-overlay-gradient"></div>
+                    <div class="card-content">
+                        <h3 style="font-size: 1.8rem;">Imported Solutions</h3>
+                        <div class="coming-soon-wrapper">
+                            <span class="pulsing-dot" style="background-color: var(--blue); box-shadow: 0 0 8px var(--blue);"></span>
+                            <span class="coming-soon-text" style="color: var(--blue);">Global Sourcing</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 3 -->
+                <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 4/5;">
+                    <img src="solutions_locally_developed.jpg" alt="Locally Developed Solutions" class="card-bg-img">
+                    <div class="card-overlay-gradient"></div>
+                    <div class="card-content">
+                        <h3 style="font-size: 1.8rem;">Locally Developed</h3>
+                        <div class="coming-soon-wrapper">
+                            <span class="pulsing-dot"></span>
+                            <span class="coming-soon-text">Custom R&D</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Report Problem Modal -->
+    <div id="problem-modal-overlay" class="custom-modal-overlay">
+        <div class="auth-modal" style="border-color: var(--red); box-shadow: 0 20px 60px rgba(239, 68, 68, 0.15);">
+            <button class="close-auth" onclick="closeProblemModal()">✕</button>
+            <div class="auth-header">
+                <span class="auth-icon">⚙️</span>
+                <h3 style="color: var(--red);">Report an Engineering Problem</h3>
+                <p>Have you identified an inefficiency in the field? Submit the parameters below so our engineering team can analyze a solution.</p>
+            </div>
+            <div class="auth-form">
+                <input type="text" placeholder="Problem Title (e.g., Tractor Sensor Failure)" class="auth-input">
+                <textarea placeholder="Describe the technical issue and its impact..." class="auth-input" style="height: 100px; resize: none; font-family: inherit;"></textarea>
+                <button class="auth-submit-btn" style="background: var(--red);" onclick="alert('Submission received. Engineering review initiated.')">Submit to R&D</button>
+            </div>
         </div>
     </div>
 
-    <!-- Custom UI Popup Overlay (Hidden by default) -->
-    <div id="custom-modal-overlay" class="custom-modal-overlay">
-        <div id="custom-modal" class="custom-modal">
-            <div id="custom-modal-icon" class="modal-icon"></div>
-            <h3 id="custom-modal-title">Notice</h3>
-            <p id="custom-modal-text">Message goes here.</p>
-            <button class="modal-close-btn" onclick="closeModal()">Understood</button>
-        </div>
-    </div>
-
-    <!-- Scripts for Dynamic Title and Popup Logic -->
+    <!-- Scripts -->
     <script>
-        // Grabs the '?title=' from the URL and sets the H1 text dynamically
+        // Set dynamic title if passed via URL, else default to Horticulture
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const title = urlParams.get('title');
             if (title) {
-                document.getElementById('page-title').innerText = title;
-                document.title = title + " - FT Agri-Tech";
+                // Strip the "03 | " numbers if they exist for a cleaner header
+                const cleanTitle = title.replace(/[0-9]+\s*\|\s*/g, '');
+                document.getElementById('page-title').innerText = cleanTitle;
+                document.title = cleanTitle + " - FT Agri-Tech Solutions";
             }
         };
 
-        // Custom Modal Popup Controller
-        function showModal(type, text) {
-            const overlay = document.getElementById('custom-modal-overlay');
-            const modal = document.getElementById('custom-modal');
-            const textEl = document.getElementById('custom-modal-text');
-            const titleEl = document.getElementById('custom-modal-title');
-            const iconEl = document.getElementById('custom-modal-icon');
-
-            // Reset modal classes
-            modal.className = 'custom-modal';
-            
-            // Apply colors and icons based on the button clicked
-            if (type === 'yellow') {
-                modal.classList.add('modal-yellow');
-                titleEl.innerText = 'Background Scope';
-                iconEl.innerHTML = '⚠️';
-            } else if (type === 'red') {
-                modal.classList.add('modal-red');
-                titleEl.innerText = 'Problem Analysis';
-                iconEl.innerHTML = '🛑';
-            } else if (type === 'green') {
-                modal.classList.add('modal-green');
-                titleEl.innerText = 'Solution Developed';
-                iconEl.innerHTML = '✅';
-            }
-
-            // Insert text and show the modal
-            textEl.innerText = text;
-            overlay.classList.add('active');
+        // Report Problem Modal Logic
+        function openProblemModal() {
+            document.getElementById('problem-modal-overlay').classList.add('active');
+        }
+        function closeProblemModal() {
+            document.getElementById('problem-modal-overlay').classList.remove('active');
         }
 
-        // Close Modal Controller
-        function closeModal() {
-            document.getElementById('custom-modal-overlay').classList.remove('active');
-        }
+        // 3D Hover Tilt Physics (Reused from Index)
+        const cards = document.querySelectorAll('.tilt-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;  
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateY = ((x - centerX) / centerX) * 10;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+            });
+        });
     </script>
 </body>
 </html>
