@@ -248,18 +248,18 @@
                 <p>Access your FT Agri-Tech portal to manage operations or deploy hardware.</p>
             </div>
             <div class="auth-form">
-                <input type="email" placeholder="Corporate Email / Partner ID" class="auth-input">
-                <input type="password" placeholder="Password / Access Key" class="auth-input">
-                <button class="auth-submit-btn" onclick="triggerDevAlert()">Log In / Create Account</button>
+                <input type="email" id="auth-email" placeholder="Corporate Email / Partner ID" class="auth-input">
+                <input type="password" id="auth-password" placeholder="Password / Access Key" class="auth-input">
+                <button class="auth-submit-btn" onclick="submitAuthForm()">Log In / Create Account</button>
             </div>
-            <div id="dev-alert" class="dev-alert-box">
-                ⚠️ Notice: Registration and Login systems are currently under development. Please check back later.
-            </div>
+            <div id="dev-alert" class="dev-alert-box" style="display: none;"></div>
         </div>
     </div>
 
     <!-- JS Logic -->
     <script>
+        const API_BASE_URL = 'http://localhost:5000';
+
         function filterSolutions() {
             let input = document.getElementById('solution-search').value.toLowerCase();
             let cards = document.getElementsByClassName('solution-grid-card');
@@ -280,13 +280,59 @@
 
         function openAuthModal() {
             document.getElementById('auth-modal-overlay').classList.add('active');
-            document.getElementById('dev-alert').style.display = 'none';
+            const alertBox = document.getElementById('dev-alert');
+            alertBox.style.display = 'none';
+            alertBox.textContent = '';
         }
         function closeAuthModal() {
             document.getElementById('auth-modal-overlay').classList.remove('active');
         }
-        function triggerDevAlert() {
-            document.getElementById('dev-alert').style.display = 'block';
+        function setAuthAlert(message, type) {
+            const alertBox = document.getElementById('dev-alert');
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            if (type === 'success') {
+                alertBox.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                alertBox.style.background = 'rgba(16, 185, 129, 0.12)';
+                alertBox.style.color = 'var(--green)';
+            } else {
+                alertBox.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+                alertBox.style.background = 'rgba(239, 68, 68, 0.12)';
+                alertBox.style.color = '#fecaca';
+            }
+        }
+        async function submitAuthForm() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const submitBtn = document.querySelector('.auth-submit-btn');
+
+            if (!email || !password) {
+                setAuthAlert('Please enter both email and password.', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    setAuthAlert(data.message || 'Registration completed successfully.', 'success');
+                } else {
+                    setAuthAlert(data.message || 'Registration failed. Please try again.', 'error');
+                }
+            } catch (_error) {
+                setAuthAlert('Unable to reach the server. Please try again later.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log In / Create Account';
+            }
         }
 
         const cards = document.querySelectorAll('.tilt-card');

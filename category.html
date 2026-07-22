@@ -115,10 +115,11 @@
                 <p>Submit the parameters below so our engineering team can analyze a solution.</p>
             </div>
             <div class="auth-form">
-                <input type="text" placeholder="Problem Title (e.g., Sensor Failure)" class="auth-input">
-                <textarea placeholder="Describe the technical issue and its impact..." class="auth-input" style="height: 100px; resize: none; font-family: inherit;"></textarea>
+                <input type="text" id="report-title" placeholder="Problem Title (e.g., Sensor Failure)" class="auth-input">
+                <textarea id="report-desc" placeholder="Describe the technical issue and its impact..." class="auth-input" style="height: 100px; resize: none; font-family: inherit;"></textarea>
                 <button class="auth-submit-btn" style="background: var(--red);" onclick="submitProblemForm()">Submit to R&D</button>
             </div>
+            <div id="problem-alert" class="dev-alert-box" style="display: none;"></div>
         </div>
     </div>
 
@@ -135,6 +136,8 @@
 
     <!-- The Brain: Dynamic Content Router -->
     <script>
+        const API_BASE_URL = 'http://localhost:5000';
+
         const sectorDatabase = {
             "apiculture": {
                 title: "Apiculture",
@@ -257,13 +260,72 @@
             }
         };
 
-        function openProblemModal() { document.getElementById('problem-modal-overlay').classList.add('active'); }
-        function closeProblemModal() { document.getElementById('problem-modal-overlay').classList.remove('active'); }
+        function openProblemModal() {
+            document.getElementById('problem-modal-overlay').classList.add('active');
+            resetProblemAlert();
+        }
+        function closeProblemModal() {
+            document.getElementById('problem-modal-overlay').classList.remove('active');
+        }
+        function setProblemAlert(message, type) {
+            const alertBox = document.getElementById('problem-alert');
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            if (type === 'success') {
+                alertBox.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                alertBox.style.background = 'rgba(16, 185, 129, 0.12)';
+                alertBox.style.color = 'var(--green)';
+            } else {
+                alertBox.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+                alertBox.style.background = 'rgba(239, 68, 68, 0.12)';
+                alertBox.style.color = '#fecaca';
+            }
+        }
+        function resetProblemAlert() {
+            const alertBox = document.getElementById('problem-alert');
+            alertBox.style.display = 'none';
+            alertBox.textContent = '';
+        }
         function showDevModal(event) { if(event) event.preventDefault(); document.getElementById('dev-modal-overlay').classList.add('active'); }
         function closeDevModal() { document.getElementById('dev-modal-overlay').classList.remove('active'); }
-        function submitProblemForm() {
-            closeProblemModal();
-            setTimeout(() => { showDevModal(); }, 300);
+        async function submitProblemForm() {
+            const title = document.getElementById('report-title').value.trim();
+            const description = document.getElementById('report-desc').value.trim();
+            const submitBtn = document.querySelector('#problem-modal-overlay .auth-submit-btn');
+
+            if (!title || !description) {
+                setProblemAlert('Please provide both a title and description.', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/reports/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, description })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    setProblemAlert(data.message || 'Problem report submitted successfully.', 'success');
+                    document.getElementById('report-title').value = '';
+                    document.getElementById('report-desc').value = '';
+                    setTimeout(() => {
+                        closeProblemModal();
+                        resetProblemAlert();
+                    }, 1500);
+                } else {
+                    setProblemAlert(data.message || 'Failed to submit report. Please try again.', 'error');
+                }
+            } catch (_error) {
+                setProblemAlert('Unable to reach the server. Please try again later.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit to R&D';
+            }
         }
 
         const cards = document.querySelectorAll('.tilt-card');
