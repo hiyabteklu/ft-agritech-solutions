@@ -222,38 +222,43 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const rawTitle = urlParams.get('title');
-            
-            if (rawTitle) {
-                const cleanName = rawTitle.replace(/[0-9]+\s*\|\s*/g, '').trim().toLowerCase();
-                const data = sectorDatabase[cleanName];
+        // INSTANT EXECUTION - No waiting for DOM Content to Load
+        const urlParams = new URLSearchParams(window.location.search);
+        const rawTitle = urlParams.get('title');
+        
+        if (rawTitle) {
+            const cleanName = rawTitle.replace(/[0-9]+\s*\|\s*/g, '').trim().toLowerCase();
+            const data = sectorDatabase[cleanName];
 
-                if (data) {
-                    document.getElementById('page-title').innerText = data.title;
-                    document.getElementById('page-subtitle').innerText = data.subtitle;
-                    document.title = data.title + " - FT Agri-Tech";
-                    document.getElementById('scope-content').innerHTML = data.scope;
+            if (data) {
+                document.getElementById('page-title').innerText = data.title;
+                document.getElementById('page-subtitle').innerText = data.subtitle;
+                document.title = data.title + " - FT Agri-Tech";
+                document.getElementById('scope-content').innerHTML = data.scope;
 
-                    const grid = document.getElementById('problems-grid');
-                    let problemHTML = "";
-                    data.problems.forEach(prob => {
-                        problemHTML += `
-                        <div class="dynamic-blue-card" style="border-top: 3px solid var(--red);">
-                            <h3 style="color: var(--red); border-bottom-color: rgba(239, 68, 68, 0.2);">${prob.title}</h3>
-                            <p>${prob.text}</p>
-                        </div>`;
-                    });
-                    grid.innerHTML = problemHTML;
+                const grid = document.getElementById('problems-grid');
+                let problemHTML = "";
+                data.problems.forEach(prob => {
+                    problemHTML += `
+                    <div class="dynamic-blue-card" style="border-top: 3px solid var(--red);">
+                        <h3 style="color: var(--red); border-bottom-color: rgba(239, 68, 68, 0.2);">${prob.title}</h3>
+                        <p>${prob.text}</p>
+                    </div>`;
+                });
+                grid.innerHTML = problemHTML;
 
-                    document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg`;
-                    document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg`;
-                } else {
-                    document.getElementById('page-title').innerText = "Sector Not Found";
-                }
+                document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg`;
+                document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg`;
+            } else {
+                document.getElementById('page-title').innerText = "Sector Not Found";
+                document.getElementById('page-subtitle').innerText = "The requested sector does not exist in our database.";
             }
-        });
+        } else {
+            // FAILSAFE: If opened without a category, tell the user instead of freezing
+            document.getElementById('page-title').innerText = "No Sector Selected";
+            document.getElementById('page-subtitle').innerText = "Please return to the home page and select a specific category card.";
+            document.getElementById('scope-content').innerHTML = "<p style='text-align:center; color:var(--red);'>Data missing. Please navigate from the main portal.</p>";
+        }
 
         function openProblemModal() {
             document.getElementById('problem-modal-overlay').classList.add('active');
