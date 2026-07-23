@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: ft-agritech-backend
-    runtime: node
-    buildCommand: npm install
-    startCommand: npm start
