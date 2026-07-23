@@ -222,7 +222,7 @@
             }
         };
 
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const rawTitle = urlParams.get('title');
             
@@ -253,7 +253,7 @@
                     document.getElementById('page-title').innerText = "Sector Not Found";
                 }
             }
-        };
+        });
 
         function openProblemModal() {
             document.getElementById('problem-modal-overlay').classList.add('active');
