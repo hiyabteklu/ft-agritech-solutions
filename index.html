@@ -291,20 +291,59 @@
         async function submitAuthForm() {
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-            
+            const alertBox = document.getElementById('dev-alert');
+            const submitBtn = document.querySelector('.auth-submit-btn');
+
+            // 1. Basic validation
+            if (!email || !password) {
+                alertBox.textContent = '⚠️ Please provide both an email and password.';
+                alertBox.style.color = 'var(--red)';
+                alertBox.style.borderColor = 'var(--red)';
+                alertBox.style.background = 'rgba(239, 68, 68, 0.1)';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
             try {
-                const response = await fetch(`${API_BASE_URL}/api/register`, {
+                // 2. Corrected endpoint URL
+                const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
                 const data = await response.json();
-                console.log('Response:', data);
+
+                // 3. Dynamic Success / Error Handling
+                if (response.ok && data.success) {
+                    alertBox.textContent = '✅ ' + (data.message || 'User registered successfully.');
+                    alertBox.style.color = 'var(--green)';
+                    alertBox.style.borderColor = 'var(--green)';
+                    alertBox.style.background = 'rgba(16, 185, 129, 0.1)';
+                    alertBox.style.display = 'block';
+                    
+                    document.getElementById('auth-email').value = '';
+                    document.getElementById('auth-password').value = '';
+                } else {
+                    alertBox.textContent = '❌ ' + (data.message || 'Registration failed.');
+                    alertBox.style.color = 'var(--red)';
+                    alertBox.style.borderColor = 'var(--red)';
+                    alertBox.style.background = 'rgba(239, 68, 68, 0.1)';
+                    alertBox.style.display = 'block';
+                }
             } catch (error) {
                 console.error('API Error:', error);
+                alertBox.textContent = '⚠️ Cannot connect to server. Please try again.';
+                alertBox.style.color = 'var(--red)';
+                alertBox.style.borderColor = 'var(--red)';
+                alertBox.style.background = 'rgba(239, 68, 68, 0.1)';
+                alertBox.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log In / Create Account';
             }
-
-            document.getElementById('dev-alert').style.display = 'block';
         }
 
         const cards = document.querySelectorAll('.tilt-card');
