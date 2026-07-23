@@ -89,7 +89,7 @@
                 </a>
 
                 <a href="#" class="solution-grid-card tilt-card" style="aspect-ratio: 3/4;" onclick="showDevModal(event)">
-                    <img id="img-dev" src="assets/images/custom_design_lab.jpg?v=finalfix" alt="Request Custom Design" class="card-bg-img">
+                    <img id="img-dev" src="assets/images/custom_design_lab.jpg" alt="Request Custom Design" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
                         <h3 style="font-size: 1.8rem;">Request Custom Design</h3>
@@ -135,11 +135,6 @@
 
     <!-- The Brain: Dynamic Content Router -->
     <script>
-        const API_BASE_URL =
-            window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'http://localhost:5000'
-                : 'https://ft-agritech-solutions-1.onrender.com';
-
         const sectorDatabase = {
             "apiculture": {
                 title: "Apiculture",
@@ -252,9 +247,8 @@
                     });
                     grid.innerHTML = problemHTML;
 
-                    const cacheVersion = Date.now();
-                    document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg?v=${cacheVersion}`;
-                    document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg?v=${cacheVersion}`;
+                    document.getElementById('img-hand').src = `assets/images/${data.imgPrefix}_hand.jpg`;
+                    document.getElementById('img-import').src = `assets/images/${data.imgPrefix}_import.jpg`;
                 } else {
                     document.getElementById('page-title').innerText = "Sector Not Found";
                 }
@@ -263,70 +257,29 @@
 
         function openProblemModal() {
             document.getElementById('problem-modal-overlay').classList.add('active');
-            resetProblemAlert();
+            document.getElementById('problem-alert').style.display = 'none';
         }
+        
         function closeProblemModal() {
             document.getElementById('problem-modal-overlay').classList.remove('active');
         }
-        function setProblemAlert(message, type) {
+        
+        function submitProblemForm() {
             const alertBox = document.getElementById('problem-alert');
-            alertBox.textContent = message;
+            alertBox.textContent = '⚠️ Notice: R&D reporting system is currently under development. Please check back later.';
+            alertBox.style.color = 'var(--gold)';
+            alertBox.style.borderColor = 'var(--gold)';
+            alertBox.style.background = 'rgba(212, 175, 55, 0.1)';
             alertBox.style.display = 'block';
-            if (type === 'success') {
-                alertBox.style.borderColor = 'rgba(16, 185, 129, 0.5)';
-                alertBox.style.background = 'rgba(16, 185, 129, 0.12)';
-                alertBox.style.color = 'var(--green)';
-            } else {
-                alertBox.style.borderColor = 'rgba(239, 68, 68, 0.5)';
-                alertBox.style.background = 'rgba(239, 68, 68, 0.12)';
-                alertBox.style.color = '#fecaca';
-            }
         }
-        function resetProblemAlert() {
-            const alertBox = document.getElementById('problem-alert');
-            alertBox.style.display = 'none';
-            alertBox.textContent = '';
+
+        function showDevModal(event) { 
+            if(event) event.preventDefault(); 
+            document.getElementById('dev-modal-overlay').classList.add('active'); 
         }
-        function showDevModal(event) { if(event) event.preventDefault(); document.getElementById('dev-modal-overlay').classList.add('active'); }
-        function closeDevModal() { document.getElementById('dev-modal-overlay').classList.remove('active'); }
-        async function submitProblemForm() {
-            const title = document.getElementById('report-title').value.trim();
-            const description = document.getElementById('report-desc').value.trim();
-            const submitBtn = document.querySelector('#problem-modal-overlay .auth-submit-btn');
-
-            if (!title || !description) {
-                setProblemAlert('Please provide both a title and description.', 'error');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/reports/submit`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, description })
-                });
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    setProblemAlert(data.message || 'Problem report submitted successfully.', 'success');
-                    document.getElementById('report-title').value = '';
-                    document.getElementById('report-desc').value = '';
-                    setTimeout(() => {
-                        closeProblemModal();
-                        resetProblemAlert();
-                    }, 1500);
-                } else {
-                    setProblemAlert(data.message || 'Failed to submit report. Please try again.', 'error');
-                }
-            } catch (_error) {
-                setProblemAlert('Unable to reach the server. Please try again later.', 'error');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit to R&D';
-            }
+        
+        function closeDevModal() { 
+            document.getElementById('dev-modal-overlay').classList.remove('active'); 
         }
 
         const cards = document.querySelectorAll('.tilt-card');
