@@ -371,6 +371,11 @@
                 catalogHTML += `
                 <div class="dynamic-blue-card" style="border-top: 3px solid ${accentColor}; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem;">
                     <div>
+                        <!-- NEW 1:1 IMAGE BOX -->
+                        <div class="product-image-box">
+                            <img src="assets/images/${prod.name.toLowerCase().replace(/\s+/g, '_')}.jpg" alt="${prod.name}">
+                        </div>
+
                         <div style="display: flex; justify-content: space-between; align-items: start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px;">
                             <h3 style="color: white; font-size: 1.5rem; margin:0;">${prod.name}</h3>
                             <span style="background: ${accentColor}; color: var(--bg-dark); font-weight: bold; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${prod.status}</span>
@@ -390,9 +395,18 @@
                         </div>
                     </div>
                     
-                    <button class="auth-submit-btn" style="background: ${accentColor}; color: var(--bg-dark); width: 100%; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px;">Configure & Order</button>
+                    <button class="auth-submit-btn" style="background: ${accentColor}; color: var(--bg-dark); width: 100%; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px;" onclick="alert('Procurement Gateway Offline: Pending Appwrite Backend Integration.')">Configure & Order</button>
                 </div>`;
             });
+            
+            // NEW FADED COMING SOON CARD
+            catalogHTML += `
+            <div class="dynamic-blue-card" style="border: 2px dashed rgba(255,255,255,0.1); background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; text-align: center; opacity: 0.5; box-shadow: none;">
+                <div style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;">⚙️</div>
+                <h3 style="color: white; font-size: 1.3rem; margin-bottom: 10px;">Further Developments</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Additional engineering interventions for this sector are currently undergoing field testing and stress verification.</p>
+            </div>`;
+
             catalogGrid.innerHTML = catalogHTML;
             
             // Scroll to top of catalog
