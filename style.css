@@ -630,3 +630,45 @@ body {
     .marquee-items { gap: 2rem; padding-right: 2rem; }
     .partner-logo img { height: 60px; } 
 }
+
+/* --- 1:1 PRODUCT IMAGE CONTAINER --- */
+.product-image-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.3);
+}
+.product-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- LIFECYCLE BUTTONS (INNOVATION FRAMEWORK) --- */
+.lifecycle-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+    margin-top: 10px;
+}
+.lifecycle-tags li {
+    background: rgba(212, 175, 55, 0.05);
+    border: 1px solid var(--gold);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+.lifecycle-tags li:hover {
+    background: var(--gold);
+    color: var(--bg-main);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
