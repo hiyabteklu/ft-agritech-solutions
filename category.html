@@ -3,66 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solutions - FT Agri-Tech</title>
+    <title>Solutions Database | FT Agri-Tech</title>
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
-    <!-- Glassmorphism Sticky Navbar -->
+    <!-- Primary Navigation -->
     <nav class="glass-navbar">
         <div class="nav-brand">
             <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="nav-logo">
             <span class="nav-title">FT-Agri-Tech</span>
         </div>
         <div class="nav-controls">
-            <button class="portal-btn" onclick="window.location.href='index.html'">← Back to Portal</button>
+            <button class="portal-btn" onclick="window.location.href='index.html'">← Return to Dashboard</button>
         </div>
     </nav>
 
-    <!-- Page Header -->
+    <!-- Header Section -->
     <section class="hero-section" style="padding-bottom: 2rem;">
         <div class="section-container" style="text-align: center;">
-            <h1 id="page-title" style="color: var(--gold); font-size: 3.5rem; letter-spacing: -1px; margin-bottom: 1rem;">Loading Sector...</h1>
+            <h1 id="page-title" style="color: var(--gold); font-size: 3.5rem; letter-spacing: -1px; margin-bottom: 1rem;">Initializing Data...</h1>
             <p id="page-subtitle" style="color: var(--text-muted); font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
-                Loading specialized engineering interventions...
+                Retrieving sector parameters and engineering deployments.
             </p>
         </div>
     </section>
 
-    <!-- MAIN DASHBOARD VIEW (Hides when Catalog is opened) -->
+    <!-- Dashboard View Container -->
     <div id="main-dashboard-view">
-        <!-- 1. Background / Scope Section -->
+        <!-- Scope Section -->
         <section id="background" style="padding-top: 0;">
             <div class="section-container">
-                <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 10px;">Background & Scope in Ethiopia</h2>
+                <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 10px;">Sector Scope & Parameters</h2>
                 
                 <div class="dynamic-blue-card" id="scope-content">
-                    <!-- Injected via JS -->
+                    <!-- Injected via Application Router -->
                 </div>
             </div>
         </section>
 
-        <!-- 2. Problems Identified Section -->
+        <!-- Inefficiencies Section -->
         <section id="problems" class="identity-section" style="padding-top: 2rem;">
             <div class="section-container">
-                <h2 style="font-size: 2.2rem; color: white; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px; margin-bottom: 3rem;">Problems Identified</h2>
+                <h2 style="font-size: 2.2rem; color: white; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px; margin-bottom: 3rem;">Identified Inefficiencies</h2>
 
                 <div class="identity-grid" id="problems-grid">
-                    <!-- Injected via JS -->
+                    <!-- Injected via Application Router -->
                 </div>
 
-                <!-- Centralized Large Report Button -->
+                <!-- Field Report Action -->
                 <div style="text-align: center; width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 3rem; padding-top: 2rem;">
-                    <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 1.1rem;">Have you identified an unlisted inefficiency in the field?</p>
-                    <button class="large-report-btn" onclick="openProblemModal()">+ Report New Problem</button>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 1.1rem;">Identify an unlisted technical inefficiency in the field?</p>
+                    <button class="large-report-btn" onclick="openProblemModal()">+ Submit Field Report</button>
                 </div>
             </div>
         </section>
 
-        <!-- 3. Solutions Available Section -->
+        <!-- Solution Categories Section -->
         <section id="solutions" class="solutions-section" style="padding-top: 2rem; padding-bottom: 6rem;">
             <div class="section-container">
-                <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;">Solutions Available</h2>
+                <h2 class="section-title" style="font-size: 2.2rem; text-align: left; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;">Deployed Solutions</h2>
                 
                 <div class="solutions-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                     
@@ -70,10 +70,10 @@
                         <img id="img-hand" src="" alt="Locally Developed" class="card-bg-img">
                         <div class="card-overlay-gradient"></div>
                         <div class="card-content">
-                            <h3 style="font-size: 1.8rem;">Locally Developed</h3>
+                            <h3 style="font-size: 1.8rem;">Local R&D</h3>
                             <div class="coming-soon-wrapper">
                                 <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                                <span class="coming-soon-text" style="color: var(--green);">Ready to Deploy</span>
+                                <span class="coming-soon-text" style="color: var(--green);">Manufactured Internally</span>
                             </div>
                         </div>
                     </a>
@@ -82,10 +82,10 @@
                         <img id="img-import" src="" alt="Imported Solutions" class="card-bg-img">
                         <div class="card-overlay-gradient"></div>
                         <div class="card-content">
-                            <h3 style="font-size: 1.8rem;">Imported Solutions</h3>
+                            <h3 style="font-size: 1.8rem;">Global Sourcing</h3>
                             <div class="coming-soon-wrapper">
                                 <span class="pulsing-dot" style="background-color: var(--blue); box-shadow: 0 0 8px var(--blue);"></span>
-                                <span class="coming-soon-text" style="color: var(--blue);">Global Sourcing</span>
+                                <span class="coming-soon-text" style="color: var(--blue);">Imported Hardware</span>
                             </div>
                         </div>
                     </a>
@@ -94,10 +94,10 @@
                         <img id="img-dev" src="assets/images/custom_design_lab.jpg?v=2" alt="Request Custom Design" class="card-bg-img">
                         <div class="card-overlay-gradient"></div>
                         <div class="card-content">
-                            <h3 style="font-size: 1.8rem;">Request Custom Design</h3>
+                            <h3 style="font-size: 1.8rem;">Custom Architecture</h3>
                             <div class="coming-soon-wrapper">
                                 <span class="pulsing-dot"></span>
-                                <span class="coming-soon-text">Custom R&D Request</span>
+                                <span class="coming-soon-text">Initiate Design Request</span>
                             </div>
                         </div>
                     </a>
@@ -107,63 +107,71 @@
         </section>
     </div>
 
-    <!-- PRODUCT CATALOG VIEW (Hidden by default, slides in when a card is clicked) -->
+    <!-- Product Catalog View Container -->
     <div id="product-catalog-view" style="display: none; padding-bottom: 6rem;">
         <div class="section-container">
-            <button class="portal-btn" style="margin-bottom: 2rem; background: transparent; border: 1px solid var(--gold); color: var(--gold);" onclick="closeCatalog()">← Back to Dashboard</button>
+            <button class="portal-btn" style="margin-bottom: 2rem; background: transparent; border: 1px solid var(--gold); color: var(--gold);" onclick="closeCatalog()">← Return to Sector Overview</button>
             
-            <h2 id="catalog-title" class="section-title" style="font-size: 2.5rem; text-align: left; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;">Product Catalog</h2>
-            <p style="color: var(--text-muted); margin-bottom: 3rem;">Select an engineering intervention to view deployment specifications and pricing.</p>
+            <h2 id="catalog-title" class="section-title" style="font-size: 2.5rem; text-align: left; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;">Hardware Specifications</h2>
+            <p style="color: var(--text-muted); margin-bottom: 3rem;">Select an engineering intervention to view parameters and deployment pricing.</p>
 
             <div class="solutions-grid" id="catalog-grid">
-                <!-- Products Injected via JS -->
+                <!-- Products Injected via Application Router -->
             </div>
         </div>
     </div>
 
-    <!-- Form: Report Problem Modal -->
+    <!-- Modals -->
+    <!-- Field Report Modal -->
     <div id="problem-modal-overlay" class="custom-modal-overlay">
         <div class="auth-modal" style="border-color: var(--red); box-shadow: 0 20px 60px rgba(239, 68, 68, 0.15);">
             <button class="close-auth" onclick="closeProblemModal()">✕</button>
             <div class="auth-header">
-                <span class="auth-icon">⚙️</span>
-                <h3 style="color: var(--red);">Report an Engineering Problem</h3>
-                <p>Submit the parameters below so our engineering team can analyze a solution.</p>
+                <h3 style="color: var(--red);">Submit Field Data</h3>
+                <p>Provide technical parameters for the inefficiency so our team can initiate analysis.</p>
             </div>
             <div class="auth-form">
-                <input type="text" id="report-title" placeholder="Problem Title (e.g., Sensor Failure)" class="auth-input">
-                <textarea id="report-desc" placeholder="Describe the technical issue and its impact..." class="auth-input" style="height: 100px; resize: none; font-family: inherit;"></textarea>
-                <button class="auth-submit-btn" style="background: var(--red);" onclick="submitProblemForm()">Submit to R&D</button>
+                <input type="text" id="report-title" placeholder="Inefficiency Title (e.g., Thermal Sensor Failure)" class="auth-input">
+                <textarea id="report-desc" placeholder="Detail the technical specifications and structural impact..." class="auth-input" style="height: 100px; resize: none; font-family: inherit;"></textarea>
+                <button class="auth-submit-btn" style="background: var(--red);" onclick="submitProblemForm()">Route to Engineering</button>
             </div>
             <div id="problem-alert" class="dev-alert-box" style="display: none;"></div>
         </div>
     </div>
 
-    <!-- Form: Custom R&D Request Modal -->
+    <!-- Custom Request Modal -->
     <div id="custom-request-overlay" class="custom-modal-overlay">
         <div class="auth-modal" style="max-width: 600px;">
             <button class="close-auth" onclick="closeCustomRequestModal()">✕</button>
             <div class="auth-header">
-                <span class="auth-icon">🔬</span>
-                <h3 style="color: var(--gold);">Custom R&D Request</h3>
-                <p>If our existing local or imported solutions do not fit your parameters, our engineering team can design a custom architecture.</p>
+                <h3 style="color: var(--gold);">Architectural R&D Request</h3>
+                <p>If existing deployments do not meet your exact parameters, our firm can design custom hardware.</p>
             </div>
             <div class="auth-form">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; text-align: left;">1. Why are the standard solutions insufficient?</p>
-                <textarea id="custom-reason" placeholder="e.g., The standard pumps cannot handle our high-sediment water..." class="auth-input" style="height: 80px; resize: none; font-family: inherit; margin-bottom: 15px;"></textarea>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; text-align: left;">1. Operational Limitations of Standard Hardware</p>
+                <textarea id="custom-reason" placeholder="e.g., Existing pumps cannot process fluid with sediment density over 4%..." class="auth-input" style="height: 80px; resize: none; font-family: inherit; margin-bottom: 15px;"></textarea>
                 
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; text-align: left;">2. What exact parameters must the new solution meet?</p>
-                <textarea id="custom-params" placeholder="e.g., Must run on 12V solar, process 500L/hour, and cost under 15,000 ETB..." class="auth-input" style="height: 80px; resize: none; font-family: inherit;"></textarea>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; text-align: left;">2. Required Target Specifications</p>
+                <textarea id="custom-params" placeholder="e.g., Must operate on 24V solar array and sustain 800L/hour throughput..." class="auth-input" style="height: 80px; resize: none; font-family: inherit;"></textarea>
                 
-                <input type="text" id="custom-contact" placeholder="Engineering Lead Contact Email / Phone" class="auth-input" style="margin-top: 15px;">
+                <input type="text" id="custom-contact" placeholder="Technical Lead Contact Information" class="auth-input" style="margin-top: 15px;">
                 
-                <button class="auth-submit-btn" style="background: var(--gold); color: var(--bg-dark);" onclick="submitCustomRequest()">Initiate R&D Consultation</button>
+                <button class="auth-submit-btn" style="background: var(--gold); color: var(--bg-dark);" onclick="submitCustomRequest()">Initiate Consultation</button>
             </div>
             <div id="custom-alert" class="dev-alert-box" style="display: none;"></div>
         </div>
     </div>
 
-    <!-- The Brain: Dynamic Content Router & Catalog Data -->
+    <!-- Procurement Integration Modal -->
+    <div id="order-modal-overlay" class="custom-modal-overlay">
+        <div id="order-modal" class="custom-modal modal-yellow" style="border-color: var(--blue);">
+            <h3 style="color: white;">Procurement System Offline</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">The deployment scheduling and procurement gateway is currently pending backend integration.</p>
+            <button class="modal-close-btn" onclick="closeOrderModal()" style="background: var(--blue); color: white; border: none;">Acknowledge</button>
+        </div>
+    </div>
+
+    <!-- Application Router & Database -->
     <script>
         const sectorDatabase = {
             "apiculture": {
@@ -177,12 +185,12 @@
                 ],
                 products: {
                     local: [
-                        { name: "Smart-Temp Hive Node v1", solves: "Micro-Climate Volatility", price: "4,200 ETB", rating: "4.9/5", status: "Ready to Deploy", desc: "Solar-powered IoT sensor that actively monitors internal hive humidity and temperature, alerting you via SMS before colony collapse." },
-                        { name: "Eco-Comb Centrifuge Extractor", solves: "Harvest Yield Loss", price: "12,500 ETB", rating: "4.7/5", status: "In Stock", desc: "Locally manufactured stainless steel extractor engineered to spin honey without destroying the wax comb structure." }
+                        { name: "Smart-Temp Hive Node v1", solves: "Micro-Climate Volatility", price: "4,200 ETB", rating: "4.9/5", status: "Active Deployment", img: "api_local_1.jpg", desc: "Solar-powered IoT sensor that actively monitors internal hive humidity and temperature, alerting you via SMS before colony collapse." },
+                        { name: "Eco-Comb Extractor", solves: "Harvest Yield Loss", price: "12,500 ETB", rating: "4.7/5", status: "In Stock", img: "api_local_2.jpg", desc: "Locally manufactured stainless steel extractor engineered to spin honey without destroying the wax comb structure." }
                     ],
                     imported: [
-                        { name: "Varroa-Shield Auto Vaporizer", solves: "Pest Intrusion", price: "8,900 ETB", rating: "4.8/5", status: "Global Sourcing", desc: "Automated oxalic acid vaporizer imported from Germany to eliminate Varroa mites without harming the bee population." },
-                        { name: "GPS Floral Tracker Tag", solves: "Forage Tracking", price: "15,000 ETB", rating: "4.5/5", status: "Special Order", desc: "Micro-GPS tracking nodes to analyze bee flight paths and optimize hive placement near dense nectar sources." }
+                        { name: "Varroa-Shield Vaporizer", solves: "Pest Intrusion", price: "8,900 ETB", rating: "4.8/5", status: "Global Sourcing", img: "api_import_1.jpg", desc: "Automated oxalic acid vaporizer imported from Germany to eliminate Varroa mites without harming the bee population." },
+                        { name: "GPS Floral Tracker Tag", solves: "Forage Tracking", price: "15,000 ETB", rating: "4.5/5", status: "Special Order", img: "api_import_2.jpg", desc: "Micro-GPS tracking nodes to analyze bee flight paths and optimize hive placement near dense nectar sources." }
                     ]
                 }
             },
@@ -197,12 +205,12 @@
                 ],
                 products: {
                     local: [
-                        { name: "Auto-Sense Brooder Panel", solves: "Brooder Temp Control", price: "6,500 ETB", rating: "4.8/5", status: "Ready to Deploy", desc: "Thermostat-controlled heating panel built for Ethiopian voltage fluctuations to ensure zero chick mortality at night." },
-                        { name: "Precision Trough Dispenser", solves: "Feed Ration Waste", price: "8,200 ETB", rating: "4.6/5", status: "In Stock", desc: "Automated mechanical feeder that dispenses exact granular rations based on flock age and weight targets." }
+                        { name: "Auto-Sense Brooder Panel", solves: "Brooder Temp Control", price: "6,500 ETB", rating: "4.8/5", status: "Active Deployment", img: "avi_local_1.jpg", desc: "Thermostat-controlled heating panel built for Ethiopian voltage fluctuations to ensure zero chick mortality at night." },
+                        { name: "Precision Dispenser", solves: "Feed Ration Waste", price: "8,200 ETB", rating: "4.6/5", status: "In Stock", img: "avi_local_2.jpg", desc: "Automated mechanical feeder that dispenses exact granular rations based on flock age and weight targets." }
                     ],
                     imported: [
-                        { name: "Aero-Vaccine Fogger", solves: "Disease Outbreak", price: "22,000 ETB", rating: "4.9/5", status: "Global Sourcing", desc: "Industrial European fogger for rapid, stress-free airborne vaccination of massive commercial flocks." },
-                        { name: "Optical Egg Grader", solves: "Egg Sorting & Breakage", price: "45,000 ETB", rating: "4.7/5", status: "Special Order", desc: "High-speed conveyor system that automatically weighs and sorts eggs while detecting hairline shell fractures." }
+                        { name: "Aero-Vaccine Fogger", solves: "Disease Outbreak", price: "22,000 ETB", rating: "4.9/5", status: "Global Sourcing", img: "avi_import_1.jpg", desc: "Industrial European fogger for rapid, stress-free airborne vaccination of massive commercial flocks." },
+                        { name: "Optical Egg Grader", solves: "Egg Sorting & Breakage", price: "45,000 ETB", rating: "4.7/5", status: "Special Order", img: "avi_import_2.jpg", desc: "High-speed conveyor system that automatically weighs and sorts eggs while detecting hairline shell fractures." }
                     ]
                 }
             },
@@ -217,12 +225,12 @@
                 ],
                 products: {
                     local: [
-                        { name: "Solar Evaporative Cold-Box", solves: "Post-Harvest Degradation", price: "18,000 ETB", rating: "4.8/5", status: "Ready to Deploy", desc: "Zero-grid cold storage unit utilizing forced-air evaporative cooling to extend produce shelf life by 14 days." },
-                        { name: "Soil-Sync Drip Timer", solves: "Irrigation Inefficiency", price: "3,500 ETB", rating: "4.9/5", status: "In Stock", desc: "Locally designed electronic valve that only releases drip irrigation when subsurface moisture drops below a critical threshold." }
+                        { name: "Evaporative Cold-Box", solves: "Post-Harvest Degradation", price: "18,000 ETB", rating: "4.8/5", status: "Active Deployment", img: "hort_local_1.jpg", desc: "Zero-grid cold storage unit utilizing forced-air evaporative cooling to extend produce shelf life by 14 days." },
+                        { name: "Soil-Sync Drip Timer", solves: "Irrigation Inefficiency", price: "3,500 ETB", rating: "4.9/5", status: "In Stock", img: "hort_local_2.jpg", desc: "Locally designed electronic valve that only releases drip irrigation when subsurface moisture drops below a critical threshold." }
                     ],
                     imported: [
-                        { name: "Dutch Climate Controller", solves: "Micro-Climate Volatility", price: "35,000 ETB", rating: "5.0/5", status: "Global Sourcing", desc: "Complete greenhouse computer system regulating vents, shade screens, and humidity for export-grade flowers." },
-                        { name: "UV Pathogen Zapper", solves: "Pest & Pathogen Outbreaks", price: "12,400 ETB", rating: "4.4/5", status: "Global Sourcing", desc: "Automated robotic UV light system that eliminates fungal spores and pests overnight without chemical pesticides." }
+                        { name: "Dutch Climate Controller", solves: "Micro-Climate Volatility", price: "35,000 ETB", rating: "5.0/5", status: "Global Sourcing", img: "hort_import_1.jpg", desc: "Complete greenhouse computer system regulating vents, shade screens, and humidity for export-grade flowers." },
+                        { name: "UV Pathogen Zapper", solves: "Pest Outbreaks", price: "12,400 ETB", rating: "4.4/5", status: "Global Sourcing", img: "hort_import_2.jpg", desc: "Automated robotic UV light system that eliminates fungal spores and pests overnight without chemical pesticides." }
                     ]
                 }
             },
@@ -237,12 +245,12 @@
                 ],
                 products: {
                     local: [
-                        { name: "Biogas Milk Chiller", solves: "Dairy Cold-Chain Loss", price: "28,000 ETB", rating: "4.7/5", status: "Ready to Deploy", desc: "Off-grid milk chilling vat powered entirely by farm biogas, preventing cooperative-level milk spoilage." },
-                        { name: "Rangeland RFID Gate", solves: "Rangeland Tracking", price: "15,500 ETB", rating: "4.6/5", status: "In Stock", desc: "Solar-powered scanning gate that logs individual cattle movement and weight data as they enter/exit feedlots." }
+                        { name: "Biogas Milk Chiller", solves: "Dairy Cold-Chain Loss", price: "28,000 ETB", rating: "4.7/5", status: "Active Deployment", img: "live_local_1.jpg", desc: "Off-grid milk chilling vat powered entirely by farm biogas, preventing cooperative-level milk spoilage." },
+                        { name: "Rangeland RFID Gate", solves: "Rangeland Tracking", price: "15,500 ETB", rating: "4.6/5", status: "In Stock", img: "live_local_2.jpg", desc: "Solar-powered scanning gate that logs individual cattle movement and weight data as they enter/exit feedlots." }
                     ],
                     imported: [
-                        { name: "Aussie Shearing Plant", solves: "Fleece Harvesting", price: "24,000 ETB", rating: "4.8/5", status: "Global Sourcing", desc: "Heavy-duty imported shearing motors and clippers designed for rapid, stress-free wool and hair harvesting." },
-                        { name: "Infrared Disease Scanner", solves: "Early Disease Detection", price: "19,000 ETB", rating: "4.9/5", status: "Special Order", desc: "Handheld thermal imaging scanner to instantly detect fever and inflammation (like FMD) before visual symptoms appear." }
+                        { name: "Aussie Shearing Plant", solves: "Fleece Harvesting", price: "24,000 ETB", rating: "4.8/5", status: "Global Sourcing", img: "live_import_1.jpg", desc: "Heavy-duty imported shearing motors and clippers designed for rapid, stress-free wool and hair harvesting." },
+                        { name: "Infrared Disease Scanner", solves: "Early Disease Detection", price: "19,000 ETB", rating: "4.9/5", status: "Special Order", img: "live_import_2.jpg", desc: "Handheld thermal imaging scanner to instantly detect fever and inflammation before visual symptoms appear." }
                     ]
                 }
             },
@@ -257,12 +265,12 @@
                 ],
                 products: {
                     local: [
-                        { name: "Smart Moisture Probe", solves: "Drying Inconsistencies", price: "2,800 ETB", rating: "4.9/5", status: "Ready to Deploy", desc: "Digital insertion probe calibrated specifically for Ethiopian Arabica to ensure exact export-standard moisture content." },
-                        { name: "Aero-Sorter for Sesame", solves: "Grading Subjectivity", price: "32,000 ETB", rating: "4.5/5", status: "In Stock", desc: "Locally built pneumatic gravity separator that removes stones, dust, and defective seeds using controlled airflow." }
+                        { name: "Smart Moisture Probe", solves: "Drying Inconsistencies", price: "2,800 ETB", rating: "4.9/5", status: "Active Deployment", img: "exp_local_1.jpg", desc: "Digital insertion probe calibrated specifically for Ethiopian Arabica to ensure exact export-standard moisture content." },
+                        { name: "Aero-Sorter for Sesame", solves: "Grading Subjectivity", price: "32,000 ETB", rating: "4.5/5", status: "In Stock", img: "exp_local_2.jpg", desc: "Locally built pneumatic gravity separator that removes stones, dust, and defective seeds using controlled airflow." }
                     ],
                     imported: [
-                        { name: "Optical Color Grader", solves: "Grading Subjectivity", price: "180,000 ETB", rating: "5.0/5", status: "Global Sourcing", desc: "Industrial laser sorting machine that scans and ejects discolored or defective coffee beans at high speeds." },
-                        { name: "Vacuum Seal Station", solves: "Traceability Data", price: "45,000 ETB", rating: "4.8/5", status: "Global Sourcing", desc: "Heavy-duty commercial vacuum sealer ensuring zero oxidation and perfect preservation of premium roasted exports." }
+                        { name: "Optical Color Grader", solves: "Grading Subjectivity", price: "180,000 ETB", rating: "5.0/5", status: "Global Sourcing", img: "exp_import_1.jpg", desc: "Industrial laser sorting machine that scans and ejects discolored or defective coffee beans at high speeds." },
+                        { name: "Vacuum Seal Station", solves: "Traceability Data", price: "45,000 ETB", rating: "4.8/5", status: "Global Sourcing", img: "exp_import_2.jpg", desc: "Heavy-duty commercial vacuum sealer ensuring zero oxidation and perfect preservation of premium roasted exports." }
                     ]
                 }
             },
@@ -277,12 +285,12 @@
                 ],
                 products: {
                     local: [
-                        { name: "Teff-Master Pedal Thresher", solves: "Threshing & Harvest Loss", price: "14,000 ETB", rating: "4.7/5", status: "Ready to Deploy", desc: "Human-powered mechanical thresher optimized specifically for the delicate grain structure of Teff, reducing shatter loss by 18%." },
-                        { name: "Hermetic Silo Seal Kit", solves: "Storage Infestation", price: "1,500 ETB", rating: "4.9/5", status: "In Stock", desc: "Air-tight retrofitting kit for traditional grain stores that suffocates weevils and prevents fungal growth via oxygen deprivation." }
+                        { name: "Teff-Master Thresher", solves: "Threshing & Harvest Loss", price: "14,000 ETB", rating: "4.7/5", status: "Active Deployment", img: "grain_local_1.jpg", desc: "Human-powered mechanical thresher optimized specifically for the delicate grain structure of Teff, reducing shatter loss by 18%." },
+                        { name: "Hermetic Silo Seal Kit", solves: "Storage Infestation", price: "1,500 ETB", rating: "4.9/5", status: "In Stock", img: "grain_local_2.jpg", desc: "Air-tight retrofitting kit for traditional grain stores that suffocates weevils and prevents fungal growth via oxygen deprivation." }
                     ],
                     imported: [
-                        { name: "Precision Seed Drill", solves: "Soil Moisture Deficit", price: "85,000 ETB", rating: "4.8/5", status: "Global Sourcing", desc: "Tractor-mounted drill that injects seeds at the exact subsurface depth required to tap into hidden soil moisture during drought." },
-                        { name: "Industrial Dehumidifier", solves: "Storage Infestation", price: "30,000 ETB", rating: "4.6/5", status: "Global Sourcing", desc: "Large-scale warehouse dehumidification unit to artificially maintain safe grain storage environments during heavy rainy seasons." }
+                        { name: "Precision Seed Drill", solves: "Soil Moisture Deficit", price: "85,000 ETB", rating: "4.8/5", status: "Global Sourcing", img: "grain_import_1.jpg", desc: "Tractor-mounted drill that injects seeds at the exact subsurface depth required to tap into hidden soil moisture during drought." },
+                        { name: "Industrial Dehumidifier", solves: "Storage Infestation", price: "30,000 ETB", rating: "4.6/5", status: "Global Sourcing", img: "grain_import_2.jpg", desc: "Large-scale warehouse dehumidification unit to artificially maintain safe grain storage environments during heavy rainy seasons." }
                     ]
                 }
             },
@@ -297,21 +305,20 @@
                 ],
                 products: {
                     local: [
-                        { name: "Solar Paddle-Wheel Aerator", solves: "Water Quality Spikes", price: "21,000 ETB", rating: "4.8/5", status: "Ready to Deploy", desc: "Off-grid floating aerator that activates automatically when surface oxygen levels drop dangerously low." },
-                        { name: "Ammonia Rapid-Test Node", solves: "Water Quality Spikes", price: "5,500 ETB", rating: "4.6/5", status: "In Stock", desc: "Digital submerged sensor that continuously monitors toxic ammonia buildup and transmits alerts to the farmer's phone." }
+                        { name: "Solar Aerator", solves: "Water Quality Spikes", price: "21,000 ETB", rating: "4.8/5", status: "Active Deployment", img: "aqua_local_1.jpg", desc: "Off-grid floating paddle-wheel aerator that activates automatically when surface oxygen levels drop dangerously low." },
+                        { name: "Ammonia Rapid-Test", solves: "Water Quality Spikes", price: "5,500 ETB", rating: "4.6/5", status: "In Stock", img: "aqua_local_2.jpg", desc: "Digital submerged sensor that continuously monitors toxic ammonia buildup and transmits alerts to the farm telemetry dashboard." }
                     ],
                     imported: [
-                        { name: "Auto-Pellet Cannon", solves: "Manual Feeding Waste", price: "34,000 ETB", rating: "4.7/5", status: "Global Sourcing", desc: "Timed directional feeder that scatters exact pellet ratios across large commercial ponds to ensure uniform fish growth." },
-                        { name: "Sonic Predator Deterrent", solves: "Predator Intrusion", price: "12,000 ETB", rating: "4.5/5", status: "Global Sourcing", desc: "Submerged acoustic emitter that safely repels aquatic predators and invasive species away from high-density harvesting nets." }
+                        { name: "Auto-Pellet Cannon", solves: "Manual Feeding Waste", price: "34,000 ETB", rating: "4.7/5", status: "Global Sourcing", img: "aqua_import_1.jpg", desc: "Timed directional feeder that scatters exact pellet ratios across large commercial ponds to ensure uniform fish growth." },
+                        { name: "Sonic Predator Deterrent", solves: "Predator Intrusion", price: "12,000 ETB", rating: "4.5/5", status: "Global Sourcing", img: "aqua_import_2.jpg", desc: "Submerged acoustic emitter that safely repels aquatic predators and invasive species away from high-density harvesting nets." }
                     ]
                 }
             }
         };
 
-        // Current loaded sector memory
+        // Application State Management
         let currentSectorData = null;
 
-        // INSTANT EXECUTION - Load Main Dashboard
         const urlParams = new URLSearchParams(window.location.search);
         const rawTitle = urlParams.get('title');
         
@@ -322,7 +329,7 @@
             if (currentSectorData) {
                 document.getElementById('page-title').innerText = currentSectorData.title;
                 document.getElementById('page-subtitle').innerText = currentSectorData.subtitle;
-                document.title = currentSectorData.title + " - FT Agri-Tech";
+                document.title = currentSectorData.title + " | FT Agri-Tech";
                 document.getElementById('scope-content').innerHTML = currentSectorData.scope;
 
                 const grid = document.getElementById('problems-grid');
@@ -339,30 +346,27 @@
                 document.getElementById('img-hand').src = `assets/images/${currentSectorData.imgPrefix}_hand.jpg?v=2`;
                 document.getElementById('img-import').src = `assets/images/${currentSectorData.imgPrefix}_import.jpg?v=2`;
             } else {
-                document.getElementById('page-title').innerText = "Sector Not Found";
-                document.getElementById('page-subtitle').innerText = "The requested sector does not exist in our database.";
+                document.getElementById('page-title').innerText = "Sector Data Unavailable";
+                document.getElementById('page-subtitle').innerText = "The requested sector parameters could not be located in the current database.";
             }
         } else {
-            document.getElementById('page-title').innerText = "No Sector Selected";
-            document.getElementById('page-subtitle').innerText = "Please return to the home page and select a specific category card.";
-            document.getElementById('scope-content').innerHTML = "<p style='text-align:center; color:var(--red);'>Data missing. Please navigate from the main portal.</p>";
+            document.getElementById('page-title').innerText = "Sector Unspecified";
+            document.getElementById('page-subtitle').innerText = "Please initialize sector data by navigating from the primary dashboard.";
+            document.getElementById('scope-content').innerHTML = "<p style='text-align:center; color:var(--red);'>Data stream missing. Return to main portal.</p>";
         }
 
-        // SPA NAVIGATION LOGIC
+        // UI Routing Functions
         function openCatalog(type, event) {
             if(event) event.preventDefault();
             if(!currentSectorData) return;
 
-            // Hide Main Dashboard, Show Catalog
             document.getElementById('main-dashboard-view').style.display = 'none';
             document.getElementById('product-catalog-view').style.display = 'block';
 
-            // Set Title
-            const titlePrefix = type === 'local' ? "Locally Developed" : "Imported Solutions";
+            const titlePrefix = type === 'local' ? "Local Engineering" : "Imported Solutions";
             const accentColor = type === 'local' ? "var(--green)" : "var(--blue)";
             document.getElementById('catalog-title').innerHTML = `<span style="color: ${accentColor};">${titlePrefix}</span> // ${currentSectorData.title}`;
 
-            // Inject Products
             const catalogGrid = document.getElementById('catalog-grid');
             let catalogHTML = "";
             const products = currentSectorData.products[type];
@@ -371,31 +375,44 @@
                 catalogHTML += `
                 <div class="dynamic-blue-card" style="border-top: 3px solid ${accentColor}; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem;">
                     <div>
+                        <!-- 1:1 Image Ratio Container -->
+                        <div style="aspect-ratio: 1/1; overflow: hidden; border-radius: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);">
+                            <img src="assets/images/${prod.img}" alt="${prod.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        
                         <div style="display: flex; justify-content: space-between; align-items: start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px;">
-                            <h3 style="color: white; font-size: 1.5rem; margin:0;">${prod.name}</h3>
-                            <span style="background: ${accentColor}; color: var(--bg-dark); font-weight: bold; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${prod.status}</span>
+                            <h3 style="color: white; font-size: 1.5rem; margin:0; line-height: 1.2;">${prod.name}</h3>
+                            <span style="background: ${accentColor}; color: var(--bg-dark); font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; margin-left: 10px;">${prod.status}</span>
                         </div>
                         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;"><strong>Solves:</strong> <span style="color: var(--red);">${prod.solves}</span></p>
                         <p style="color: white; font-size: 1rem; line-height: 1.5; margin-bottom: 20px;">${prod.desc}</p>
                     </div>
                     
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05);">
                         <div>
-                            <p style="color: var(--text-muted); font-size: 0.8rem; margin:0;">Unit Pricing</p>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin:0;">Unit Procurement</p>
                             <p style="color: var(--gold); font-size: 1.3rem; font-weight: bold; margin:0;">${prod.price}</p>
                         </div>
                         <div style="text-align: right;">
-                            <p style="color: var(--text-muted); font-size: 0.8rem; margin:0;">Field Rating</p>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin:0;">Field Verification</p>
                             <p style="color: white; font-weight: bold; margin:0;">⭐ ${prod.rating}</p>
                         </div>
                     </div>
                     
-                    <button class="auth-submit-btn" style="background: ${accentColor}; color: var(--bg-dark); width: 100%; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px;">Configure & Order</button>
+                    <button class="auth-submit-btn" style="background: ${accentColor}; color: var(--bg-dark); width: 100%; border: none; padding: 14px; font-weight: bold; cursor: pointer; border-radius: 5px; font-size: 1rem;" onclick="openOrderModal()">Initialize Deployment</button>
                 </div>`;
             });
-            catalogGrid.innerHTML = catalogHTML;
             
-            // Scroll to top of catalog
+            // "Coming Soon" Wireframe Placeholder Card
+            catalogHTML += `
+            <div class="dynamic-blue-card" style="border: 2px dashed rgba(255,255,255,0.1); background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; text-align: center; opacity: 0.6; box-shadow: none;">
+                <div style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;">⚗️</div>
+                <h3 style="color: white; font-size: 1.3rem; margin-bottom: 10px;">Further Developments</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Additional engineering interventions for this sector are currently undergoing field testing and stress verification. They will populate here upon R&D clearance.</p>
+            </div>
+            `;
+            
+            catalogGrid.innerHTML = catalogHTML;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -405,46 +422,48 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // PROBLEM MODAL LOGIC
+        // Modal Action Controllers
         function openProblemModal() {
             document.getElementById('problem-modal-overlay').classList.add('active');
             document.getElementById('problem-alert').style.display = 'none';
         }
-        
         function closeProblemModal() {
             document.getElementById('problem-modal-overlay').classList.remove('active');
         }
-        
         function submitProblemForm() {
             const alertBox = document.getElementById('problem-alert');
-            alertBox.textContent = '⚠️ Backend database integration pending. Form data not sent.';
+            alertBox.textContent = 'System Note: Database connection pending. Field data stored locally.';
             alertBox.style.color = 'var(--gold)';
             alertBox.style.borderColor = 'var(--gold)';
             alertBox.style.background = 'rgba(212, 175, 55, 0.1)';
             alertBox.style.display = 'block';
         }
 
-        // CUSTOM R&D MODAL LOGIC
         function openCustomRequestModal(event) {
             if(event) event.preventDefault();
             document.getElementById('custom-request-overlay').classList.add('active');
             document.getElementById('custom-alert').style.display = 'none';
         }
-
         function closeCustomRequestModal() {
             document.getElementById('custom-request-overlay').classList.remove('active');
         }
-
         function submitCustomRequest() {
             const alertBox = document.getElementById('custom-alert');
-            alertBox.textContent = '⚠️ API connection pending. Custom engineering request not routed.';
+            alertBox.textContent = 'System Note: Engineering request queue offline. Integration pending.';
             alertBox.style.color = 'var(--gold)';
             alertBox.style.borderColor = 'var(--gold)';
             alertBox.style.background = 'rgba(212, 175, 55, 0.1)';
             alertBox.style.display = 'block';
         }
 
-        // 3D CARD TILT LOGIC
+        function openOrderModal() {
+            document.getElementById('order-modal-overlay').classList.add('active');
+        }
+        function closeOrderModal() {
+            document.getElementById('order-modal-overlay').classList.remove('active');
+        }
+
+        // Kinetic UI Interactions
         const cards = document.querySelectorAll('.tilt-card');
         cards.forEach(card => {
             card.addEventListener('mousemove', e => {
