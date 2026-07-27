@@ -3,310 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FT Agri-Tech Solutions</title>
+    <title>FT Agri-Tech | Engineering Interventions</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Architectural Framework Styles */
+        .framework-pipeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+        .framework-node {
+            background: rgba(10, 15, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 3px solid var(--gold);
+            border-radius: 8px;
+            padding: 2.5rem 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .framework-node:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+        }
+        .node-index {
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .node-content {
+            position: relative;
+            z-index: 1;
+        }
+        .node-header {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .node-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Glassmorphism Sticky Navbar -->
+    <!-- Primary Navigation -->
     <nav class="glass-navbar">
         <div class="nav-brand">
             <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="nav-logo">
             <span class="nav-title">FT-Agri-Tech</span>
         </div>
         <div class="nav-controls">
-            <div class="search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="solution-search" placeholder="Search solutions..." onkeyup="filterSolutions()">
-            </div>
-            <button class="portal-btn" onclick="openAuthModal()">Register / Log In <span class="lock">🔒</span></button>
+            <button class="portal-btn" onclick="openPartnerModal()">Partner Portal</button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
+    <!-- Header Section -->
+    <header class="hero-section">
         <div class="section-container">
-            <div class="video-presentation-box">
-                <h2 class="video-title">Where It All Began</h2>
-                <div class="video-container">
-                    <video controls class="intro-video">
-                        <source src="yorda.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+            <h1 class="hero-title">Industrial Agricultural <br><span style="color: var(--gold);">Engineering & R&D</span></h1>
+            <p class="hero-subtitle">Deploying advanced hardware, IoT telemetry, and structural interventions to modernize Ethiopian agricultural infrastructure.</p>
+        </div>
+    </header>
+
+    <!-- Innovation Framework Section -->
+    <section class="identity-section" style="padding-top: 2rem; padding-bottom: 4rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="section-container">
+            <h2 class="section-title" style="font-size: 2.2rem; text-align: left; margin-bottom: 10px;">Development Architecture</h2>
+            <p style="color: var(--text-muted); max-width: 700px;">Our standard operating procedure for identifying systemic agricultural failures and deploying hardware solutions.</p>
+            
+            <div class="framework-pipeline">
+                <div class="framework-node">
+                    <span class="node-index">01</span>
+                    <div class="node-content">
+                        <h3 class="node-header">Field Telemetry</h3>
+                        <p class="node-text">Aggregating environmental data, cooperative feedback, and systemic inefficiency reports directly from active agricultural zones.</p>
+                    </div>
+                </div>
+
+                <div class="framework-node">
+                    <span class="node-index">02</span>
+                    <div class="node-content">
+                        <h3 class="node-header">Systems Engineering</h3>
+                        <p class="node-text">Our R&D team drafts hardware schematics, IoT software logic, and structural prototypes to address the identified parameters.</p>
+                    </div>
+                </div>
+
+                <div class="framework-node">
+                    <span class="node-index">03</span>
+                    <div class="node-content">
+                        <h3 class="node-header">Procurement & Assembly</h3>
+                        <p class="node-text">Sourcing premium industrial components globally or manufacturing proprietary hardware locally to meet exact specifications.</p>
+                    </div>
+                </div>
+
+                <div class="framework-node">
+                    <span class="node-index">04</span>
+                    <div class="node-content">
+                        <h3 class="node-header">Active Deployment</h3>
+                        <p class="node-text">Installing the intervention on-site, calibrating sensors, and integrating the hardware with our central monitoring databases.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Corporate Identity -->
-    <section id="identity" class="identity-section">
-        <div class="section-container identity-grid">
-            <div class="identity-card">
-                <h3>Vision</h3>
-                <p>To make Ethiopia the world's leading example of technology-driven agriculture by innovating practical solutions to every major agricultural challenge.</p>
-            </div>
-            <div class="identity-card">
-                <h3>Mission</h3>
-                <p>FT Agri-Tech exists to identify real agricultural challenges through research, field engagement, and data, then design, build, deploy, and continuously improve engineering solutions that create measurable value for farmers, businesses, and institutions.</p>
-            </div>
-            <div class="identity-card">
-                <h3>Why We Exist</h3>
-                <p>FT Agri-Tech was born from lived experience. We grew up watching hardworking farmers lose harvests to pests, wildlife, unpredictable weather, disease, and problems that often had practical solutions but no one built them.</p>
-            </div>
-            <div class="identity-card highlight-card">
-                <h3>Philosophy</h3>
-                <p>We don't invent technology and search for a use.<br>We find the problem first, then build exactly what the situation demands.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Our Solutions (Searchable Grid) -->
-    <section id="solutions" class="solutions-section">
+    <!-- Sector Database Grid Section -->
+    <section class="solutions-section">
         <div class="section-container">
-            <h2 class="section-title">Our Solutions</h2>
-            
-            <div class="solutions-grid" id="solutions-grid">
+            <h2 class="section-title">Active Engineering Sectors</h2>
+            <div class="solutions-grid">
                 
-                <!-- Card 1: Apiculture -->
-                <a href="category.html?title=01 | Apiculture" class="solution-grid-card tilt-card" data-title="apiculture bees honey">
-                    <img src="assets/images/cat1.jpg" alt="Apiculture" class="card-bg-img">
+                <a href="category.html?title=Apiculture" class="solution-grid-card">
+                    <img src="assets/images/apiculture.jpg?v=2" alt="Apiculture Sector" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3>01 | Apiculture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
+                        <h3>Apiculture</h3>
+                        <p>Apiary telemetry and processing</p>
                     </div>
                 </a>
 
-                <!-- Card 2: Aviculture -->
-                <a href="category.html?title=02 | Aviculture" class="solution-grid-card tilt-card" data-title="aviculture poultry birds chickens">
-                    <img src="assets/images/cat2.jpg" alt="Aviculture" class="card-bg-img">
+                <a href="category.html?title=Aviculture" class="solution-grid-card">
+                    <img src="assets/images/aviculture.jpg?v=2" alt="Aviculture Sector" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3>02 | Aviculture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
+                        <h3>Aviculture</h3>
+                        <p>Automated hatchery infrastructure</p>
                     </div>
                 </a>
 
-                <!-- Card 3: Horticulture -->
-                <a href="category.html?title=03 | Horticulture" class="solution-grid-card tilt-card" data-title="horticulture plants vegetables fruits">
-                    <img src="assets/images/cat3.jpg" alt="Horticulture" class="card-bg-img">
+                <a href="category.html?title=Horticulture" class="solution-grid-card">
+                    <img src="assets/images/horticulture.jpg?v=2" alt="Horticulture Sector" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3>03 | Horticulture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
+                        <h3>Horticulture</h3>
+                        <p>Cold-chain and micro-climate control</p>
                     </div>
                 </a>
 
-                <!-- Card 4: Livestock -->
-                <a href="category.html?title=04 | Livestock" class="solution-grid-card tilt-card" data-title="livestock cattle cows animals">
-                    <img src="assets/images/cat4.jpg" alt="Livestock" class="card-bg-img">
+                <a href="category.html?title=Livestock" class="solution-grid-card">
+                    <img src="assets/images/livestock.jpg?v=2" alt="Livestock Sector" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3>04 | Livestock</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
+                        <h3>Livestock</h3>
+                        <p>Rangeland tracking and dairy processing</p>
                     </div>
                 </a>
 
-                <!-- Card 5: Export Crops -->
-                <a href="category.html?title=05 | Export Crops" class="solution-grid-card tilt-card" data-title="export crops coffee sesame international">
-                    <img src="assets/images/cat5.jpg" alt="Export Crops" class="card-bg-img">
+                <a href="category.html?title=Export Crops" class="solution-grid-card">
+                    <img src="assets/images/export.jpg?v=2" alt="Export Crops Sector" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3>05 | Export Crops</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
+                        <h3>Export Crops</h3>
+                        <p>Precision grading and moisture calibration</p>
                     </div>
                 </a>
 
-                <!-- Card 6: Staple Grains -->
-                <a href="category.html?title=06 | Staple Grains" class="solution-grid-card tilt-card" data-title="staple grains teff wheat corn">
-                    <img src="assets/images/cat6.jpg" alt="Staple Grains" class="card-bg-img">
+                <a href="category.html?title=Staple Grains" class="solution-grid-card">
+                    <img src="assets/images/staple.jpg?v=2" alt="Staple Grains Sector" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3>06 | Staple Grains</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
+                        <h3>Staple Grains</h3>
+                        <p>Mechanization and storage solutions</p>
                     </div>
                 </a>
 
-                <!-- Card 7: Aquaculture -->
-                <a href="category.html?title=07 | Aquaculture" class="solution-grid-card tilt-card" data-title="aquaculture fish farming water">
-                    <img src="assets/images/cat7.jpg" alt="Aquaculture" class="card-bg-img">
+                <a href="category.html?title=Aquaculture" class="solution-grid-card">
+                    <img src="assets/images/aquaculture.jpg?v=2" alt="Aquaculture Sector" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
                     <div class="card-content">
-                        <h3>07 | Aquaculture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
+                        <h3>Aquaculture</h3>
+                        <p>Water quality sensors and automation</p>
                     </div>
                 </a>
-            </div>
-            
-            <div id="no-results" style="display:none; text-align:center; padding: 2rem; color: var(--text-muted);">
-                No solutions found matching your search.
+
             </div>
         </div>
     </section>
 
-    <!-- Innovation Framework & Core Values -->
-    <section id="framework" class="collapsible-data-section">
-        <div class="section-container">
-            <h2 class="section-title">Innovation Framework</h2>
-            <p class="framework-intro">Every innovation at FT Agri-Tech follows the same process:</p>
-            
-            <div class="accordion-group">
-                <details class="premium-accordion"><summary>Research</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Field studies</li><li><span>🔮</span> Data collection</li><li><span>🔮</span> Government priorities</li><li><span>🔮</span> Customer requests</li><li><span>🔮</span> Global trends</li><li><span>🔮</span> Case studies</li></ul></div></details>
-                <details class="premium-accordion"><summary>Problem Identification</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Root-cause analysis</li><li><span>🔮</span> Economic impact</li><li><span>🔮</span> Technical feasibility</li><li><span>🔮</span> Priority ranking</li></ul></div></details>
-                <details class="premium-accordion"><summary>Engineering</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Hardware</li><li><span>🔮</span> Embedded systems</li><li><span>🔮</span> AI & Machine Learning</li><li><span>🔮</span> IoT</li><li><span>🔮</span> Robotics</li><li><span>🔮</span> Software</li><li><span>🔮</span> Automation</li></ul></div></details>
-                <details class="premium-accordion"><summary>Deployment</summary><div class="accordion-content"><ul class="crystal-list"><li><span>🔮</span> Manufacturing</li><li><span>🔮</span> Installation</li><li><span>🔮</span> Training</li><li><span>🔮</span> Maintenance</li><li><span>🔮</span> Continuous improvement</li></ul></div></details>
-            </div>
-
-            <div class="accordion-group" style="margin-top: 4rem;">
-                <details class="premium-accordion">
-                    <summary>Core Values</summary>
-                    <div class="accordion-content">
-                        <ul class="crystal-list">
-                            <li><span>🔮</span> Purpose before profit.</li>
-                            <li><span>🔮</span> Research before engineering.</li>
-                            <li><span>🔮</span> Practicality over complexity.</li>
-                            <li><span>🔮</span> Innovation driven by real demand.</li>
-                            <li><span>🔮</span> Long-term partnership with customers.</li>
-                            <li><span>🔮</span> Continuous learning from the field.</li>
-                            <li><span>🔮</span> Engineering with measurable impact.</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-        </div>
-    </section>
-
-    <!-- Strategic Partners Marquee -->
-    <section class="partners-section">
-        <div class="section-container">
-            <h2 class="section-title" style="font-size: 2.2rem; margin-bottom: 2rem;">Strategic Partners</h2>
-            <div class="marquee-white-container">
-                <div class="marquee-track">
-                    <div class="marquee-items">
-                        <div class="partner-logo"><img src="GridArt_20260718_090800234.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_090950084.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_091135477.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_091736635.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_092344887.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_092523414.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_092816998.png" alt="Partner"></div>
-                    </div>
-                    <div class="marquee-items">
-                        <div class="partner-logo"><img src="GridArt_20260718_090800234.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_090950084.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_091135477.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_091736635.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_092344887.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_092523414.png" alt="Partner"></div>
-                        <div class="partner-logo"><img src="GridArt_20260718_092816998.png" alt="Partner"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="footer-container">
-            <h2>Contact us</h2>
-            <div class="contact-links">
-                <button onclick="window.open('https://t.me/FT_Agri_Tech', '_blank')" class="contact-btn telegram-btn" style="border:none; cursor:pointer; font-family:inherit;">Telegram</button>
-                <button onclick="window.open('https://www.linkedin.com/company/ft-agritech-solutions/', '_blank')" class="contact-btn linkedin-btn" style="border:none; cursor:pointer; font-family:inherit;">LinkedIn</button>
-            </div>
-            <p class="copyright">&copy; 2026 FT Agri-Tech Solutions. All systems operational.</p>
-        </div>
-    </footer>
-
-    <!-- Register / Log In Modal -->
-    <div id="auth-modal-overlay" class="custom-modal-overlay">
+    <!-- Partner Authentication Modal -->
+    <div id="partner-modal-overlay" class="custom-modal-overlay">
         <div class="auth-modal">
-            <button class="close-auth" onclick="closeAuthModal()">✕</button>
+            <button class="close-auth" onclick="closePartnerModal()">✕</button>
             <div class="auth-header">
-                <span class="auth-icon">👤</span>
-                <h3>Register / Log In</h3>
-                <p>Access your FT Agri-Tech portal to manage operations or deploy hardware.</p>
+                <h3>Corporate Partner Access</h3>
+                <p>Secure gateway for registered cooperatives, government entities, and R&D partners.</p>
             </div>
             <div class="auth-form">
-                <input type="email" id="auth-email" placeholder="Corporate Email / Partner ID" class="auth-input">
-                <input type="password" id="auth-password" placeholder="Password / Access Key" class="auth-input">
-                <button class="auth-submit-btn" onclick="submitAuthForm()">Log In / Create Account</button>
+                <input type="email" placeholder="Corporate Email Address" class="auth-input">
+                <input type="password" placeholder="Access Credential" class="auth-input">
+                <button class="auth-submit-btn" onclick="submitAuth()">Authenticate</button>
             </div>
-            <div id="dev-alert" class="dev-alert-box">
-                ⚠️ Notice: Registration and Login systems are currently under development. Please check back later.
-            </div>
+            <div id="auth-alert" class="dev-alert-box" style="display: none;"></div>
         </div>
     </div>
 
-    <!-- JS Logic -->
+    <!-- Application Logic -->
     <script>
-        function filterSolutions() {
-            let input = document.getElementById('solution-search').value.toLowerCase();
-            let cards = document.getElementsByClassName('solution-grid-card');
-            let hasVisibleCards = false;
+        function openPartnerModal() {
+            document.getElementById('partner-modal-overlay').classList.add('active');
+            document.getElementById('auth-alert').style.display = 'none';
+        }
 
-            for (let i = 0; i < cards.length; i++) {
-                let searchData = cards[i].getAttribute('data-title');
-                if (searchData.includes(input)) {
-                    cards[i].style.display = "";
-                    hasVisibleCards = true;
-                } else {
-                    cards[i].style.display = "none";
-                }
+        function closePartnerModal() {
+            document.getElementById('partner-modal-overlay').classList.remove('active');
+        }
+
+        function submitAuth() {
+            const alertBox = document.getElementById('auth-alert');
+            alertBox.textContent = 'System Note: Authentication server offline. Appwrite integration pending.';
+            alertBox.style.color = 'var(--gold)';
+            alertBox.style.borderColor = 'var(--gold)';
+            alertBox.style.background = 'rgba(212, 175, 55, 0.1)';
+            alertBox.style.display = 'block';
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('partner-modal-overlay');
+            if (event.target === modal) {
+                closePartnerModal();
             }
-            
-            document.getElementById('no-results').style.display = hasVisibleCards ? "none" : "block";
         }
-
-        function openAuthModal() {
-            document.getElementById('auth-modal-overlay').classList.add('active');
-            document.getElementById('dev-alert').style.display = 'none';
-        }
-        
-        function closeAuthModal() {
-            document.getElementById('auth-modal-overlay').classList.remove('active');
-        }
-        
-        function submitAuthForm() {
-            document.getElementById('dev-alert').style.display = 'block';
-        }
-
-        const cards = document.querySelectorAll('.tilt-card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; 
-                const y = e.clientY - rect.top;  
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -10; 
-                const rotateY = ((x - centerX) / centerX) * 10;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
-            });
-        });
     </script>
 </body>
 </html>
