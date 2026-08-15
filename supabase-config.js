@@ -1,5 +1,5 @@
-const EXPECTED_SUPABASE_URL = 'https://qdfuddoznqlrkgkbylyu.supabase.co';
-const SUPABASE_URL = 'https://qdfuddoznqlrkgkbylyu.supabase.co';
+const EXPECTED_SUPABASE_URL = 'https://qdfuddoznqlrkgkbyiyu.supabase.co';
+const SUPABASE_URL = 'https://qdfuddoznqlrkgkbyiyu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_JiydRHQ3JZXfFeJXzgCkdw_AlGmJtBy';
 
 if (SUPABASE_URL !== EXPECTED_SUPABASE_URL) {
