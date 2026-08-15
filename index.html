@@ -16,53 +16,23 @@
             border-radius: 30px;
             max-width: 260px;
         }
-        .user-profile-chip.visible {
-            display: flex;
-        }
+        .user-profile-chip.visible { display: flex; }
         .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+            width: 32px; height: 32px; border-radius: 50%;
             background: linear-gradient(135deg, #10B981, #059669);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: white;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: white; font-size: 0.9rem; flex-shrink: 0; overflow: hidden;
         }
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            line-height: 1.2;
-        }
-        .user-name {
-            color: #10B981;
-            font-size: 0.8rem;
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .user-email {
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .portal-btn.logged-in {
-            background: linear-gradient(135deg, #10B981, #059669) !important;
-            color: white !important;
+        .user-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .user-info { display: flex; flex-direction: column; overflow: hidden; line-height: 1.2; }
+        .user-name { color: #10B981; font-size: 0.8rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-email { color: var(--text-muted); font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .portal-btn.logged-in { background: linear-gradient(135deg, #10B981, #059669) !important; color: white !important; }
+        #auth-debug {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #111; color: #0f0; font-family: monospace; font-size: 12px;
+            padding: 10px 14px; z-index: 99999; border-top: 2px solid #10B981;
+            max-height: 140px; overflow-y: auto; white-space: pre-wrap;
         }
         @media (max-width: 768px) {
             .user-profile-chip { max-width: 160px; }
@@ -82,7 +52,6 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" id="solution-search" placeholder="Search solutions..." onkeyup="filterSolutions()">
             </div>
-
             <div id="user-profile-chip" class="user-profile-chip">
                 <div class="user-avatar" id="user-avatar">U</div>
                 <div class="user-info">
@@ -90,7 +59,6 @@
                     <span class="user-email" id="user-display-email"></span>
                 </div>
             </div>
-
             <button class="portal-btn" id="portal-btn" onclick="openAuthModal()">Register / Log In <span class="lock">🔒</span></button>
         </div>
     </nav>
@@ -111,22 +79,10 @@
 
     <section id="identity" class="identity-section">
         <div class="section-container identity-grid">
-            <div class="identity-card">
-                <h3>Vision</h3>
-                <p>To make Ethiopia the world's leading example of technology-driven agriculture by innovating practical solutions to every major agricultural challenge.</p>
-            </div>
-            <div class="identity-card">
-                <h3>Mission</h3>
-                <p>FT Agri-Tech exists to identify real agricultural challenges through research, field engagement, and data, then design, build, deploy, and continuously improve engineering solutions that create measurable value for farmers, businesses, and institutions.</p>
-            </div>
-            <div class="identity-card">
-                <h3>Why We Exist</h3>
-                <p>FT Agri-Tech was born from lived experience. We grew up watching hardworking farmers lose harvests to pests, wildlife, unpredictable weather, disease, and problems that often had practical solutions but no one built them.</p>
-            </div>
-            <div class="identity-card highlight-card">
-                <h3>Philosophy</h3>
-                <p>We don't invent technology and search for a use.<br>We find the problem first, then build exactly what the situation demands.</p>
-            </div>
+            <div class="identity-card"><h3>Vision</h3><p>To make Ethiopia the world's leading example of technology-driven agriculture by innovating practical solutions to every major agricultural challenge.</p></div>
+            <div class="identity-card"><h3>Mission</h3><p>FT Agri-Tech exists to identify real agricultural challenges through research, field engagement, and data, then design, build, deploy, and continuously improve engineering solutions that create measurable value for farmers, businesses, and institutions.</p></div>
+            <div class="identity-card"><h3>Why We Exist</h3><p>FT Agri-Tech was born from lived experience. We grew up watching hardworking farmers lose harvests to pests, wildlife, unpredictable weather, disease, and problems that often had practical solutions but no one built them.</p></div>
+            <div class="identity-card highlight-card"><h3>Philosophy</h3><p>We don't invent technology and search for a use.<br>We find the problem first, then build exactly what the situation demands.</p></div>
         </div>
     </section>
 
@@ -134,87 +90,15 @@
         <div class="section-container">
             <h2 class="section-title">Our Solutions</h2>
             <div class="solutions-grid" id="solutions-grid">
-                <a href="category.html?title=01 | Apiculture" class="solution-grid-card tilt-card" data-title="apiculture bees honey">
-                    <img src="assets/images/cat1.jpg" alt="Apiculture" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3>01 | Apiculture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="category.html?title=02 | Aviculture" class="solution-grid-card tilt-card" data-title="aviculture poultry birds chickens">
-                    <img src="assets/images/cat2.jpg" alt="Aviculture" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3>02 | Aviculture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="category.html?title=03 | Horticulture" class="solution-grid-card tilt-card" data-title="horticulture plants vegetables fruits">
-                    <img src="assets/images/cat3.jpg" alt="Horticulture" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3>03 | Horticulture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="category.html?title=04 | Livestock" class="solution-grid-card tilt-card" data-title="livestock cattle cows animals">
-                    <img src="assets/images/cat4.jpg" alt="Livestock" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3>04 | Livestock</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="category.html?title=05 | Export Crops" class="solution-grid-card tilt-card" data-title="export crops coffee sesame international">
-                    <img src="assets/images/cat5.jpg" alt="Export Crops" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3>05 | Export Crops</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="category.html?title=06 | Staple Grains" class="solution-grid-card tilt-card" data-title="staple grains teff wheat corn">
-                    <img src="assets/images/cat6.jpg" alt="Staple Grains" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3>06 | Staple Grains</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="category.html?title=07 | Aquaculture" class="solution-grid-card tilt-card" data-title="aquaculture fish farming water">
-                    <img src="assets/images/cat7.jpg" alt="Aquaculture" class="card-bg-img">
-                    <div class="card-overlay-gradient"></div>
-                    <div class="card-content">
-                        <h3>07 | Aquaculture</h3>
-                        <div class="coming-soon-wrapper">
-                            <span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span>
-                            <span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span>
-                        </div>
-                    </div>
-                </a>
+                <a href="category.html?title=01 | Apiculture" class="solution-grid-card tilt-card" data-title="apiculture bees honey"><img src="assets/images/cat1.jpg" alt="Apiculture" class="card-bg-img"><div class="card-overlay-gradient"></div><div class="card-content"><h3>01 | Apiculture</h3><div class="coming-soon-wrapper"><span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span><span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span></div></div></a>
+                <a href="category.html?title=02 | Aviculture" class="solution-grid-card tilt-card" data-title="aviculture poultry birds chickens"><img src="assets/images/cat2.jpg" alt="Aviculture" class="card-bg-img"><div class="card-overlay-gradient"></div><div class="card-content"><h3>02 | Aviculture</h3><div class="coming-soon-wrapper"><span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span><span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span></div></div></a>
+                <a href="category.html?title=03 | Horticulture" class="solution-grid-card tilt-card" data-title="horticulture plants vegetables fruits"><img src="assets/images/cat3.jpg" alt="Horticulture" class="card-bg-img"><div class="card-overlay-gradient"></div><div class="card-content"><h3>03 | Horticulture</h3><div class="coming-soon-wrapper"><span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span><span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span></div></div></a>
+                <a href="category.html?title=04 | Livestock" class="solution-grid-card tilt-card" data-title="livestock cattle cows animals"><img src="assets/images/cat4.jpg" alt="Livestock" class="card-bg-img"><div class="card-overlay-gradient"></div><div class="card-content"><h3>04 | Livestock</h3><div class="coming-soon-wrapper"><span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span><span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span></div></div></a>
+                <a href="category.html?title=05 | Export Crops" class="solution-grid-card tilt-card" data-title="export crops coffee sesame international"><img src="assets/images/cat5.jpg" alt="Export Crops" class="card-bg-img"><div class="card-overlay-gradient"></div><div class="card-content"><h3>05 | Export Crops</h3><div class="coming-soon-wrapper"><span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span><span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span></div></div></a>
+                <a href="category.html?title=06 | Staple Grains" class="solution-grid-card tilt-card" data-title="staple grains teff wheat corn"><img src="assets/images/cat6.jpg" alt="Staple Grains" class="card-bg-img"><div class="card-overlay-gradient"></div><div class="card-content"><h3>06 | Staple Grains</h3><div class="coming-soon-wrapper"><span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span><span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span></div></div></a>
+                <a href="category.html?title=07 | Aquaculture" class="solution-grid-card tilt-card" data-title="aquaculture fish farming water"><img src="assets/images/cat7.jpg" alt="Aquaculture" class="card-bg-img"><div class="card-overlay-gradient"></div><div class="card-content"><h3>07 | Aquaculture</h3><div class="coming-soon-wrapper"><span class="pulsing-dot" style="background-color: var(--green); box-shadow: 0 0 8px var(--green);"></span><span class="coming-soon-text" style="color: var(--green);">Explore Solutions</span></div></div></a>
             </div>
-            <div id="no-results" style="display:none; text-align:center; padding: 2rem; color: var(--text-muted);">
-                No solutions found matching your search.
-            </div>
+            <div id="no-results" style="display:none; text-align:center; padding: 2rem; color: var(--text-muted);">No solutions found matching your search.</div>
         </div>
     </section>
 
@@ -229,20 +113,7 @@
                 <details class="premium-accordion"><summary>Deployment</summary><div class="accordion-content"><ul class="lifecycle-tags"><li>Manufacturing</li><li>Installation</li><li>Training</li><li>Maintenance</li><li>Continuous improvement</li></ul></div></details>
             </div>
             <div class="accordion-group" style="margin-top: 4rem;">
-                <details class="premium-accordion">
-                    <summary>Core Values</summary>
-                    <div class="accordion-content">
-                        <ul class="lifecycle-tags">
-                            <li>Purpose before profit.</li>
-                            <li>Research before engineering.</li>
-                            <li>Practicality over complexity.</li>
-                            <li>Innovation driven by real demand.</li>
-                            <li>Long-term partnership with customers.</li>
-                            <li>Continuous learning from the field.</li>
-                            <li>Engineering with measurable impact.</li>
-                        </ul>
-                    </div>
-                </details>
+                <details class="premium-accordion"><summary>Core Values</summary><div class="accordion-content"><ul class="lifecycle-tags"><li>Purpose before profit.</li><li>Research before engineering.</li><li>Practicality over complexity.</li><li>Innovation driven by real demand.</li><li>Long-term partnership with customers.</li><li>Continuous learning from the field.</li><li>Engineering with measurable impact.</li></ul></div></details>
             </div>
         </div>
     </section>
@@ -301,42 +172,52 @@
         </div>
     </div>
 
+    <!-- TEMPORARY DEBUG PANEL (bottom of screen) -->
+    <div id="auth-debug">Auth debug loading...</div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./supabase-config.js"></script>
     <script>
-        // ---------- AUTH LOGIC (stronger detection) ----------
+        function debugLog(msg) {
+            const el = document.getElementById('auth-debug');
+            if (el) el.textContent = (el.textContent || '') + '\n' + msg;
+            console.log(msg);
+        }
+
         async function initAuth() {
+            const el = document.getElementById('auth-debug');
+            el.textContent = 'Checking auth...\n';
+
             if (!window.supabaseClient) {
-                console.error('supabaseClient missing');
+                debugLog('ERROR: supabaseClient is missing');
                 return;
             }
+            debugLog('Client OK | URL hash: ' + (window.location.hash ? window.location.hash.substring(0, 40) + '...' : '(empty)'));
+            debugLog('Full URL: ' + window.location.href);
 
-            // 1. Listen first so we catch the INITIAL_SESSION event
             window.supabaseClient.auth.onAuthStateChange((event, session) => {
-                console.log('Auth event:', event, session ? 'HAS SESSION' : 'NO SESSION');
+                debugLog('EVENT: ' + event + ' | session: ' + (session ? 'YES (' + (session.user?.email || '?') + ')' : 'NO'));
                 updateAuthUI(session);
             });
 
-            // 2. Also force a getSession (handles cases where event is missed)
             try {
                 const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-                if (error) console.error('getSession error:', error);
-                console.log('getSession result:', session ? 'HAS SESSION' : 'NO SESSION');
+                if (error) debugLog('getSession ERROR: ' + error.message);
+                debugLog('getSession: ' + (session ? 'YES - ' + session.user.email : 'NO SESSION'));
                 updateAuthUI(session);
             } catch (e) {
-                console.error('getSession exception:', e);
+                debugLog('getSession exception: ' + e.message);
             }
 
-            // 3. Extra safety: if URL still has tokens, try again after a short delay
-            if (window.location.hash && window.location.hash.includes('access_token')) {
+            // If hash has tokens, wait and check again
+            if (window.location.hash && (window.location.hash.includes('access_token') || window.location.hash.includes('error'))) {
+                debugLog('Hash tokens detected, re-checking in 1s...');
                 setTimeout(async () => {
                     const { data: { session } } = await window.supabaseClient.auth.getSession();
+                    debugLog('After delay: ' + (session ? 'YES - ' + session.user.email : 'STILL NO SESSION'));
                     updateAuthUI(session);
-                    // Clean the ugly hash from the address bar
-                    if (session) {
-                        history.replaceState(null, '', window.location.pathname);
-                    }
-                }, 800);
+                    if (session) history.replaceState(null, '', window.location.pathname);
+                }, 1000);
             }
         }
 
@@ -346,7 +227,6 @@
             const avatarEl = document.getElementById('user-avatar');
             const nameEl = document.getElementById('user-display-name');
             const emailEl = document.getElementById('user-display-email');
-
             if (!authBtn || !profileChip) return;
 
             if (session && session.user) {
@@ -359,17 +239,13 @@
                 profileChip.classList.add('visible');
                 nameEl.textContent = fullName;
                 emailEl.textContent = email;
-
-                if (avatarUrl) {
-                    avatarEl.innerHTML = '<img src="' + avatarUrl + '" alt="' + fullName + '">';
-                } else {
-                    avatarEl.textContent = initial;
-                }
+                if (avatarUrl) avatarEl.innerHTML = '<img src="' + avatarUrl + '" alt="' + fullName + '">';
+                else avatarEl.textContent = initial;
 
                 authBtn.classList.add('logged-in');
                 authBtn.innerHTML = 'Log Out <span class="lock">🔓</span>';
                 authBtn.onclick = async function () {
-                    if (confirm('Logged in as ' + email + '\n\nDo you want to log out?')) {
+                    if (confirm('Logged in as ' + email + '\n\nLog out?')) {
                         await window.supabaseClient.auth.signOut();
                         window.location.reload();
                     }
@@ -382,26 +258,16 @@
             }
         }
 
-        // Run as soon as possible
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initAuth);
-        } else {
-            initAuth();
-        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAuth);
+        else initAuth();
 
-        // ---------- REST OF PAGE ----------
         function filterSolutions() {
             let input = document.getElementById('solution-search').value.toLowerCase();
             let cards = document.getElementsByClassName('solution-grid-card');
             let hasVisibleCards = false;
             for (let i = 0; i < cards.length; i++) {
-                let searchData = cards[i].getAttribute('data-title');
-                if (searchData.includes(input)) {
-                    cards[i].style.display = '';
-                    hasVisibleCards = true;
-                } else {
-                    cards[i].style.display = 'none';
-                }
+                if (cards[i].getAttribute('data-title').includes(input)) { cards[i].style.display = ''; hasVisibleCards = true; }
+                else cards[i].style.display = 'none';
             }
             document.getElementById('no-results').style.display = hasVisibleCards ? 'none' : 'block';
         }
@@ -410,7 +276,6 @@
             document.getElementById('auth-modal-overlay').classList.add('active');
             document.getElementById('dev-alert').style.display = 'none';
         }
-
         function closeAuthModal() {
             document.getElementById('auth-modal-overlay').classList.remove('active');
         }
@@ -420,36 +285,27 @@
             const alertBox = document.getElementById('dev-alert');
             alertBox.style.display = 'block';
             alertBox.textContent = '⏳ Redirecting to Google...';
-
             try {
                 const { error } = await window.supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
-                    options: {
-                        redirectTo: 'https://ft-agri-tech.systems/'
-                    }
+                    options: { redirectTo: 'https://ft-agri-tech.systems/' }
                 });
-                if (error) {
-                    alertBox.textContent = error.message;
-                }
+                if (error) alertBox.textContent = error.message;
             } catch (err) {
-                alertBox.textContent = err?.message || 'Authentication error';
+                alertBox.textContent = err?.message || 'Auth error';
             }
         }
 
-        const cards = document.querySelectorAll('.tilt-card');
-        cards.forEach(card => {
+        document.querySelectorAll('.tilt-card').forEach(card => {
             card.addEventListener('mousemove', e => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -10;
-                const rotateY = ((x - centerX) / centerX) * 10;
-                card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
+                const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                const rx = ((y - rect.height/2) / (rect.height/2)) * -10;
+                const ry = ((x - rect.width/2) / (rect.width/2)) * 10;
+                card.style.transform = 'perspective(1000px) rotateX('+rx+'deg) rotateY('+ry+'deg) scale(1.02)';
             });
             card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
             });
         });
     </script>
