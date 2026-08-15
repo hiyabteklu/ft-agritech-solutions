@@ -258,6 +258,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
     <!-- JS Logic -->
     <script>
         function filterSolutions() {
@@ -287,8 +289,46 @@
             document.getElementById('auth-modal-overlay').classList.remove('active');
         }
         
-        function submitAuthForm() {
-            document.getElementById('dev-alert').style.display = 'block';
+        async function submitAuthForm() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const alertBox = document.getElementById('dev-alert');
+
+            alertBox.style.display = 'block';
+
+            if (!email || !password) {
+                alertBox.textContent = '⚠️ Please enter both email and password.';
+                return;
+            }
+
+            alertBox.textContent = '⏳ Processing authentication...';
+
+            const { error: signInError } = await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (!signInError) {
+                alertBox.textContent = '✅ Logged in successfully.';
+                return;
+            }
+
+            const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+                email,
+                password
+            });
+
+            if (signUpError) {
+                alertBox.textContent = `❌ ${signUpError.message}`;
+                return;
+            }
+
+            if (signUpData?.session) {
+                alertBox.textContent = '✅ Account created and logged in successfully.';
+                return;
+            }
+
+            alertBox.textContent = '✅ Account created. Check your email to confirm your account.';
         }
 
         const cards = document.querySelectorAll('.tilt-card');
