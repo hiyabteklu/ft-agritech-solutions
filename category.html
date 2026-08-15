@@ -459,7 +459,7 @@
                 return;
             }
 
-            const { error } = await supabaseClient.from('problems').insert([
+            const { error } = await window.supabaseClient.from('problems').insert([
                 { title, description }
             ]);
 
@@ -505,7 +505,7 @@
                 return;
             }
 
-            const { error } = await supabaseClient.from('custom_requests').insert([
+            const { error } = await window.supabaseClient.from('custom_requests').insert([
                 { reason, parameters, contact }
             ]);
 

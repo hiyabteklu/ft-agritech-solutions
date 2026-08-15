@@ -303,7 +303,7 @@
 
             alertBox.textContent = '⏳ Processing authentication...';
 
-            const { error: signInError } = await supabaseClient.auth.signInWithPassword({
+            const { error: signInError } = await window.supabaseClient.auth.signInWithPassword({
                 email,
                 password
             });
@@ -313,7 +313,7 @@
                 return;
             }
 
-            const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+            const { data: signUpData, error: signUpError } = await window.supabaseClient.auth.signUp({
                 email,
                 password
             });
