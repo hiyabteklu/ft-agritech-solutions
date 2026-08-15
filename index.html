@@ -290,7 +290,7 @@
         async function submitAuthForm(event) {
             event.preventDefault();
             const alertBox = document.getElementById('dev-alert');
-            const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbylgu.supabase.co';
+            const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbylyu.supabase.co';
 
             if (window.supabaseClient?.supabaseUrl !== expectedSupabaseUrl) {
                 const error = new Error(`Invalid Supabase URL. Expected ${expectedSupabaseUrl}`);
