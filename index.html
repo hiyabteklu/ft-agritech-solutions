@@ -260,6 +260,41 @@
     <script src="./supabase-config.js"></script>
     <!-- JS Logic -->
     <script>
+        // Check for active user session on page load
+        window.onload = async function() {
+            if (window.supabaseClient) {
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                updateAuthUI(session);
+
+                // Listen for changes (like logging in or out)
+                window.supabaseClient.auth.onAuthStateChange((event, session) => {
+                    updateAuthUI(session);
+                });
+            }
+        };
+
+        // Change the button if logged in
+        function updateAuthUI(session) {
+            const authBtn = document.querySelector('.portal-btn');
+            if (!authBtn) return;
+            
+            if (session) {
+                // User IS logged in
+                authBtn.innerHTML = 'My Portal <span class="lock">🔓</span>';
+                authBtn.onclick = async function() {
+                    const confirmLogout = confirm("You are logged in. Do you want to log out?");
+                    if (confirmLogout) {
+                        await window.supabaseClient.auth.signOut();
+                        window.location.reload();
+                    }
+                };
+            } else {
+                // User IS NOT logged in
+                authBtn.innerHTML = 'Register / Log In <span class="lock">🔒</span>';
+                authBtn.onclick = openAuthModal;
+            }
+        }
+
         function filterSolutions() {
             let input = document.getElementById('solution-search').value.toLowerCase();
             let cards = document.getElementsByClassName('solution-grid-card');
