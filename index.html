@@ -251,8 +251,8 @@
                 <input type="email" id="auth-email" placeholder="Corporate Email / Partner ID" class="auth-input">
                 <input type="password" id="auth-password" placeholder="Password / Access Key" class="auth-input">
                 <div style="display: flex; gap: 10px;">
-                    <button class="auth-submit-btn" style="flex: 1;" onclick="submitAuthForm('login')">Log In</button>
-                    <button class="auth-submit-btn" style="flex: 1;" onclick="submitAuthForm('signup')">Create Account</button>
+                    <button type="button" class="auth-submit-btn" style="flex: 1;" onclick="submitAuthForm('login', event)">Log In</button>
+                    <button type="button" class="auth-submit-btn" style="flex: 1;" onclick="submitAuthForm('signup', event)">Create Account</button>
                 </div>
             </div>
             <div id="dev-alert" class="dev-alert-box">
@@ -310,10 +310,20 @@
             return null;
         }
 
-        async function submitAuthForm(action) {
+        async function submitAuthForm(action, event) {
+            event.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value;
             const alertBox = document.getElementById('dev-alert');
+            const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbylgu.supabase.co';
+
+            if (window.supabaseClient?.supabaseUrl !== expectedSupabaseUrl) {
+                const error = new Error(`Invalid Supabase URL. Expected ${expectedSupabaseUrl}`);
+                console.error("AUTH ERROR:", error);
+                alertBox.style.display = 'block';
+                alertBox.textContent = error.message;
+                return;
+            }
 
             alertBox.style.display = 'block';
             const validationError = validateAuthInputs(email, password);
@@ -362,7 +372,8 @@
 
                 alertBox.textContent = 'Invalid authentication action.';
             } catch (error) {
-                alertBox.textContent = error?.message || 'Authentication request failed.';
+                console.error("AUTH ERROR:", error);
+                alertBox.textContent = error?.message || 'Unknown authentication error.';
             }
         }
 
