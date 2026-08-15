@@ -6,7 +6,6 @@
     <title>FT Agri-Tech Solutions</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Logged-in profile chip */
         .user-profile-chip {
             display: none;
             align-items: center;
@@ -32,6 +31,7 @@
             color: white;
             font-size: 0.9rem;
             flex-shrink: 0;
+            overflow: hidden;
         }
         .user-avatar img {
             width: 100%;
@@ -61,22 +61,17 @@
             text-overflow: ellipsis;
         }
         .portal-btn.logged-in {
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
+            background: linear-gradient(135deg, #10B981, #059669) !important;
+            color: white !important;
         }
         @media (max-width: 768px) {
-            .user-profile-chip {
-                max-width: 180px;
-            }
-            .user-email {
-                display: none;
-            }
+            .user-profile-chip { max-width: 160px; }
+            .user-email { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Glassmorphism Sticky Navbar -->
     <nav class="glass-navbar">
         <div class="nav-brand">
             <img src="ftagritech1.jpg" alt="FT Agri-Tech Logo" class="nav-logo">
@@ -88,7 +83,6 @@
                 <input type="text" id="solution-search" placeholder="Search solutions..." onkeyup="filterSolutions()">
             </div>
 
-            <!-- User profile chip (shown only when logged in) -->
             <div id="user-profile-chip" class="user-profile-chip">
                 <div class="user-avatar" id="user-avatar">U</div>
                 <div class="user-info">
@@ -101,7 +95,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero-section">
         <div class="section-container">
             <div class="video-presentation-box">
@@ -116,7 +109,6 @@
         </div>
     </section>
 
-    <!-- Corporate Identity -->
     <section id="identity" class="identity-section">
         <div class="section-container identity-grid">
             <div class="identity-card">
@@ -138,14 +130,10 @@
         </div>
     </section>
 
-    <!-- Our Solutions (Searchable Grid) -->
     <section id="solutions" class="solutions-section">
         <div class="section-container">
             <h2 class="section-title">Our Solutions</h2>
-            
             <div class="solutions-grid" id="solutions-grid">
-                
-                <!-- Card 1: Apiculture -->
                 <a href="category.html?title=01 | Apiculture" class="solution-grid-card tilt-card" data-title="apiculture bees honey">
                     <img src="assets/images/cat1.jpg" alt="Apiculture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
@@ -157,8 +145,6 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Card 2: Aviculture -->
                 <a href="category.html?title=02 | Aviculture" class="solution-grid-card tilt-card" data-title="aviculture poultry birds chickens">
                     <img src="assets/images/cat2.jpg" alt="Aviculture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
@@ -170,8 +156,6 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Card 3: Horticulture -->
                 <a href="category.html?title=03 | Horticulture" class="solution-grid-card tilt-card" data-title="horticulture plants vegetables fruits">
                     <img src="assets/images/cat3.jpg" alt="Horticulture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
@@ -183,8 +167,6 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Card 4: Livestock -->
                 <a href="category.html?title=04 | Livestock" class="solution-grid-card tilt-card" data-title="livestock cattle cows animals">
                     <img src="assets/images/cat4.jpg" alt="Livestock" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
@@ -196,8 +178,6 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Card 5: Export Crops -->
                 <a href="category.html?title=05 | Export Crops" class="solution-grid-card tilt-card" data-title="export crops coffee sesame international">
                     <img src="assets/images/cat5.jpg" alt="Export Crops" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
@@ -209,8 +189,6 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Card 6: Staple Grains -->
                 <a href="category.html?title=06 | Staple Grains" class="solution-grid-card tilt-card" data-title="staple grains teff wheat corn">
                     <img src="assets/images/cat6.jpg" alt="Staple Grains" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
@@ -222,8 +200,6 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Card 7: Aquaculture -->
                 <a href="category.html?title=07 | Aquaculture" class="solution-grid-card tilt-card" data-title="aquaculture fish farming water">
                     <img src="assets/images/cat7.jpg" alt="Aquaculture" class="card-bg-img">
                     <div class="card-overlay-gradient"></div>
@@ -236,26 +212,22 @@
                     </div>
                 </a>
             </div>
-            
             <div id="no-results" style="display:none; text-align:center; padding: 2rem; color: var(--text-muted);">
                 No solutions found matching your search.
             </div>
         </div>
     </section>
 
-    <!-- Innovation Framework & Core Values -->
     <section id="framework" class="collapsible-data-section">
         <div class="section-container">
             <h2 class="section-title">Innovation Framework</h2>
             <p class="framework-intro">Every innovation at FT Agri-Tech follows the same process:</p>
-            
             <div class="accordion-group">
                 <details class="premium-accordion"><summary>Research</summary><div class="accordion-content"><ul class="lifecycle-tags"><li>Field studies</li><li>Data collection</li><li>Government priorities</li><li>Customer requests</li><li>Global trends</li><li>Case studies</li></ul></div></details>
                 <details class="premium-accordion"><summary>Problem Identification</summary><div class="accordion-content"><ul class="lifecycle-tags"><li>Root-cause analysis</li><li>Economic impact</li><li>Technical feasibility</li><li>Priority ranking</li></ul></div></details>
                 <details class="premium-accordion"><summary>Engineering</summary><div class="accordion-content"><ul class="lifecycle-tags"><li>Hardware</li><li>Embedded systems</li><li>AI & Machine Learning</li><li>IoT</li><li>Robotics</li><li>Software</li><li>Automation</li></ul></div></details>
                 <details class="premium-accordion"><summary>Deployment</summary><div class="accordion-content"><ul class="lifecycle-tags"><li>Manufacturing</li><li>Installation</li><li>Training</li><li>Maintenance</li><li>Continuous improvement</li></ul></div></details>
             </div>
-
             <div class="accordion-group" style="margin-top: 4rem;">
                 <details class="premium-accordion">
                     <summary>Core Values</summary>
@@ -275,7 +247,6 @@
         </div>
     </section>
 
-    <!-- Strategic Partners Marquee -->
     <section class="partners-section">
         <div class="section-container">
             <h2 class="section-title" style="font-size: 2.2rem; margin-bottom: 2rem;">Strategic Partners</h2>
@@ -304,7 +275,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="main-footer">
         <div class="footer-container">
             <h2>Contact us</h2>
@@ -316,7 +286,6 @@
         </div>
     </footer>
 
-    <!-- Register / Log In Modal -->
     <div id="auth-modal-overlay" class="custom-modal-overlay">
         <div class="auth-modal">
             <button class="close-auth" onclick="closeAuthModal()">✕</button>
@@ -328,36 +297,49 @@
             <div class="auth-form">
                 <button type="button" class="auth-submit-btn" onclick="submitAuthForm(event)">Continue with Google</button>
             </div>
-            <div id="dev-alert" class="dev-alert-box">
-                ⚠️ Notice: Registration and Login systems are currently under development. Please check back later.
-            </div>
+            <div id="dev-alert" class="dev-alert-box" style="display:none;"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./supabase-config.js"></script>
-    <!-- JS Logic -->
     <script>
-        // Check for active user session on page load
-        window.onload = async function() {
-            if (window.supabaseClient) {
-                const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-                
-                if (error) {
-                    console.error('Session error:', error);
-                }
-                
-                updateAuthUI(session);
-
-                // Listen for changes (login / logout / token refresh)
-                window.supabaseClient.auth.onAuthStateChange((event, session) => {
-                    console.log('Auth event:', event);
-                    updateAuthUI(session);
-                });
+        // ---------- AUTH LOGIC (stronger detection) ----------
+        async function initAuth() {
+            if (!window.supabaseClient) {
+                console.error('supabaseClient missing');
+                return;
             }
-        };
 
-        // Update the navbar based on login status
+            // 1. Listen first so we catch the INITIAL_SESSION event
+            window.supabaseClient.auth.onAuthStateChange((event, session) => {
+                console.log('Auth event:', event, session ? 'HAS SESSION' : 'NO SESSION');
+                updateAuthUI(session);
+            });
+
+            // 2. Also force a getSession (handles cases where event is missed)
+            try {
+                const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+                if (error) console.error('getSession error:', error);
+                console.log('getSession result:', session ? 'HAS SESSION' : 'NO SESSION');
+                updateAuthUI(session);
+            } catch (e) {
+                console.error('getSession exception:', e);
+            }
+
+            // 3. Extra safety: if URL still has tokens, try again after a short delay
+            if (window.location.hash && window.location.hash.includes('access_token')) {
+                setTimeout(async () => {
+                    const { data: { session } } = await window.supabaseClient.auth.getSession();
+                    updateAuthUI(session);
+                    // Clean the ugly hash from the address bar
+                    if (session) {
+                        history.replaceState(null, '', window.location.pathname);
+                    }
+                }, 800);
+            }
+        }
+
         function updateAuthUI(session) {
             const authBtn = document.getElementById('portal-btn');
             const profileChip = document.getElementById('user-profile-chip');
@@ -365,17 +347,15 @@
             const nameEl = document.getElementById('user-display-name');
             const emailEl = document.getElementById('user-display-email');
 
-            if (!authBtn) return;
-            
+            if (!authBtn || !profileChip) return;
+
             if (session && session.user) {
-                // ===== LOGGED IN =====
                 const user = session.user;
                 const email = user.email || '';
-                const fullName = user.user_metadata?.full_name || user.user_metadata?.name || email.split('@')[0] || 'User';
+                const fullName = user.user_metadata?.full_name || user.user_metadata?.name || (email ? email.split('@')[0] : 'User');
                 const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
                 const initial = (fullName.charAt(0) || 'U').toUpperCase();
 
-                // Show profile chip
                 profileChip.classList.add('visible');
                 nameEl.textContent = fullName;
                 emailEl.textContent = email;
@@ -386,19 +366,15 @@
                     avatarEl.textContent = initial;
                 }
 
-                // Change button to Logout style
                 authBtn.classList.add('logged-in');
                 authBtn.innerHTML = 'Log Out <span class="lock">🔓</span>';
-                authBtn.onclick = async function() {
-                    const confirmLogout = confirm('You are logged in as ' + email + '.\nDo you want to log out?');
-                    if (confirmLogout) {
+                authBtn.onclick = async function () {
+                    if (confirm('Logged in as ' + email + '\n\nDo you want to log out?')) {
                         await window.supabaseClient.auth.signOut();
                         window.location.reload();
                     }
                 };
-
             } else {
-                // ===== NOT LOGGED IN =====
                 profileChip.classList.remove('visible');
                 authBtn.classList.remove('logged-in');
                 authBtn.innerHTML = 'Register / Log In <span class="lock">🔒</span>';
@@ -406,64 +382,57 @@
             }
         }
 
+        // Run as soon as possible
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAuth);
+        } else {
+            initAuth();
+        }
+
+        // ---------- REST OF PAGE ----------
         function filterSolutions() {
             let input = document.getElementById('solution-search').value.toLowerCase();
             let cards = document.getElementsByClassName('solution-grid-card');
             let hasVisibleCards = false;
-
             for (let i = 0; i < cards.length; i++) {
                 let searchData = cards[i].getAttribute('data-title');
                 if (searchData.includes(input)) {
-                    cards[i].style.display = "";
+                    cards[i].style.display = '';
                     hasVisibleCards = true;
                 } else {
-                    cards[i].style.display = "none";
+                    cards[i].style.display = 'none';
                 }
             }
-            
-            document.getElementById('no-results').style.display = hasVisibleCards ? "none" : "block";
+            document.getElementById('no-results').style.display = hasVisibleCards ? 'none' : 'block';
         }
 
         function openAuthModal() {
             document.getElementById('auth-modal-overlay').classList.add('active');
             document.getElementById('dev-alert').style.display = 'none';
         }
-        
+
         function closeAuthModal() {
             document.getElementById('auth-modal-overlay').classList.remove('active');
         }
-        
+
         async function submitAuthForm(event) {
             event.preventDefault();
             const alertBox = document.getElementById('dev-alert');
-            const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbyiyu.supabase.co';
-
-            if (window.supabaseClient?.supabaseUrl !== expectedSupabaseUrl) {
-                const error = new Error('Invalid Supabase URL. Expected ' + expectedSupabaseUrl);
-                console.error("AUTH ERROR:", error);
-                alertBox.style.display = 'block';
-                alertBox.textContent = error.message;
-                return;
-            }
-
             alertBox.style.display = 'block';
             alertBox.textContent = '⏳ Redirecting to Google...';
 
             try {
-                const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
+                const { error } = await window.supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: window.location.origin + window.location.pathname
+                        redirectTo: 'https://ft-agri-tech.systems/'
                     }
                 });
                 if (error) {
-                    console.error("OAuth Error:", error);
                     alertBox.textContent = error.message;
-                    return;
                 }
-            } catch (error) {
-                console.error("AUTH ERROR:", error);
-                alertBox.textContent = error?.message || 'Unknown authentication error.';
+            } catch (err) {
+                alertBox.textContent = err?.message || 'Authentication error';
             }
         }
 
@@ -471,11 +440,11 @@
         cards.forEach(card => {
             card.addEventListener('mousemove', e => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; 
-                const y = e.clientY - rect.top;  
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateX = ((y - centerY) / centerY) * -10;
                 const rotateY = ((x - centerX) / centerX) * 10;
                 card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
             });
