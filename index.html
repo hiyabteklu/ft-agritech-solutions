@@ -231,8 +231,8 @@
         <div class="footer-container">
             <h2>Contact us</h2>
             <div class="contact-links">
-                <button onclick="window.open('https://t.me/FT_Agri_Tech', '_blank')" class="contact-btn telegram-btn" style="border:none; cursor:pointer; font-family:inherit;">Telegram</button>
-                <button onclick="window.open('https://www.linkedin.com/company/ft-agritech-solutions/', '_blank')" class="contact-btn linkedin-btn" style="border:none; cursor:pointer; font-family:inherit;">LinkedIn</button>
+                <button class="contact-btn telegram-btn" style="border:none; cursor:pointer; font-family:inherit;">Telegram</button>
+                <button class="contact-btn linkedin-btn" style="border:none; cursor:pointer; font-family:inherit;">LinkedIn</button>
             </div>
             <p class="copyright">&copy; 2026 FT Agri-Tech Solutions. All systems operational.</p>
         </div>
@@ -290,7 +290,7 @@
         async function submitAuthForm(event) {
             event.preventDefault();
             const alertBox = document.getElementById('dev-alert');
-            const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbylyu.supabase.co';
+            const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbyiyu.supabase.co';
 
             if (window.supabaseClient?.supabaseUrl !== expectedSupabaseUrl) {
                 const error = new Error(`Invalid Supabase URL. Expected ${expectedSupabaseUrl}`);
