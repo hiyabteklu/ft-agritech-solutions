@@ -248,12 +248,7 @@
                 <p>Access your FT Agri-Tech portal to manage operations or deploy hardware.</p>
             </div>
             <div class="auth-form">
-                <input type="email" id="auth-email" placeholder="Corporate Email / Partner ID" class="auth-input">
-                <input type="password" id="auth-password" placeholder="Password / Access Key" class="auth-input">
-                <div style="display: flex; gap: 10px;">
-                    <button type="button" class="auth-submit-btn" style="flex: 1;" onclick="submitAuthForm('login', event)">Log In</button>
-                    <button type="button" class="auth-submit-btn" style="flex: 1;" onclick="submitAuthForm('signup', event)">Create Account</button>
-                </div>
+                <button type="button" class="auth-submit-btn" onclick="submitAuthForm(event)">Continue with Google</button>
             </div>
             <div id="dev-alert" class="dev-alert-box">
                 ⚠️ Notice: Registration and Login systems are currently under development. Please check back later.
@@ -292,28 +287,8 @@
             document.getElementById('auth-modal-overlay').classList.remove('active');
         }
         
-        function validateAuthInputs(email, password) {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (!email || !password) {
-                return 'Please enter both email and password.';
-            }
-
-            if (!emailPattern.test(email)) {
-                return 'Please enter a valid email address.';
-            }
-
-            if (password.length < 6) {
-                return 'Password must be at least 6 characters.';
-            }
-
-            return null;
-        }
-
-        async function submitAuthForm(action, event) {
+        async function submitAuthForm(event) {
             event.preventDefault();
-            const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').value;
             const alertBox = document.getElementById('dev-alert');
             const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbylgu.supabase.co';
 
@@ -326,51 +301,24 @@
             }
 
             alertBox.style.display = 'block';
-            const validationError = validateAuthInputs(email, password);
-            if (validationError) {
-                alertBox.textContent = validationError;
-                return;
-            }
-
-            alertBox.textContent = '⏳ Processing authentication...';
+            alertBox.textContent = '⏳ Redirecting to Google...';
 
             try {
-                if (action === 'login') {
-                    const { error } = await window.supabaseClient.auth.signInWithPassword({
-                        email,
-                        password
-                    });
-
-                    if (error) {
-                        alertBox.textContent = error.message;
-                        return;
+                const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: 'https://ft-agri-tech.systems'
                     }
-
-                    alertBox.textContent = '✅ Logged in successfully.';
+                });
+                if (error) {
+                    console.error("OAuth Error:", error);
+                    alertBox.textContent = error.message;
                     return;
                 }
-
-                if (action === 'signup') {
-                    const { data, error } = await window.supabaseClient.auth.signUp({
-                        email,
-                        password
-                    });
-
-                    if (error) {
-                        alertBox.textContent = error.message;
-                        return;
-                    }
-
-                    if (data?.session) {
-                        alertBox.textContent = '✅ Account created and logged in successfully.';
-                        return;
-                    }
-
-                    alertBox.textContent = '✅ Account created. Check your email to confirm your account.';
+                if (data?.url) {
+                    alertBox.textContent = '✅ Redirecting to Google sign-in...';
                     return;
                 }
-
-                alertBox.textContent = 'Invalid authentication action.';
             } catch (error) {
                 console.error("AUTH ERROR:", error);
                 alertBox.textContent = error?.message || 'Unknown authentication error.';
