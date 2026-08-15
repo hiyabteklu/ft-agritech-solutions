@@ -5,6 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FT Agri-Tech Solutions</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Logged-in profile chip */
+        .user-profile-chip {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            padding: 6px 14px 6px 8px;
+            border-radius: 30px;
+            max-width: 260px;
+        }
+        .user-profile-chip.visible {
+            display: flex;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            line-height: 1.2;
+        }
+        .user-name {
+            color: #10B981;
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .user-email {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .portal-btn.logged-in {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .user-profile-chip {
+                max-width: 180px;
+            }
+            .user-email {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -19,7 +87,17 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" id="solution-search" placeholder="Search solutions..." onkeyup="filterSolutions()">
             </div>
-            <button class="portal-btn" onclick="openAuthModal()">Register / Log In <span class="lock">🔒</span></button>
+
+            <!-- User profile chip (shown only when logged in) -->
+            <div id="user-profile-chip" class="user-profile-chip">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <div class="user-info">
+                    <span class="user-name" id="user-display-name">User</span>
+                    <span class="user-email" id="user-display-email"></span>
+                </div>
+            </div>
+
+            <button class="portal-btn" id="portal-btn" onclick="openAuthModal()">Register / Log In <span class="lock">🔒</span></button>
         </div>
     </nav>
 
@@ -231,8 +309,8 @@
         <div class="footer-container">
             <h2>Contact us</h2>
             <div class="contact-links">
-                <button class="contact-btn telegram-btn" style="border:none; cursor:pointer; font-family:inherit;">Telegram</button>
-                <button class="contact-btn linkedin-btn" style="border:none; cursor:pointer; font-family:inherit;">LinkedIn</button>
+                <button onclick="window.open('https://t.me/FT_Agri_Tech', '_blank')" class="contact-btn telegram-btn" style="border:none; cursor:pointer; font-family:inherit;">Telegram</button>
+                <button onclick="window.open('https://www.linkedin.com/company/ft-agritech-solutions/', '_blank')" class="contact-btn linkedin-btn" style="border:none; cursor:pointer; font-family:inherit;">LinkedIn</button>
             </div>
             <p class="copyright">&copy; 2026 FT Agri-Tech Solutions. All systems operational.</p>
         </div>
@@ -263,33 +341,66 @@
         // Check for active user session on page load
         window.onload = async function() {
             if (window.supabaseClient) {
-                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+                
+                if (error) {
+                    console.error('Session error:', error);
+                }
+                
                 updateAuthUI(session);
 
-                // Listen for changes (like logging in or out)
+                // Listen for changes (login / logout / token refresh)
                 window.supabaseClient.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth event:', event);
                     updateAuthUI(session);
                 });
             }
         };
 
-        // Change the button if logged in
+        // Update the navbar based on login status
         function updateAuthUI(session) {
-            const authBtn = document.querySelector('.portal-btn');
+            const authBtn = document.getElementById('portal-btn');
+            const profileChip = document.getElementById('user-profile-chip');
+            const avatarEl = document.getElementById('user-avatar');
+            const nameEl = document.getElementById('user-display-name');
+            const emailEl = document.getElementById('user-display-email');
+
             if (!authBtn) return;
             
-            if (session) {
-                // User IS logged in
-                authBtn.innerHTML = 'My Portal <span class="lock">🔓</span>';
+            if (session && session.user) {
+                // ===== LOGGED IN =====
+                const user = session.user;
+                const email = user.email || '';
+                const fullName = user.user_metadata?.full_name || user.user_metadata?.name || email.split('@')[0] || 'User';
+                const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
+                const initial = (fullName.charAt(0) || 'U').toUpperCase();
+
+                // Show profile chip
+                profileChip.classList.add('visible');
+                nameEl.textContent = fullName;
+                emailEl.textContent = email;
+
+                if (avatarUrl) {
+                    avatarEl.innerHTML = '<img src="' + avatarUrl + '" alt="' + fullName + '">';
+                } else {
+                    avatarEl.textContent = initial;
+                }
+
+                // Change button to Logout style
+                authBtn.classList.add('logged-in');
+                authBtn.innerHTML = 'Log Out <span class="lock">🔓</span>';
                 authBtn.onclick = async function() {
-                    const confirmLogout = confirm("You are logged in. Do you want to log out?");
+                    const confirmLogout = confirm('You are logged in as ' + email + '.\nDo you want to log out?');
                     if (confirmLogout) {
                         await window.supabaseClient.auth.signOut();
                         window.location.reload();
                     }
                 };
+
             } else {
-                // User IS NOT logged in
+                // ===== NOT LOGGED IN =====
+                profileChip.classList.remove('visible');
+                authBtn.classList.remove('logged-in');
                 authBtn.innerHTML = 'Register / Log In <span class="lock">🔒</span>';
                 authBtn.onclick = openAuthModal;
             }
@@ -328,7 +439,7 @@
             const expectedSupabaseUrl = 'https://qdfuddoznqlrkgkbyiyu.supabase.co';
 
             if (window.supabaseClient?.supabaseUrl !== expectedSupabaseUrl) {
-                const error = new Error(`Invalid Supabase URL. Expected ${expectedSupabaseUrl}`);
+                const error = new Error('Invalid Supabase URL. Expected ' + expectedSupabaseUrl);
                 console.error("AUTH ERROR:", error);
                 alertBox.style.display = 'block';
                 alertBox.textContent = error.message;
@@ -342,16 +453,12 @@
                 const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: 'https://ft-agri-tech.systems'
+                        redirectTo: window.location.origin + window.location.pathname
                     }
                 });
                 if (error) {
                     console.error("OAuth Error:", error);
                     alertBox.textContent = error.message;
-                    return;
-                }
-                if (data?.url) {
-                    alertBox.textContent = '✅ Redirecting to Google sign-in...';
                     return;
                 }
             } catch (error) {
@@ -370,10 +477,10 @@
                 const centerY = rect.height / 2;
                 const rotateX = ((y - centerY) / centerY) * -10; 
                 const rotateY = ((x - centerX) / centerX) * 10;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
             });
             card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
             });
         });
     </script>
