@@ -459,8 +459,10 @@
                 return;
             }
 
+            const sectorName = currentSectorData ? currentSectorData.title : 'Unknown Sector';
+
             const { error } = await window.supabaseClient.from('problems').insert([
-                { title, description }
+                { title, description, sector: sectorName }
             ]);
 
             if (error) {
@@ -505,8 +507,10 @@
                 return;
             }
 
+            const sectorName = currentSectorData ? currentSectorData.title : 'Unknown Sector';
+
             const { error } = await window.supabaseClient.from('custom_requests').insert([
-                { reason, parameters, contact }
+                { reason, parameters, contact, sector: sectorName }
             ]);
 
             if (error) {
