@@ -13,12 +13,18 @@ type AlertState = {
   ok: boolean;
 };
 
+type PendingAction = 'problem' | 'custom' | null;
+
 export default function CategoryClient({ sector }: { sector: Sector }) {
   const [user, setUser] = useState(null as User | null);
   const [authLoading, setAuthLoading] = useState(true);
   const [catalog, setCatalog] = useState(null as CatalogType);
   const [problemOpen, setProblemOpen] = useState(false);
   const [customOpen, setCustomOpen] = useState(false);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null as PendingAction);
+  const [noticeOpen, setNoticeOpen] = useState(false);
+  const [noticeMsg, setNoticeMsg] = useState('');
 
   const [probTitle, setProbTitle] = useState('');
   const [probDesc, setProbDesc] = useState('');
@@ -42,20 +48,6 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const requireAuth = async () => {
-    if (user) return true;
-    const confirmed = window.confirm(
-      'You need to sign in with Google to submit requests.\n\nContinue to login?'
-    );
-    if (confirmed) {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.href },
-      });
-    }
-    return false;
-  };
-
   const openCatalog = (type: 'local' | 'imported') => {
     setCatalog(type);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -66,16 +58,42 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const openProblemModal = async () => {
-    if (!(await requireAuth())) return;
+  const openProblemModal = () => {
+    if (!user) {
+      setPendingAction('problem');
+      setAuthPromptOpen(true);
+      return;
+    }
     setProbAlert(null);
     setProblemOpen(true);
   };
 
-  const openCustomModal = async () => {
-    if (!(await requireAuth())) return;
+  const openCustomModal = () => {
+    if (!user) {
+      setPendingAction('custom');
+      setAuthPromptOpen(true);
+      return;
+    }
     setCustomAlert(null);
     setCustomOpen(true);
+  };
+
+  const continueToLogin = async () => {
+    setAuthPromptOpen(false);
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href },
+    });
+  };
+
+  const cancelAuthPrompt = () => {
+    setAuthPromptOpen(false);
+    setPendingAction(null);
+  };
+
+  const showNotice = (msg: string) => {
+    setNoticeMsg(msg);
+    setNoticeOpen(true);
   };
 
   const submitProblem = async () => {
@@ -265,8 +283,66 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
           </section>
         </div>
       ) : (
-        <CatalogView sector={sector} type={catalog} onBack={closeCatalog} />
+        <CatalogView
+          sector={sector}
+          type={catalog}
+          onBack={closeCatalog}
+          onOrderNotice={() =>
+            showNotice(
+              'Procurement Gateway is offline while backend integration is completed. Contact us to place an order.'
+            )
+          }
+        />
       )}
+
+      {authPromptOpen ? (
+        <Modal onClose={cancelAuthPrompt} accent="gold">
+          <div className="mb-5 text-center">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gold/15 text-2xl">
+              🔐
+            </div>
+            <h3 className="text-xl font-bold text-white">Sign in required</h3>
+            <p className="mt-2 text-sm leading-relaxed text-gray-400">
+              You need to sign in with Google to submit requests to FT Agri-Tech R&amp;D.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={cancelAuthPrompt}
+              className="w-full rounded-lg border border-white/15 px-4 py-3 text-sm font-medium text-gray-300 transition hover:bg-white/5"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={continueToLogin}
+              className="w-full rounded-lg bg-brand-gold px-4 py-3 text-sm font-semibold text-black transition hover:opacity-90"
+            >
+              Continue with Google
+            </button>
+          </div>
+        </Modal>
+      ) : null}
+
+      {noticeOpen ? (
+        <Modal onClose={() => setNoticeOpen(false)} accent="gold">
+          <div className="mb-5 text-center">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gold/15 text-2xl">
+              ℹ️
+            </div>
+            <h3 className="text-xl font-bold text-white">Notice</h3>
+            <p className="mt-2 text-sm leading-relaxed text-gray-400">{noticeMsg}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setNoticeOpen(false)}
+            className="w-full rounded-lg bg-brand-gold px-4 py-3 text-sm font-semibold text-black transition hover:opacity-90"
+          >
+            Got it
+          </button>
+        </Modal>
+      ) : null}
 
       {problemOpen ? (
         <Modal onClose={() => setProblemOpen(false)} accent="red">
@@ -274,7 +350,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
             <span className="text-3xl">⚙️</span>
             <h3 className="mt-2 text-xl font-bold text-red-400">Report an Engineering Problem</h3>
             <p className="mt-1 text-sm text-gray-400">
-              Signed in as {user?.email}. Submit so R&D can analyze a solution.
+              Signed in as {user?.email}. Submit so R&amp;D can analyze a solution.
             </p>
           </div>
           <input
@@ -295,7 +371,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
             onClick={submitProblem}
             className="w-full rounded-lg bg-red-600 py-3 text-sm font-semibold text-white transition hover:bg-red-500"
           >
-            Submit to R&D
+            Submit to R&amp;D
           </button>
           {probAlert ? (
             <p
@@ -315,7 +391,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
         <Modal onClose={() => setCustomOpen(false)} accent="gold">
           <div className="mb-4 text-center">
             <span className="text-3xl">🔬</span>
-            <h3 className="mt-2 text-xl font-bold text-brand-gold">Custom R&D Request</h3>
+            <h3 className="mt-2 text-xl font-bold text-brand-gold">Custom R&amp;D Request</h3>
             <p className="mt-1 text-sm text-gray-400">
               Signed in as {user?.email}. Tell us what a custom solution must do.
             </p>
@@ -351,7 +427,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
             onClick={submitCustom}
             className="w-full rounded-lg bg-brand-gold py-3 text-sm font-semibold text-black transition hover:opacity-90"
           >
-            Initiate R&D Consultation
+            Initiate R&amp;D Consultation
           </button>
           {customAlert ? (
             <p
@@ -374,9 +450,10 @@ type CatalogViewProps = {
   sector: Sector;
   type: 'local' | 'imported';
   onBack: () => void;
+  onOrderNotice: () => void;
 };
 
-function CatalogView({ sector, type, onBack }: CatalogViewProps) {
+function CatalogView({ sector, type, onBack, onOrderNotice }: CatalogViewProps) {
   const products = sector.products[type];
   const label = type === 'local' ? 'Locally Developed' : 'Imported Solutions';
 
@@ -404,7 +481,7 @@ function CatalogView({ sector, type, onBack }: CatalogViewProps) {
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((prod) => (
-            <ProductCard key={prod.name} product={prod} type={type} />
+            <ProductCard key={prod.name} product={prod} type={type} onOrder={onOrderNotice} />
           ))}
 
           <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-transparent p-8 text-center opacity-50">
@@ -421,7 +498,15 @@ function CatalogView({ sector, type, onBack }: CatalogViewProps) {
   );
 }
 
-function ProductCard({ product, type }: { product: Product; type: 'local' | 'imported' }) {
+function ProductCard({
+  product,
+  type,
+  onOrder,
+}: {
+  product: Product;
+  type: 'local' | 'imported';
+  onOrder: () => void;
+}) {
   const accentBg = type === 'local' ? 'bg-brand-green text-black' : 'bg-blue-400 text-black';
   const borderTop = type === 'local' ? 'border-t-brand-green' : 'border-t-blue-400';
   const btnBg = type === 'local' ? 'bg-brand-green text-black' : 'bg-blue-400 text-black';
@@ -469,7 +554,7 @@ function ProductCard({ product, type }: { product: Product; type: 'local' | 'imp
         </div>
         <button
           type="button"
-          onClick={() => alert('Procurement Gateway Offline: Pending backend integration.')}
+          onClick={onOrder}
           className={'w-full rounded-lg py-3 text-sm font-bold transition hover:opacity-90 ' + btnBg}
         >
           Configure & Order
