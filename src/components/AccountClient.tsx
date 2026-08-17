@@ -40,6 +40,13 @@ type QuoteRow = {
   created_at: string;
 };
 
+type WithdrawTarget = {
+  table: 'quote_requests' | 'problems' | 'custom_requests';
+  id: string;
+  label: string;
+  title: string;
+};
+
 function statusColor(status: string | null | undefined) {
   const s = (status || 'pending').toLowerCase();
   if (s === 'resolved' || s === 'closed') return 'bg-brand-green/15 text-brand-green border-brand-green/30';
@@ -74,6 +81,7 @@ export default function AccountClient() {
   const [dataLoading, setDataLoading] = useState(false);
   const [busyId, setBusyId] = useState('');
   const [toast, setToast] = useState('');
+  const [withdrawTarget, setWithdrawTarget] = useState(null as WithdrawTarget | null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -143,20 +151,11 @@ export default function AccountClient() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  const withdraw = async (
-    table: 'quote_requests' | 'problems' | 'custom_requests',
-    id: string,
-    label: string
-  ) => {
-    if (!user?.email) return;
-    const ok = window.confirm(
-      `Withdraw this ${label}? It will be removed from your list and marked withdrawn for admins.`
-    );
-    if (!ok) return;
-
+  const confirmWithdraw = async () => {
+    if (!user?.email || !withdrawTarget) return;
+    const { table, id } = withdrawTarget;
     setBusyId(id);
 
-    // Prefer soft-withdraw (status) so admin still sees history; fall back to delete
     const { error: updateErr } = await supabase
       .from(table)
       .update({ status: 'withdrawn' })
@@ -171,6 +170,7 @@ export default function AccountClient() {
         .eq('user_email', user.email);
 
       setBusyId('');
+      setWithdrawTarget(null);
       if (delErr) {
         setToast('Could not withdraw: ' + (delErr.message || updateErr.message));
         return;
@@ -181,6 +181,7 @@ export default function AccountClient() {
     }
 
     setBusyId('');
+    setWithdrawTarget(null);
     setToast('Submission withdrawn');
     await load();
   };
@@ -230,6 +231,53 @@ export default function AccountClient() {
       {toast ? (
         <div className="fixed bottom-4 left-1/2 z-[300] max-w-[90vw] -translate-x-1/2 rounded-full border border-brand-green/40 bg-brand-card px-5 py-3 text-sm font-medium text-brand-green shadow-xl">
           {toast}
+        </div>
+      ) : null}
+
+      {withdrawTarget ? (
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4"
+          style={{
+            background: 'rgba(0,0,0,0.75)',
+            paddingTop: 'max(16px, env(safe-area-inset-top))',
+            paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+          }}
+          onClick={() => !busyId && setWithdrawTarget(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-red-500/40 bg-brand-card p-5 shadow-2xl sm:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/15 text-2xl">
+              ⚠️
+            </div>
+            <h3 className="text-center text-lg font-bold text-white">Withdraw {withdrawTarget.label}?</h3>
+            <p className="mt-2 text-center text-sm text-gray-400">
+              <span className="font-medium text-gray-200">{withdrawTarget.title}</span>
+              <br />
+              It will be marked as withdrawn. Admins can still see it in history.
+            </p>
+            <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+              <button
+                type="button"
+                disabled={!!busyId}
+                onClick={() => setWithdrawTarget(null)}
+                className="min-h-[48px] flex-1 rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold text-gray-200 transition hover:bg-white/10 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!!busyId}
+                onClick={confirmWithdraw}
+                className="min-h-[48px] flex-1 rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-500 disabled:opacity-50"
+              >
+                {busyId === withdrawTarget.id ? 'Withdrawing…' : 'Yes, withdraw'}
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
 
@@ -386,10 +434,17 @@ export default function AccountClient() {
                       <button
                         type="button"
                         disabled={busyId === q.id}
-                        onClick={() => withdraw('quote_requests', q.id, 'quote')}
+                        onClick={() =>
+                          setWithdrawTarget({
+                            table: 'quote_requests',
+                            id: q.id,
+                            label: 'quote',
+                            title: q.product_name,
+                          })
+                        }
                         className="mt-3 min-h-[40px] rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400 disabled:opacity-50"
                       >
-                        {busyId === q.id ? 'Withdrawing…' : 'Withdraw request'}
+                        Withdraw request
                       </button>
                     ) : null}
                   </li>
@@ -446,10 +501,17 @@ export default function AccountClient() {
                             <button
                               type="button"
                               disabled={busyId === p.id}
-                              onClick={() => withdraw('problems', p.id, 'problem report')}
+                              onClick={() =>
+                                setWithdrawTarget({
+                                  table: 'problems',
+                                  id: p.id,
+                                  label: 'problem report',
+                                  title: p.title,
+                                })
+                              }
                               className="mt-3 min-h-[40px] rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400 disabled:opacity-50"
                             >
-                              {busyId === p.id ? 'Withdrawing…' : 'Withdraw submission'}
+                              Withdraw submission
                             </button>
                           ) : null}
                         </li>
@@ -495,10 +557,17 @@ export default function AccountClient() {
                             <button
                               type="button"
                               disabled={busyId === c.id}
-                              onClick={() => withdraw('custom_requests', c.id, 'R&D request')}
+                              onClick={() =>
+                                setWithdrawTarget({
+                                  table: 'custom_requests',
+                                  id: c.id,
+                                  label: 'R&D request',
+                                  title: c.sector || 'Custom R&D',
+                                })
+                              }
                               className="mt-3 min-h-[40px] rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400 disabled:opacity-50"
                             >
-                              {busyId === c.id ? 'Withdrawing…' : 'Withdraw submission'}
+                              Withdraw submission
                             </button>
                           ) : null}
                         </li>
