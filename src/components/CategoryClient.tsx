@@ -5,6 +5,12 @@ import type { User } from '@supabase/supabase-js';
 import type { Sector, Product } from '@/data/sectors';
 import { productImagePath } from '@/data/sectors';
 import { supabase } from '@/lib/supabase';
+import {
+  contactHint,
+  phoneHint,
+  quantityHint,
+  requiredText,
+} from '@/lib/validation';
 
 type CatalogType = 'local' | 'imported' | null;
 
@@ -70,21 +76,21 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
   useEffect(() => {
     if (quoteAlert && !quoteAlert.ok) {
-      const t = setTimeout(() => setQuoteAlert(null), 4500);
+      const t = setTimeout(() => setQuoteAlert(null), 5000);
       return () => clearTimeout(t);
     }
   }, [quoteAlert]);
 
   useEffect(() => {
     if (probAlert && !probAlert.ok) {
-      const t = setTimeout(() => setProbAlert(null), 4500);
+      const t = setTimeout(() => setProbAlert(null), 5000);
       return () => clearTimeout(t);
     }
   }, [probAlert]);
 
   useEffect(() => {
     if (customAlert && !customAlert.ok) {
-      const t = setTimeout(() => setCustomAlert(null), 4500);
+      const t = setTimeout(() => setCustomAlert(null), 5000);
       return () => clearTimeout(t);
     }
   }, [customAlert]);
@@ -151,13 +157,18 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
   const submitQuote = async () => {
     if (!user || !quoteProduct) return;
-    if (!quotePhone.trim()) {
-      setQuoteAlert({
-        msg: 'Please add a phone or WhatsApp number so we can reach you.',
-        ok: false,
-      });
+
+    const qtyErr = quantityHint(quoteQty);
+    if (qtyErr) {
+      setQuoteAlert({ msg: qtyErr, ok: false });
       return;
     }
+    const phoneErr = phoneHint(quotePhone);
+    if (phoneErr) {
+      setQuoteAlert({ msg: phoneErr, ok: false });
+      return;
+    }
+
     setQuoteSending(true);
     const { error } = await supabase.from('quote_requests').insert([
       {
@@ -193,11 +204,14 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
       setProbAlert({ msg: 'Please sign in before submitting.', ok: false });
       return;
     }
-    if (!probTitle.trim() || !probDesc.trim()) {
-      setProbAlert({
-        msg: 'Please provide both a problem title and description.',
-        ok: false,
-      });
+    const titleErr = requiredText(probTitle, 'Problem title', 3);
+    if (titleErr) {
+      setProbAlert({ msg: titleErr, ok: false });
+      return;
+    }
+    const descErr = requiredText(probDesc, 'Description', 10);
+    if (descErr) {
+      setProbAlert({ msg: descErr, ok: false });
       return;
     }
     const { error } = await supabase.from('problems').insert([
@@ -206,6 +220,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
         description: probDesc.trim(),
         sector: sector.title,
         user_email: user.email ?? null,
+        status: 'pending',
       },
     ]);
     if (error) {
@@ -222,10 +237,22 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
       setCustomAlert({ msg: 'Please sign in before submitting.', ok: false });
       return;
     }
-    if (!customReason.trim() || !customParams.trim() || !customContact.trim()) {
-      setCustomAlert({ msg: 'Please complete all custom request fields.', ok: false });
+    const reasonErr = requiredText(customReason, 'Reason', 10);
+    if (reasonErr) {
+      setCustomAlert({ msg: reasonErr, ok: false });
       return;
     }
+    const paramsErr = requiredText(customParams, 'Parameters', 5);
+    if (paramsErr) {
+      setCustomAlert({ msg: paramsErr, ok: false });
+      return;
+    }
+    const contactErr = contactHint(customContact);
+    if (contactErr) {
+      setCustomAlert({ msg: contactErr, ok: false });
+      return;
+    }
+
     const { error } = await supabase.from('custom_requests').insert([
       {
         reason: customReason.trim(),
@@ -233,6 +260,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
         contact: customContact.trim(),
         sector: sector.title,
         user_email: user.email ?? null,
+        status: 'pending',
       },
     ]);
     if (error) {
@@ -430,6 +458,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                   onChange={(e) => setQuoteQty(e.target.value)}
                   className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
                   placeholder="1"
+                  inputMode="numeric"
                 />
               </label>
               <label className="mb-2.5 block text-left">
@@ -438,9 +467,12 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                   value={quotePhone}
                   onChange={(e) => setQuotePhone(e.target.value)}
                   className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
-                  placeholder="+251..."
+                  placeholder="09xxxxxxxx or 07xxxxxxxx"
                   inputMode="tel"
                 />
+                <span className="mt-1 block text-[11px] text-gray-500">
+                  Must start with 09 or 07 · 10 digits (or +2519… / +2517…)
+                </span>
               </label>
               <label className="mb-3 block text-left">
                 <span className="mb-1 block text-xs text-gray-400">Notes (optional)</span>
@@ -488,13 +520,13 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
               <input
                 value={probTitle}
                 onChange={(e) => setProbTitle(e.target.value)}
-                placeholder="Problem title"
+                placeholder="Problem title (min 3 characters)"
                 className="mb-2.5 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400/30"
               />
               <textarea
                 value={probDesc}
                 onChange={(e) => setProbDesc(e.target.value)}
-                placeholder="Describe the issue and impact..."
+                placeholder="Describe the issue and impact (min 10 characters)..."
                 rows={3}
                 className="mb-3 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400/30"
               />
@@ -534,7 +566,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
               <textarea
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
-                placeholder="Describe the gap..."
+                placeholder="Describe the gap (min 10 characters)..."
                 rows={2}
                 className="mb-2.5 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
               />
@@ -546,12 +578,18 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 rows={2}
                 className="mb-2.5 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
               />
-              <input
-                value={customContact}
-                onChange={(e) => setCustomContact(e.target.value)}
-                placeholder="Contact email / phone"
-                className="mb-3 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
-              />
+              <label className="mb-3 block text-left">
+                <span className="mb-1 block text-xs text-gray-400">Contact email or phone</span>
+                <input
+                  value={customContact}
+                  onChange={(e) => setCustomContact(e.target.value)}
+                  placeholder="name@gmail.com or 09xxxxxxxx"
+                  className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
+                />
+                <span className="mt-1 block text-[11px] text-gray-500">
+                  Email like name@gmail.com · or phone 09/07 + 10 digits
+                </span>
+              </label>
               <button
                 type="button"
                 onClick={submitCustom}
