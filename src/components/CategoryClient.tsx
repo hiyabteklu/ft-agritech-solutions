@@ -263,7 +263,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
               <h2 className="mb-4 border-b border-brand-gold/30 pb-2 text-2xl font-bold text-white">
                 Background & Scope in Ethiopia
               </h2>
-              <div className="card-alive rounded-2xl border border-white/10 bg-brand-card p-6">
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-6">
                 <p className="leading-relaxed text-gray-300">{sector.scope}</p>
               </div>
             </div>
@@ -275,13 +275,10 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 Problems Identified
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                {sector.problems.map((p, i) => (
+                {sector.problems.map((p) => (
                   <div
                     key={p.title}
-                    className={
-                      'card-alive rounded-2xl border border-white/10 border-t-4 border-t-red-500 bg-brand-card p-5 animate-fade-up stagger-' +
-                      Math.min(i + 1, 6)
-                    }
+                    className="rounded-2xl border border-white/10 border-t-4 border-t-red-500 bg-brand-card p-5"
                   >
                     <h3 className="mb-2 font-semibold text-red-400">{p.title}</h3>
                     <p className="text-sm leading-relaxed text-gray-300">{p.text}</p>
@@ -297,7 +294,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                   type="button"
                   onClick={openProblemModal}
                   disabled={authLoading}
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-red-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-900/30 transition hover:bg-red-500 hover:shadow-red-800/40 active:scale-[0.98] disabled:opacity-50"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-red-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-900/30 transition hover:bg-red-500 active:scale-[0.98] disabled:opacity-50"
                 >
                   + Report New Problem
                 </button>
@@ -317,12 +314,12 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 <button
                   type="button"
                   onClick={() => openCatalog('local')}
-                  className="tile-3d group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left hover:border-brand-green/40"
+                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:border-brand-green/40"
                 >
                   <img
                     src={'/assets/images/' + sector.imgPrefix + '_hand.jpg'}
                     alt="Locally Developed"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
                   <div className="absolute bottom-0 p-5 sm:p-6">
@@ -337,12 +334,12 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 <button
                   type="button"
                   onClick={() => openCatalog('imported')}
-                  className="tile-3d group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left hover:border-blue-400/40"
+                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:border-blue-400/40"
                 >
                   <img
                     src={'/assets/images/' + sector.imgPrefix + '_import.jpg'}
                     alt="Imported Solutions"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
                   <div className="absolute bottom-0 p-5 sm:p-6">
@@ -357,12 +354,12 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 <button
                   type="button"
                   onClick={openCustomModal}
-                  className="tile-3d group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left hover:border-brand-gold/40"
+                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:border-brand-gold/40"
                 >
                   <img
                     src="/assets/images/custom_design_lab.jpg"
                     alt="Request Custom Design"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
                   <div className="absolute bottom-0 p-5 sm:p-6">
@@ -490,8 +487,8 @@ function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
         </h2>
         <p className="mb-8 text-base text-gray-400">Select an engineering intervention to view deployment specifications and pricing.</p>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((prod, i) => (
-            <ProductCard key={prod.name} product={prod} type={type} onOrder={() => onOrder(prod)} index={i} />
+          {products.map((prod) => (
+            <ProductCard key={prod.name} product={prod} type={type} onOrder={() => onOrder(prod)} />
           ))}
           <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/15 bg-transparent p-8 text-center opacity-60">
             <div className="mb-3 text-4xl">⚙️</div>
@@ -504,29 +501,65 @@ function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
   );
 }
 
-function ProductCard({ product, type, onOrder, index }: { product: Product; type: 'local' | 'imported'; onOrder: () => void; index: number }) {
+function ProductCard({ product, type, onOrder }: { product: Product; type: 'local' | 'imported'; onOrder: () => void }) {
   const accentBg = type === 'local' ? 'bg-brand-green text-black' : 'bg-blue-400 text-black';
   const borderTop = type === 'local' ? 'border-t-brand-green' : 'border-t-blue-400';
   const btnBg = type === 'local' ? 'bg-brand-green text-black' : 'bg-blue-400 text-black';
+
   return (
-    <div className={'card-alive flex flex-col justify-between rounded-2xl border border-white/10 border-t-4 bg-brand-card p-6 animate-fade-up stagger-' + Math.min(index + 1, 6) + ' ' + borderTop}>
+    <div
+      className={
+        'relative z-0 flex flex-col justify-between rounded-2xl border border-white/10 border-t-4 bg-brand-card p-6 ' +
+        borderTop
+      }
+    >
       <div>
         <div className="mb-4 aspect-square overflow-hidden rounded-xl bg-black/40">
-          <img src={productImagePath(product.name)} alt={product.name} className="h-full w-full object-cover transition duration-500 hover:scale-105" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          <img
+            src={productImagePath(product.name)}
+            alt={product.name}
+            className="h-full w-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
         </div>
         <div className="mb-3 flex items-start justify-between gap-2 border-b border-white/10 pb-3">
           <h3 className="text-lg font-semibold text-white">{product.name}</h3>
-          <span className={'shrink-0 rounded-md px-2.5 py-1 text-xs font-bold ' + accentBg}>{product.status}</span>
+          <span className={'shrink-0 rounded-md px-2.5 py-1 text-xs font-bold ' + accentBg}>
+            {product.status}
+          </span>
         </div>
-        <p className="mb-2 text-sm text-gray-400"><strong>Solves:</strong> <span className="text-red-400">{product.solves}</span></p>
+        <p className="mb-2 text-sm text-gray-400">
+          <strong>Solves:</strong> <span className="text-red-400">{product.solves}</span>
+        </p>
         <p className="mb-4 text-sm leading-relaxed text-gray-200">{product.desc}</p>
       </div>
-      <div>
+      <div className="relative z-10">
         <div className="mb-4 flex items-center justify-between rounded-xl bg-black/30 p-3.5">
-          <div><p className="text-xs text-gray-500">Unit Pricing</p><p className="text-lg font-bold text-brand-gold">{product.price}</p></div>
-          <div className="text-right"><p className="text-xs text-gray-500">Field Rating</p><p className="font-bold text-white">⭐ {product.rating}</p></div>
+          <div>
+            <p className="text-xs text-gray-500">Unit Pricing</p>
+            <p className="text-lg font-bold text-brand-gold">{product.price}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-500">Field Rating</p>
+            <p className="font-bold text-white">⭐ {product.rating}</p>
+          </div>
         </div>
-        <button type="button" onClick={onOrder} className={'min-h-[48px] w-full rounded-xl py-3.5 text-base font-bold shadow-md transition hover:opacity-90 active:scale-[0.98] ' + btnBg}>Configure & Order</button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onOrder();
+          }}
+          className={
+            'relative z-20 min-h-[48px] w-full touch-manipulation rounded-xl py-3.5 text-base font-bold shadow-md transition hover:opacity-90 active:scale-[0.98] ' +
+            btnBg
+          }
+        >
+          Configure & Order
+        </button>
       </div>
     </div>
   );
@@ -536,17 +569,49 @@ type ModalProps = { children: React.ReactNode; onClose: () => void; accent: 'red
 
 function Modal({ children, onClose, accent }: ModalProps) {
   const borderClass = accent === 'red' ? 'border-red-500/40' : 'border-brand-gold/40';
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
     document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
   }, [onClose]);
+
   return (
-    <div className="modal-backdrop fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4 backdrop-blur-md" onClick={onClose} role="dialog" aria-modal="true">
-      <div className={'modal-panel relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border bg-brand-card p-6 pt-14 shadow-2xl sm:p-8 sm:pt-16 ' + borderClass} onClick={(e) => e.stopPropagation()}>
-        <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg font-bold text-white transition hover:bg-white/20 active:scale-95 sm:right-4 sm:top-4">✕</button>
-        {children}
+    <div
+      className="fixed inset-0 z-[200] flex items-end justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className={
+          'relative flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border bg-brand-card shadow-2xl sm:max-h-[90vh] sm:rounded-2xl ' +
+          borderClass
+        }
+        onClick={(e) => e.stopPropagation()}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
+        {/* Sticky header with always-visible close */}
+        <div className="sticky top-0 z-10 flex shrink-0 items-center justify-end border-b border-white/10 bg-brand-card/95 px-4 py-3 backdrop-blur-sm">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-bold text-white transition hover:bg-white/20 active:scale-95"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="overflow-y-auto overscroll-contain px-5 pb-8 pt-2 sm:px-8 sm:pb-8">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -554,9 +619,24 @@ function Modal({ children, onClose, accent }: ModalProps) {
 
 function AlertBanner({ ok, msg, onDismiss }: { ok: boolean; msg: string; onDismiss: () => void }) {
   return (
-    <div className={'mt-4 animate-scale-in rounded-xl border p-4 ' + (ok ? 'border-brand-green/40 bg-brand-green/10' : 'border-brand-gold/40 bg-brand-gold/10')}>
-      <p className={'text-center text-base font-medium ' + (ok ? 'text-brand-green' : 'text-brand-gold')}>{msg}</p>
-      {ok ? <button type="button" onClick={onDismiss} className="mt-4 min-h-[44px] w-full rounded-xl border border-brand-green/50 bg-brand-green/20 py-2.5 text-base font-semibold text-brand-green transition hover:bg-brand-green/30 active:scale-[0.98]">Close</button> : null}
+    <div
+      className={
+        'mt-4 animate-scale-in rounded-xl border p-4 ' +
+        (ok ? 'border-brand-green/40 bg-brand-green/10' : 'border-brand-gold/40 bg-brand-gold/10')
+      }
+    >
+      <p className={'text-center text-base font-medium ' + (ok ? 'text-brand-green' : 'text-brand-gold')}>
+        {msg}
+      </p>
+      {ok ? (
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="mt-4 min-h-[44px] w-full rounded-xl border border-brand-green/50 bg-brand-green/20 py-2.5 text-base font-semibold text-brand-green transition hover:bg-brand-green/30 active:scale-[0.98]"
+        >
+          Close
+        </button>
+      ) : null}
     </div>
   );
 }
