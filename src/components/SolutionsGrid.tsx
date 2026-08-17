@@ -63,7 +63,7 @@ export default function SolutionsGrid() {
                 key={item.slug}
                 href={`/category/${item.slug}`}
                 className={
-                  'group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 transition duration-500 hover:scale-[1.03] hover:border-brand-green/35 hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.4)] animate-fade-up stagger-' +
+                  'tile-3d group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 animate-fade-up stagger-' +
                   Math.min(i + 1, 6)
                 }
               >
