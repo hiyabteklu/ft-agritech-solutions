@@ -101,7 +101,7 @@ export default function AdminClient() {
   return (
     <div className="min-h-screen bg-brand-dark text-white">
       <Navbar />
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-5xl animate-fade-up px-4 py-10 sm:px-6">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold sm:text-3xl">Admin dashboard</h1>
@@ -109,9 +109,12 @@ export default function AdminClient() {
           </div>
           <Link
             href="/"
-            className="rounded-full border border-white/15 px-4 py-2 text-sm text-gray-300 hover:bg-white/5"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-full border-2 border-white/20 bg-white/5 px-5 py-2.5 text-base font-semibold text-gray-200 transition hover:bg-white/10 active:scale-[0.98]"
           >
-            ← Portal
+            <span className="text-lg leading-none" aria-hidden>
+              ←
+            </span>
+            Portal
           </Link>
         </div>
 
@@ -122,7 +125,7 @@ export default function AdminClient() {
               type="button"
               onClick={() => setTab(t.id)}
               className={
-                'shrink-0 border-b-2 px-4 py-2.5 text-sm font-medium ' +
+                'min-h-[48px] shrink-0 border-b-2 px-5 py-3 text-base font-semibold ' +
                 (tab === t.id
                   ? 'border-brand-gold text-brand-gold'
                   : 'border-transparent text-gray-400 hover:text-white')
@@ -134,9 +137,9 @@ export default function AdminClient() {
         </div>
 
         {error ? (
-          <div className="rounded-xl border border-brand-gold/30 bg-brand-gold/10 p-4 text-sm text-brand-gold">
+          <div className="rounded-xl border border-brand-gold/30 bg-brand-gold/10 p-4 text-base text-brand-gold">
             {error}
-            <p className="mt-2 text-xs text-gray-400">
+            <p className="mt-2 text-sm text-gray-400">
               If this is an RLS error, run the admin policies in <code>supabase-tables.sql</code>.
             </p>
           </div>
@@ -151,7 +154,7 @@ export default function AdminClient() {
             {rows.map((row, i) => (
               <li
                 key={String(row.id || i)}
-                className="rounded-xl border border-white/10 bg-brand-card p-4 text-sm"
+                className="card-alive rounded-xl border border-white/10 bg-brand-card p-4 text-sm"
               >
                 <pre className="overflow-x-auto whitespace-pre-wrap break-words text-xs text-gray-300">
                   {JSON.stringify(row, null, 2)}
