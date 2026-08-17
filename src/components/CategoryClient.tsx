@@ -380,37 +380,89 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
       {authPromptOpen ? (
         <Modal onClose={() => setAuthPromptOpen(false)} accent="gold">
-          <div className="mb-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-gold/15 text-3xl">🔐</div>
-            <h3 className="text-2xl font-bold text-white">Sign in required</h3>
-            <p className="mt-3 text-base leading-relaxed text-gray-400">
+          <div className="mb-4 text-center">
+            <h3 className="text-xl font-bold text-white sm:text-2xl">Sign in required</h3>
+            <p className="mt-2 text-sm leading-relaxed text-gray-400 sm:text-base">
               Sign in with Google to request quotes, report problems, or submit custom R&D.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button type="button" onClick={() => setAuthPromptOpen(false)} className="min-h-[48px] w-full rounded-xl border border-white/20 px-5 py-3.5 text-base font-semibold text-gray-200 transition hover:bg-white/10 active:scale-[0.98]">Cancel</button>
-            <button type="button" onClick={continueToLogin} className="min-h-[48px] w-full rounded-xl bg-brand-gold px-5 py-3.5 text-base font-bold text-black shadow-lg shadow-brand-gold/20 transition hover:opacity-90 active:scale-[0.98]">Continue with Google</button>
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setAuthPromptOpen(false)}
+              className="min-h-[44px] w-full rounded-xl border border-white/20 px-4 py-3 text-sm font-semibold text-gray-200 transition hover:bg-white/10 active:scale-[0.98] sm:text-base"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={continueToLogin}
+              className="min-h-[44px] w-full rounded-xl bg-brand-gold px-4 py-3 text-sm font-bold text-black transition hover:opacity-90 active:scale-[0.98] sm:text-base"
+            >
+              Continue with Google
+            </button>
           </div>
         </Modal>
       ) : null}
 
       {quoteProduct ? (
         <Modal onClose={() => setQuoteProduct(null)} accent="gold">
-          <div className="mb-5 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green/15 text-3xl">📦</div>
-            <h3 className="text-2xl font-bold text-white">Request a quote</h3>
-            <p className="mt-2 text-base text-gray-400">{quoteProduct.name}</p>
-            <p className="text-base font-semibold text-brand-gold">{quoteProduct.price}</p>
+          <div className="mb-3 text-center">
+            <h3 className="text-lg font-bold text-white sm:text-xl">Request a quote</h3>
+            <p className="mt-1 line-clamp-2 text-sm text-gray-400">{quoteProduct.name}</p>
+            <p className="text-sm font-semibold text-brand-gold">{quoteProduct.price}</p>
           </div>
           {quoteAlert?.ok ? (
-            <AlertBanner ok msg={quoteAlert.msg} onDismiss={() => { setQuoteAlert(null); setQuoteProduct(null); }} />
+            <AlertBanner
+              ok
+              msg={quoteAlert.msg}
+              onDismiss={() => {
+                setQuoteAlert(null);
+                setQuoteProduct(null);
+              }}
+            />
           ) : (
             <>
-              <label className="mb-4 block text-left"><span className="mb-1.5 block text-sm text-gray-400">Quantity</span><input value={quoteQty} onChange={(e) => setQuoteQty(e.target.value)} className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30" placeholder="1" /></label>
-              <label className="mb-4 block text-left"><span className="mb-1.5 block text-sm text-gray-400">Phone / WhatsApp</span><input value={quotePhone} onChange={(e) => setQuotePhone(e.target.value)} className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30" placeholder="+251..." /></label>
-              <label className="mb-5 block text-left"><span className="mb-1.5 block text-sm text-gray-400">Notes (optional)</span><textarea value={quoteNotes} onChange={(e) => setQuoteNotes(e.target.value)} rows={3} className="w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30" placeholder="Site location, timeline, special requirements..." /></label>
-              <button type="button" onClick={submitQuote} disabled={quoteSending} className="min-h-[52px] w-full rounded-xl bg-brand-green py-3.5 text-base font-bold text-black shadow-lg shadow-brand-green/20 transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50">{quoteSending ? 'Sending…' : 'Submit quote request'}</button>
-              {quoteAlert && !quoteAlert.ok ? <AlertBanner ok={false} msg={quoteAlert.msg} onDismiss={() => setQuoteAlert(null)} /> : null}
+              <label className="mb-2.5 block text-left">
+                <span className="mb-1 block text-xs text-gray-400">Quantity</span>
+                <input
+                  value={quoteQty}
+                  onChange={(e) => setQuoteQty(e.target.value)}
+                  className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
+                  placeholder="1"
+                />
+              </label>
+              <label className="mb-2.5 block text-left">
+                <span className="mb-1 block text-xs text-gray-400">Phone / WhatsApp</span>
+                <input
+                  value={quotePhone}
+                  onChange={(e) => setQuotePhone(e.target.value)}
+                  className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
+                  placeholder="+251..."
+                  inputMode="tel"
+                />
+              </label>
+              <label className="mb-3 block text-left">
+                <span className="mb-1 block text-xs text-gray-400">Notes (optional)</span>
+                <textarea
+                  value={quoteNotes}
+                  onChange={(e) => setQuoteNotes(e.target.value)}
+                  rows={2}
+                  className="w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
+                  placeholder="Site, timeline, requirements..."
+                />
+              </label>
+              <button
+                type="button"
+                onClick={submitQuote}
+                disabled={quoteSending}
+                className="min-h-[44px] w-full rounded-xl bg-brand-green py-3 text-sm font-bold text-black transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+              >
+                {quoteSending ? 'Sending…' : 'Submit quote request'}
+              </button>
+              {quoteAlert && !quoteAlert.ok ? (
+                <AlertBanner ok={false} msg={quoteAlert.msg} onDismiss={() => setQuoteAlert(null)} />
+              ) : null}
             </>
           )}
         </Modal>
@@ -418,19 +470,44 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
       {problemOpen ? (
         <Modal onClose={() => setProblemOpen(false)} accent="red">
-          <div className="mb-5 text-center">
-            <span className="text-4xl">⚙️</span>
-            <h3 className="mt-3 text-2xl font-bold text-red-400">Report an Engineering Problem</h3>
-            <p className="mt-2 text-base text-gray-400">Signed in as {user?.email}. Submit so R&D can analyze a solution.</p>
+          <div className="mb-3 text-center">
+            <h3 className="text-lg font-bold text-red-400 sm:text-xl">Report a Problem</h3>
+            <p className="mt-1 text-xs text-gray-400 sm:text-sm">Signed in as {user?.email}</p>
           </div>
           {probAlert?.ok ? (
-            <AlertBanner ok msg={probAlert.msg} onDismiss={() => { setProbAlert(null); setProblemOpen(false); }} />
+            <AlertBanner
+              ok
+              msg={probAlert.msg}
+              onDismiss={() => {
+                setProbAlert(null);
+                setProblemOpen(false);
+              }}
+            />
           ) : (
             <>
-              <input value={probTitle} onChange={(e) => setProbTitle(e.target.value)} placeholder="Problem Title (e.g., Sensor Failure)" className="mb-4 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-400/30" />
-              <textarea value={probDesc} onChange={(e) => setProbDesc(e.target.value)} placeholder="Describe the technical issue and its impact..." rows={4} className="mb-5 w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-400/30" />
-              <button type="button" onClick={submitProblem} className="min-h-[52px] w-full rounded-xl bg-red-600 py-3.5 text-base font-bold text-white shadow-lg shadow-red-900/30 transition hover:bg-red-500 active:scale-[0.98]">Submit to R&D</button>
-              {probAlert && !probAlert.ok ? <AlertBanner ok={false} msg={probAlert.msg} onDismiss={() => setProbAlert(null)} /> : null}
+              <input
+                value={probTitle}
+                onChange={(e) => setProbTitle(e.target.value)}
+                placeholder="Problem title"
+                className="mb-2.5 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400/30"
+              />
+              <textarea
+                value={probDesc}
+                onChange={(e) => setProbDesc(e.target.value)}
+                placeholder="Describe the issue and impact..."
+                rows={3}
+                className="mb-3 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400/30"
+              />
+              <button
+                type="button"
+                onClick={submitProblem}
+                className="min-h-[44px] w-full rounded-xl bg-red-600 py-3 text-sm font-bold text-white transition hover:bg-red-500 active:scale-[0.98]"
+              >
+                Submit to R&D
+              </button>
+              {probAlert && !probAlert.ok ? (
+                <AlertBanner ok={false} msg={probAlert.msg} onDismiss={() => setProbAlert(null)} />
+              ) : null}
             </>
           )}
         </Modal>
@@ -438,22 +515,53 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
       {customOpen ? (
         <Modal onClose={() => setCustomOpen(false)} accent="gold">
-          <div className="mb-5 text-center">
-            <span className="text-4xl">🔬</span>
-            <h3 className="mt-3 text-2xl font-bold text-brand-gold">Custom R&D Request</h3>
-            <p className="mt-2 text-base text-gray-400">Signed in as {user?.email}. Tell us what a custom solution must do.</p>
+          <div className="mb-3 text-center">
+            <h3 className="text-lg font-bold text-brand-gold sm:text-xl">Custom R&D Request</h3>
+            <p className="mt-1 text-xs text-gray-400 sm:text-sm">Signed in as {user?.email}</p>
           </div>
           {customAlert?.ok ? (
-            <AlertBanner ok msg={customAlert.msg} onDismiss={() => { setCustomAlert(null); setCustomOpen(false); }} />
+            <AlertBanner
+              ok
+              msg={customAlert.msg}
+              onDismiss={() => {
+                setCustomAlert(null);
+                setCustomOpen(false);
+              }}
+            />
           ) : (
             <>
-              <p className="mb-1.5 text-left text-sm text-gray-400">1. Why are the standard solutions insufficient?</p>
-              <textarea value={customReason} onChange={(e) => setCustomReason(e.target.value)} placeholder="e.g., The standard pumps cannot handle our high-sediment water..." rows={3} className="mb-4 w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30" />
-              <p className="mb-1.5 text-left text-sm text-gray-400">2. What exact parameters must the new solution meet?</p>
-              <textarea value={customParams} onChange={(e) => setCustomParams(e.target.value)} placeholder="e.g., Must run on 12V solar, process 500L/hour, and cost under 15,000 ETB..." rows={3} className="mb-4 w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30" />
-              <input value={customContact} onChange={(e) => setCustomContact(e.target.value)} placeholder="Engineering Lead Contact Email / Phone" className="mb-5 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30" />
-              <button type="button" onClick={submitCustom} className="min-h-[52px] w-full rounded-xl bg-brand-gold py-3.5 text-base font-bold text-black shadow-lg shadow-brand-gold/20 transition hover:opacity-90 active:scale-[0.98]">Initiate R&D Consultation</button>
-              {customAlert && !customAlert.ok ? <AlertBanner ok={false} msg={customAlert.msg} onDismiss={() => setCustomAlert(null)} /> : null}
+              <p className="mb-1 text-left text-xs text-gray-400">1. Why are standard solutions insufficient?</p>
+              <textarea
+                value={customReason}
+                onChange={(e) => setCustomReason(e.target.value)}
+                placeholder="Describe the gap..."
+                rows={2}
+                className="mb-2.5 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
+              />
+              <p className="mb-1 text-left text-xs text-gray-400">2. Required parameters</p>
+              <textarea
+                value={customParams}
+                onChange={(e) => setCustomParams(e.target.value)}
+                placeholder="Specs, budget, constraints..."
+                rows={2}
+                className="mb-2.5 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
+              />
+              <input
+                value={customContact}
+                onChange={(e) => setCustomContact(e.target.value)}
+                placeholder="Contact email / phone"
+                className="mb-3 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"
+              />
+              <button
+                type="button"
+                onClick={submitCustom}
+                className="min-h-[44px] w-full rounded-xl bg-brand-gold py-3 text-sm font-bold text-black transition hover:opacity-90 active:scale-[0.98]"
+              >
+                Initiate R&D Consultation
+              </button>
+              {customAlert && !customAlert.ok ? (
+                <AlertBanner ok={false} msg={customAlert.msg} onDismiss={() => setCustomAlert(null)} />
+              ) : null}
             </>
           )}
         </Modal>
@@ -476,8 +584,14 @@ function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
   return (
     <section className="animate-fade-up px-4 py-8 pb-16 sm:px-6">
       <div className="mx-auto max-w-7xl">
-        <button type="button" onClick={onBack} className="mb-8 inline-flex min-h-[48px] items-center gap-2 rounded-full border-2 border-brand-gold bg-brand-gold/10 px-6 py-3 text-base font-semibold text-brand-gold shadow-md shadow-brand-gold/10 transition hover:bg-brand-gold/20 active:scale-[0.98]">
-          <span className="text-xl leading-none" aria-hidden>←</span>
+        <button
+          type="button"
+          onClick={onBack}
+          className="mb-8 inline-flex min-h-[48px] items-center gap-2 rounded-full border-2 border-brand-gold bg-brand-gold/10 px-6 py-3 text-base font-semibold text-brand-gold transition hover:bg-brand-gold/20 active:scale-[0.98]"
+        >
+          <span className="text-xl leading-none" aria-hidden>
+            ←
+          </span>
           Back to Dashboard
         </button>
         <h2 className="mb-2 border-b border-brand-green/30 pb-3 text-3xl font-bold text-white">
@@ -485,7 +599,9 @@ function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
           {' // '}
           {sector.title}
         </h2>
-        <p className="mb-8 text-base text-gray-400">Select an engineering intervention to view deployment specifications and pricing.</p>
+        <p className="mb-8 text-base text-gray-400">
+          Select an engineering intervention to view deployment specifications and pricing.
+        </p>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((prod) => (
             <ProductCard key={prod.name} product={prod} type={type} onOrder={() => onOrder(prod)} />
@@ -493,7 +609,10 @@ function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
           <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/15 bg-transparent p-8 text-center opacity-60">
             <div className="mb-3 text-4xl">⚙️</div>
             <h3 className="mb-2 text-lg font-semibold text-white">Further Developments</h3>
-            <p className="text-sm text-gray-400">Additional engineering interventions for this sector are currently undergoing field testing and stress verification.</p>
+            <p className="text-sm text-gray-400">
+              Additional engineering interventions for this sector are currently undergoing field
+              testing and stress verification.
+            </p>
           </div>
         </div>
       </div>
@@ -501,7 +620,15 @@ function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
   );
 }
 
-function ProductCard({ product, type, onOrder }: { product: Product; type: 'local' | 'imported'; onOrder: () => void }) {
+function ProductCard({
+  product,
+  type,
+  onOrder,
+}: {
+  product: Product;
+  type: 'local' | 'imported';
+  onOrder: () => void;
+}) {
   const accentBg = type === 'local' ? 'bg-brand-green text-black' : 'bg-blue-400 text-black';
   const borderTop = type === 'local' ? 'border-t-brand-green' : 'border-t-blue-400';
   const btnBg = type === 'local' ? 'bg-brand-green text-black' : 'bg-blue-400 text-black';
@@ -568,48 +695,62 @@ function ProductCard({ product, type, onOrder }: { product: Product; type: 'loca
 type ModalProps = { children: React.ReactNode; onClose: () => void; accent: 'red' | 'gold' };
 
 function Modal({ children, onClose, accent }: ModalProps) {
-  const borderClass = accent === 'red' ? 'border-red-500/40' : 'border-brand-gold/40';
+  const borderClass = accent === 'red' ? 'border-red-500/50' : 'border-brand-gold/50';
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
+    const prevOverflow = document.body.style.overflow;
+    const prevTouch = document.body.style.touchAction;
     document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevOverflow;
+      document.body.style.touchAction = prevTouch;
     };
   }, [onClose]);
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-end justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-4"
+      className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4"
+      style={{ background: 'rgba(0,0,0,0.75)' }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
+      {/* Panel: bottom sheet on mobile, centered card on desktop — hard max height */}
       <div
         className={
-          'relative flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border bg-brand-card shadow-2xl sm:max-h-[90vh] sm:rounded-2xl ' +
+          'relative flex w-full flex-col border bg-brand-card shadow-2xl ' +
+          'max-h-[70vh] rounded-t-2xl sm:max-h-[80vh] sm:max-w-md sm:rounded-2xl ' +
           borderClass
         }
+        style={{
+          paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+        }}
         onClick={(e) => e.stopPropagation()}
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
-        {/* Sticky header with always-visible close */}
-        <div className="sticky top-0 z-10 flex shrink-0 items-center justify-end border-b border-white/10 bg-brand-card/95 px-4 py-3 backdrop-blur-sm">
+        {/* Drag handle + close — always in view */}
+        <div className="flex shrink-0 items-center justify-between px-3 pt-2 pb-1">
+          <div className="mx-auto h-1 w-10 rounded-full bg-white/25 sm:hidden" aria-hidden />
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-bold text-white transition hover:bg-white/20 active:scale-95"
+            className="absolute right-2 top-2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-base font-bold text-white active:bg-white/25"
           >
             ✕
           </button>
         </div>
-        <div className="overflow-y-auto overscroll-contain px-5 pb-8 pt-2 sm:px-8 sm:pb-8">
+
+        {/* Scrollable body only */}
+        <div
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-1 sm:px-6"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           {children}
         </div>
       </div>
@@ -621,18 +762,22 @@ function AlertBanner({ ok, msg, onDismiss }: { ok: boolean; msg: string; onDismi
   return (
     <div
       className={
-        'mt-4 animate-scale-in rounded-xl border p-4 ' +
+        'mt-3 rounded-xl border p-3 ' +
         (ok ? 'border-brand-green/40 bg-brand-green/10' : 'border-brand-gold/40 bg-brand-gold/10')
       }
     >
-      <p className={'text-center text-base font-medium ' + (ok ? 'text-brand-green' : 'text-brand-gold')}>
+      <p
+        className={
+          'text-center text-sm font-medium ' + (ok ? 'text-brand-green' : 'text-brand-gold')
+        }
+      >
         {msg}
       </p>
       {ok ? (
         <button
           type="button"
           onClick={onDismiss}
-          className="mt-4 min-h-[44px] w-full rounded-xl border border-brand-green/50 bg-brand-green/20 py-2.5 text-base font-semibold text-brand-green transition hover:bg-brand-green/30 active:scale-[0.98]"
+          className="mt-3 min-h-[40px] w-full rounded-lg border border-brand-green/50 bg-brand-green/20 py-2 text-sm font-semibold text-brand-green active:scale-[0.98]"
         >
           Close
         </button>
