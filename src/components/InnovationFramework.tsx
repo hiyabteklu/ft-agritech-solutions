@@ -57,17 +57,14 @@ const coreValues = [
   'Engineering with measurable impact.',
 ];
 
-function AccordionItem({
-  title,
-  items,
-  isOpen,
-  onToggle,
-}: {
+type AccordionItemProps = {
   title: string;
   items: string[];
   isOpen: boolean;
   onToggle: () => void;
-}) {
+};
+
+function AccordionItem({ title, items, isOpen, onToggle }: AccordionItemProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-white/10 bg-brand-card">
       <button
@@ -77,17 +74,16 @@ function AccordionItem({
       >
         <span className="text-base font-semibold text-white">{title}</span>
         <span
-          className={`text-brand-green transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={
+            isOpen
+              ? 'text-brand-green transition-transform duration-200 rotate-180'
+              : 'text-brand-green transition-transform duration-200'
+          }
         >
           ▼
         </span>
       </button>
-      <div
-        className={`grid transition-all duration-300 ease-in-out ${\n          isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-        }`}
-      >
+      {isOpen ? (
         <div className="overflow-hidden">
           <ul className="flex flex-wrap gap-2 border-t border-white/5 px-5 py-4">
             {items.map((item) => (
@@ -100,13 +96,13 @@ function AccordionItem({
             ))}
           </ul>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
 
 export default function InnovationFramework() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState(0 as number | null);
   const [valuesOpen, setValuesOpen] = useState(false);
 
   return (
@@ -126,9 +122,7 @@ export default function InnovationFramework() {
               title={section.title}
               items={section.items}
               isOpen={openIndex === index}
-              onToggle={() =>
-                setOpenIndex(openIndex === index ? null : index)
-              }
+              onToggle={() => setOpenIndex(openIndex === index ? null : index)}
             />
           ))}
         </div>

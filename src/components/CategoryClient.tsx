@@ -8,21 +8,26 @@ import { supabase } from '@/lib/supabase';
 
 type CatalogType = 'local' | 'imported' | null;
 
+type AlertState = {
+  msg: string;
+  ok: boolean;
+};
+
 export default function CategoryClient({ sector }: { sector: Sector }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(null as User | null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [catalog, setCatalog] = useState<CatalogType>(null);
+  const [catalog, setCatalog] = useState(null as CatalogType);
   const [problemOpen, setProblemOpen] = useState(false);
   const [customOpen, setCustomOpen] = useState(false);
 
   const [probTitle, setProbTitle] = useState('');
   const [probDesc, setProbDesc] = useState('');
-  const [probAlert, setProbAlert] = useState<{ msg: string; ok: boolean } | null>(null);
+  const [probAlert, setProbAlert] = useState(null as AlertState | null);
 
   const [customReason, setCustomReason] = useState('');
   const [customParams, setCustomParams] = useState('');
   const [customContact, setCustomContact] = useState('');
-  const [customAlert, setCustomAlert] = useState<{ msg: string; ok: boolean } | null>(null);
+  const [customAlert, setCustomAlert] = useState(null as AlertState | null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -37,7 +42,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const requireAuth = async (): Promise<boolean> => {
+  const requireAuth = async () => {
     if (user) return true;
     const confirmed = window.confirm(
       'You need to sign in with Google to submit requests.\n\nContinue to login?'
@@ -79,7 +84,10 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
       return;
     }
     if (!probTitle.trim() || !probDesc.trim()) {
-      setProbAlert({ msg: 'Please provide both a problem title and description.', ok: false });
+      setProbAlert({
+        msg: 'Please provide both a problem title and description.',
+        ok: false,
+      });
       return;
     }
     const { error } = await supabase.from('problems').insert([
@@ -128,7 +136,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
   };
 
   return (
-    <>
+    <div>
       <section className="px-4 pb-6 pt-12 sm:px-6">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-3 text-4xl font-bold tracking-tight text-brand-gold sm:text-5xl">
@@ -143,7 +151,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
           <section className="px-4 py-8 sm:px-6">
             <div className="mx-auto max-w-7xl">
               <h2 className="mb-4 border-b border-brand-gold/30 pb-2 text-2xl font-bold text-white">
-                Background &amp; Scope in Ethiopia
+                Background & Scope in Ethiopia
               </h2>
               <div className="rounded-2xl border border-white/10 bg-brand-card p-6">
                 <p className="leading-relaxed text-gray-300">{sector.scope}</p>
@@ -180,9 +188,9 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 >
                   + Report New Problem
                 </button>
-                {!user && !authLoading && (
+                {!user && !authLoading ? (
                   <p className="mt-2 text-xs text-gray-500">Sign in required to submit</p>
-                )}
+                ) : null}
               </div>
             </div>
           </section>
@@ -199,7 +207,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                   className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:scale-[1.02]"
                 >
                   <img
-                    src={`/assets/images/${sector.imgPrefix}_hand.jpg`}
+                    src={'/assets/images/' + sector.imgPrefix + '_hand.jpg'}
                     alt="Locally Developed"
                     className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
@@ -219,7 +227,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                   className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:scale-[1.02]"
                 >
                   <img
-                    src={`/assets/images/${sector.imgPrefix}_import.jpg`}
+                    src={'/assets/images/' + sector.imgPrefix + '_import.jpg'}
                     alt="Imported Solutions"
                     className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
@@ -248,7 +256,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                     <h3 className="text-xl font-semibold text-white">Request Custom Design</h3>
                     <div className="mt-2 flex items-center gap-2">
                       <span className="h-2 w-2 animate-pulse rounded-full bg-brand-gold" />
-                      <span className="text-sm text-brand-gold">Custom R&amp;D Request</span>
+                      <span className="text-sm text-brand-gold">Custom R&D Request</span>
                     </div>
                   </div>
                 </button>
@@ -260,13 +268,13 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
         <CatalogView sector={sector} type={catalog} onBack={closeCatalog} />
       )}
 
-      {problemOpen && (
+      {problemOpen ? (
         <Modal onClose={() => setProblemOpen(false)} accent="red">
           <div className="mb-4 text-center">
             <span className="text-3xl">⚙️</span>
             <h3 className="mt-2 text-xl font-bold text-red-400">Report an Engineering Problem</h3>
             <p className="mt-1 text-sm text-gray-400">
-              Signed in as {user?.email}. Submit so R&amp;D can analyze a solution.
+              Signed in as {user?.email}. Submit so R&D can analyze a solution.
             </p>
           </div>
           <input
@@ -287,25 +295,27 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
             onClick={submitProblem}
             className="w-full rounded-lg bg-red-600 py-3 text-sm font-semibold text-white transition hover:bg-red-500"
           >
-            Submit to R&amp;D
+            Submit to R&D
           </button>
-          {probAlert && (
+          {probAlert ? (
             <p
-              className={`mt-3 text-center text-sm ${
-                probAlert.ok ? 'text-brand-green' : 'text-brand-gold'
-              }`}
+              className={
+                probAlert.ok
+                  ? 'mt-3 text-center text-sm text-brand-green'
+                  : 'mt-3 text-center text-sm text-brand-gold'
+              }
             >
               {probAlert.msg}
             </p>
-          )}
+          ) : null}
         </Modal>
-      )}
+      ) : null}
 
-      {customOpen && (
+      {customOpen ? (
         <Modal onClose={() => setCustomOpen(false)} accent="gold">
           <div className="mb-4 text-center">
             <span className="text-3xl">🔬</span>
-            <h3 className="mt-2 text-xl font-bold text-brand-gold">Custom R&amp;D Request</h3>
+            <h3 className="mt-2 text-xl font-bold text-brand-gold">Custom R&D Request</h3>
             <p className="mt-1 text-sm text-gray-400">
               Signed in as {user?.email}. Tell us what a custom solution must do.
             </p>
@@ -341,31 +351,32 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
             onClick={submitCustom}
             className="w-full rounded-lg bg-brand-gold py-3 text-sm font-semibold text-black transition hover:opacity-90"
           >
-            Initiate R&amp;D Consultation
+            Initiate R&D Consultation
           </button>
-          {customAlert && (
+          {customAlert ? (
             <p
-              className={`mt-3 text-center text-sm ${\n                customAlert.ok ? 'text-brand-green' : 'text-brand-gold'
-              }`}
+              className={
+                customAlert.ok
+                  ? 'mt-3 text-center text-sm text-brand-green'
+                  : 'mt-3 text-center text-sm text-brand-gold'
+              }
             >
               {customAlert.msg}
             </p>
-          )}
+          ) : null}
         </Modal>
-      )}
-    </>
+      ) : null}
+    </div>
   );
 }
 
-function CatalogView({
-  sector,
-  type,
-  onBack,
-}: {
+type CatalogViewProps = {
   sector: Sector;
   type: 'local' | 'imported';
   onBack: () => void;
-}) {
+};
+
+function CatalogView({ sector, type, onBack }: CatalogViewProps) {
   const products = sector.products[type];
   const label = type === 'local' ? 'Locally Developed' : 'Imported Solutions';
 
@@ -383,8 +394,9 @@ function CatalogView({
         <h2 className="mb-2 border-b border-brand-green/30 pb-2 text-3xl font-bold text-white">
           <span className={type === 'local' ? 'text-brand-green' : 'text-blue-400'}>
             {label}
-          </span>{' '}
-          // {sector.title}
+          </span>
+          {' // '}
+          {sector.title}
         </h2>
         <p className="mb-8 text-gray-400">
           Select an engineering intervention to view deployment specifications and pricing.
@@ -416,7 +428,10 @@ function ProductCard({ product, type }: { product: Product; type: 'local' | 'imp
 
   return (
     <div
-      className={`flex flex-col justify-between rounded-2xl border border-white/10 border-t-4 ${borderTop} bg-brand-card p-6`}
+      className={
+        'flex flex-col justify-between rounded-2xl border border-white/10 border-t-4 bg-brand-card p-6 ' +
+        borderTop
+      }
     >
       <div>
         <div className="mb-4 aspect-square overflow-hidden rounded-xl bg-black/40">
@@ -431,7 +446,7 @@ function ProductCard({ product, type }: { product: Product; type: 'local' | 'imp
         </div>
         <div className="mb-3 flex items-start justify-between gap-2 border-b border-white/10 pb-3">
           <h3 className="text-lg font-semibold text-white">{product.name}</h3>
-          <span className={`shrink-0 rounded px-2 py-0.5 text-xs font-bold ${accentBg}`}>
+          <span className={'shrink-0 rounded px-2 py-0.5 text-xs font-bold ' + accentBg}>
             {product.status}
           </span>
         </div>
@@ -455,33 +470,35 @@ function ProductCard({ product, type }: { product: Product; type: 'local' | 'imp
         <button
           type="button"
           onClick={() => alert('Procurement Gateway Offline: Pending backend integration.')}
-          className={`w-full rounded-lg py-3 text-sm font-bold transition hover:opacity-90 ${btnBg}`}
+          className={'w-full rounded-lg py-3 text-sm font-bold transition hover:opacity-90 ' + btnBg}
         >
-          Configure &amp; Order
+          Configure & Order
         </button>
       </div>
     </div>
   );
 }
 
-function Modal({
-  children,
-  onClose,
-  accent,
-}: {
+type ModalProps = {
   children: React.ReactNode;
   onClose: () => void;
   accent: 'red' | 'gold';
-}) {
+};
+
+function Modal({ children, onClose, accent }: ModalProps) {
+  const borderClass =
+    accent === 'red' ? 'border-red-500/40' : 'border-brand-gold/40';
+
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className={`relative w-full max-w-lg rounded-2xl border bg-brand-card p-6 shadow-2xl ${
-          accent === 'red' ? 'border-red-500/40' : 'border-brand-gold/40'
-        }`}
+        className={
+          'relative w-full max-w-lg rounded-2xl border bg-brand-card p-6 shadow-2xl ' +
+          borderClass
+        }
         onClick={(e) => e.stopPropagation()}
       >
         <button
