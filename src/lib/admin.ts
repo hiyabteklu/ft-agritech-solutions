@@ -10,6 +10,9 @@ export function getAdminEmails(): string[] {
 export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
   const list = getAdminEmails();
-  if (list.length === 0) return false;
+  // Fallback for local/dev if env not set: allow the primary project owner email
+  if (list.length === 0) {
+    return email.trim().toLowerCase() === 'hiyabteklu720@gmail.com';
+  }
   return list.includes(email.trim().toLowerCase());
 }
