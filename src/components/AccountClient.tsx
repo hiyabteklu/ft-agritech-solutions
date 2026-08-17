@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -13,7 +13,8 @@ type ProblemRow = {
   id: string;
   title: string;
   description: string;
-  sector: string;
+  sector: string | null;
+  status: string | null;
   created_at: string;
 };
 
@@ -21,8 +22,9 @@ type CustomRow = {
   id: string;
   reason: string;
   parameters: string;
-  contact: string;
-  sector: string;
+  contact: string | null;
+  sector: string | null;
+  status: string | null;
   created_at: string;
 };
 
@@ -38,6 +40,24 @@ type QuoteRow = {
   created_at: string;
 };
 
+function statusColor(status: string | null | undefined) {
+  const s = (status || 'pending').toLowerCase();
+  if (s === 'resolved' || s === 'closed') return 'bg-brand-green/15 text-brand-green border-brand-green/30';
+  if (s === 'contacted' || s === 'in_progress') return 'bg-blue-500/15 text-blue-400 border-blue-400/30';
+  if (s === 'withdrawn') return 'bg-gray-500/15 text-gray-400 border-gray-500/30';
+  return 'bg-brand-gold/15 text-brand-gold border-brand-gold/30';
+}
+
+function statusLabel(status: string | null | undefined) {
+  const s = (status || 'pending').toLowerCase().replace(/_/g, ' ');
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function canWithdraw(status: string | null | undefined) {
+  const s = (status || 'pending').toLowerCase();
+  return s === 'pending' || s === 'contacted';
+}
+
 export default function AccountClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,6 +72,8 @@ export default function AccountClient() {
   const [customs, setCustoms] = useState([] as CustomRow[]);
   const [quotes, setQuotes] = useState([] as QuoteRow[]);
   const [dataLoading, setDataLoading] = useState(false);
+  const [busyId, setBusyId] = useState('');
+  const [toast, setToast] = useState('');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -82,45 +104,86 @@ export default function AccountClient() {
     }
   }, [tabParam]);
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!user?.email) return;
-    let cancelled = false;
+    setDataLoading(true);
+    const [probRes, customRes, quoteRes] = await Promise.all([
+      supabase
+        .from('problems')
+        .select('id, title, description, sector, status, created_at')
+        .eq('user_email', user.email)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('custom_requests')
+        .select('id, reason, parameters, contact, sector, status, created_at')
+        .eq('user_email', user.email)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('quote_requests')
+        .select(
+          'id, product_name, product_price, sector, quantity, notes, contact_phone, status, created_at'
+        )
+        .eq('user_email', user.email)
+        .order('created_at', { ascending: false }),
+    ]);
 
-    const load = async () => {
-      setDataLoading(true);
-      const [probRes, customRes, quoteRes] = await Promise.all([
-        supabase
-          .from('problems')
-          .select('id, title, description, sector, created_at')
-          .eq('user_email', user.email)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('custom_requests')
-          .select('id, reason, parameters, contact, sector, created_at')
-          .eq('user_email', user.email)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('quote_requests')
-          .select(
-            'id, product_name, product_price, sector, quantity, notes, contact_phone, status, created_at'
-          )
-          .eq('user_email', user.email)
-          .order('created_at', { ascending: false }),
-      ]);
-
-      if (!cancelled) {
-        setProblems((probRes.data as ProblemRow[]) || []);
-        setCustoms((customRes.data as CustomRow[]) || []);
-        setQuotes((quoteRes.data as QuoteRow[]) || []);
-        setDataLoading(false);
-      }
-    };
-
-    load();
-    return () => {
-      cancelled = true;
-    };
+    setProblems((probRes.data as ProblemRow[]) || []);
+    setCustoms((customRes.data as CustomRow[]) || []);
+    setQuotes((quoteRes.data as QuoteRow[]) || []);
+    setDataLoading(false);
   }, [user?.email]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(''), 3200);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const withdraw = async (
+    table: 'quote_requests' | 'problems' | 'custom_requests',
+    id: string,
+    label: string
+  ) => {
+    if (!user?.email) return;
+    const ok = window.confirm(
+      `Withdraw this ${label}? It will be removed from your list and marked withdrawn for admins.`
+    );
+    if (!ok) return;
+
+    setBusyId(id);
+
+    // Prefer soft-withdraw (status) so admin still sees history; fall back to delete
+    const { error: updateErr } = await supabase
+      .from(table)
+      .update({ status: 'withdrawn' })
+      .eq('id', id)
+      .eq('user_email', user.email);
+
+    if (updateErr) {
+      const { error: delErr } = await supabase
+        .from(table)
+        .delete()
+        .eq('id', id)
+        .eq('user_email', user.email);
+
+      setBusyId('');
+      if (delErr) {
+        setToast('Could not withdraw: ' + (delErr.message || updateErr.message));
+        return;
+      }
+      setToast('Submission withdrawn');
+      await load();
+      return;
+    }
+
+    setBusyId('');
+    setToast('Submission withdrawn');
+    await load();
+  };
 
   const setTabAndUrl = (t: Tab) => {
     setTab(t);
@@ -156,9 +219,19 @@ export default function AccountClient() {
       })
     : '—';
 
+  const activeQuotes = quotes.filter((q) => (q.status || '').toLowerCase() !== 'withdrawn');
+  const activeProblems = problems.filter((p) => (p.status || '').toLowerCase() !== 'withdrawn');
+  const activeCustoms = customs.filter((c) => (c.status || '').toLowerCase() !== 'withdrawn');
+
   return (
     <div className="min-h-screen bg-brand-dark text-white">
       <Navbar />
+
+      {toast ? (
+        <div className="fixed bottom-4 left-1/2 z-[300] max-w-[90vw] -translate-x-1/2 rounded-full border border-brand-green/40 bg-brand-card px-5 py-3 text-sm font-medium text-brand-green shadow-xl">
+          {toast}
+        </div>
+      ) : null}
 
       <div className="mx-auto max-w-5xl animate-fade-up px-4 py-10 sm:px-6">
         <div className="mb-8 overflow-hidden rounded-2xl border border-white/10 bg-brand-card">
@@ -176,15 +249,25 @@ export default function AccountClient() {
               <p className="text-sm text-gray-400">{user.email}</p>
               <p className="mt-1 text-xs text-gray-500">Member since {memberSince}</p>
             </div>
-            <Link
-              href="/"
-              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-white/20 bg-white/5 px-5 py-2.5 text-center text-base font-semibold text-gray-200 transition hover:bg-white/10 active:scale-[0.98]"
-            >
-              <span className="text-lg leading-none" aria-hidden>
-                ←
-              </span>
-              Back to portal
-            </Link>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={load}
+                disabled={dataLoading}
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full border-2 border-white/20 bg-white/5 px-5 py-2.5 text-base font-semibold text-gray-200 transition hover:bg-white/10 disabled:opacity-50"
+              >
+                {dataLoading ? 'Refreshing…' : 'Refresh status'}
+              </button>
+              <Link
+                href="/"
+                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-white/20 bg-white/5 px-5 py-2.5 text-center text-base font-semibold text-gray-200 transition hover:bg-white/10 active:scale-[0.98]"
+              >
+                <span className="text-lg leading-none" aria-hidden>
+                  ←
+                </span>
+                Back to portal
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -221,9 +304,9 @@ export default function AccountClient() {
             >
               <div className="mb-3 text-2xl">📦</div>
               <h2 className="font-semibold text-white">My Orders</h2>
-              <p className="mt-1 text-sm text-gray-400">Quote requests you submitted.</p>
+              <p className="mt-1 text-sm text-gray-400">Quote requests and live status.</p>
               <p className="mt-3 text-sm font-medium text-brand-green">
-                {dataLoading ? 'Loading…' : quotes.length + ' quote(s)'}
+                {dataLoading ? 'Loading…' : activeQuotes.length + ' active quote(s)'}
               </p>
             </button>
 
@@ -234,13 +317,11 @@ export default function AccountClient() {
             >
               <div className="mb-3 text-2xl">📋</div>
               <h2 className="font-semibold text-white">My Requests</h2>
-              <p className="mt-1 text-sm text-gray-400">
-                Problems and custom R&D you submitted.
-              </p>
+              <p className="mt-1 text-sm text-gray-400">Problems and custom R&D status.</p>
               <p className="mt-3 text-sm font-medium text-brand-gold">
                 {dataLoading
                   ? 'Loading…'
-                  : problems.length + customs.length + ' submission(s)'}
+                  : activeProblems.length + activeCustoms.length + ' active submission(s)'}
               </p>
             </button>
 
@@ -262,36 +343,34 @@ export default function AccountClient() {
 
         {tab === 'orders' && (
           <div>
+            <p className="mb-4 text-sm text-gray-400">
+              Status updates when our team reviews your quote. You can withdraw while it is still
+              pending or contacted.
+            </p>
             {dataLoading ? (
               <p className="text-center text-gray-400">Loading quotes…</p>
             ) : quotes.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/15 bg-brand-card/50 px-6 py-16 text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-3xl">
-                  📦
-                </div>
-                <h2 className="text-xl font-semibold text-white">No quote requests yet</h2>
-                <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">
-                  Open a product and tap <strong>Configure &amp; Order</strong> to request a quote.
-                  Your requests will appear here.
-                </p>
-                <Link
-                  href="/#solutions"
-                  className="mt-6 inline-flex min-h-[48px] items-center rounded-full bg-brand-green px-6 py-3 text-base font-bold text-black transition hover:opacity-90 active:scale-[0.98]"
-                >
-                  Browse solutions
-                </Link>
-              </div>
+              <EmptyState
+                icon="📦"
+                title="No quote requests yet"
+                text="Open a product and tap Configure & Order. Your requests and their status will appear here."
+              />
             ) : (
               <ul className="space-y-3">
                 {quotes.map((q) => (
                   <li
                     key={q.id}
-                    className="card-alive rounded-xl border border-white/10 border-l-4 border-l-brand-green bg-brand-card p-4"
+                    className="rounded-xl border border-white/10 border-l-4 border-l-brand-green bg-brand-card p-4"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <h3 className="font-semibold text-white">{q.product_name}</h3>
-                      <span className="rounded-md bg-brand-green/15 px-2.5 py-1 text-xs font-medium text-brand-green">
-                        {q.status || 'pending'}
+                      <span
+                        className={
+                          'rounded-full border px-2.5 py-1 text-xs font-semibold ' +
+                          statusColor(q.status)
+                        }
+                      >
+                        {statusLabel(q.status)}
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-gray-400">
@@ -303,6 +382,16 @@ export default function AccountClient() {
                       {new Date(q.created_at).toLocaleString()}
                       {q.contact_phone ? ' · ' + q.contact_phone : ''}
                     </p>
+                    {canWithdraw(q.status) ? (
+                      <button
+                        type="button"
+                        disabled={busyId === q.id}
+                        onClick={() => withdraw('quote_requests', q.id, 'quote')}
+                        className="mt-3 min-h-[40px] rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400 disabled:opacity-50"
+                      >
+                        {busyId === q.id ? 'Withdrawing…' : 'Withdraw request'}
+                      </button>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -312,25 +401,18 @@ export default function AccountClient() {
 
         {tab === 'requests' && (
           <div className="space-y-6">
+            <p className="text-sm text-gray-400">
+              Track admin updates on your problems and custom R&D. Withdraw while status is pending
+              or contacted.
+            </p>
             {dataLoading ? (
               <p className="text-center text-gray-400">Loading your requests…</p>
             ) : problems.length === 0 && customs.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/15 bg-brand-card/50 px-6 py-16 text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-500/10 text-3xl">
-                  📋
-                </div>
-                <h2 className="text-xl font-semibold text-white">No requests yet</h2>
-                <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">
-                  Report a field problem or request custom R&D from any sector page. Your
-                  submissions will show up here.
-                </p>
-                <Link
-                  href="/#solutions"
-                  className="mt-6 inline-flex min-h-[48px] items-center rounded-full bg-brand-gold px-6 py-3 text-base font-bold text-black transition hover:opacity-90 active:scale-[0.98]"
-                >
-                  Explore sectors
-                </Link>
-              </div>
+              <EmptyState
+                icon="📋"
+                title="No requests yet"
+                text="Report a field problem or request custom R&D from any sector page."
+              />
             ) : (
               <>
                 {problems.length > 0 && (
@@ -342,18 +424,34 @@ export default function AccountClient() {
                       {problems.map((p) => (
                         <li
                           key={p.id}
-                          className="card-alive rounded-xl border border-white/10 border-l-4 border-l-red-500 bg-brand-card p-4"
+                          className="rounded-xl border border-white/10 border-l-4 border-l-red-500 bg-brand-card p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <h3 className="font-semibold text-white">{p.title}</h3>
-                            <span className="rounded-md bg-white/5 px-2.5 py-1 text-xs text-gray-400">
-                              {p.sector}
+                            <span
+                              className={
+                                'rounded-full border px-2.5 py-1 text-xs font-semibold ' +
+                                statusColor(p.status)
+                              }
+                            >
+                              {statusLabel(p.status)}
                             </span>
                           </div>
-                          <p className="mt-1 text-sm text-gray-400">{p.description}</p>
+                          <p className="mt-1 text-sm text-gray-400">{p.sector}</p>
+                          <p className="mt-1 text-sm text-gray-300">{p.description}</p>
                           <p className="mt-2 text-xs text-gray-600">
                             {new Date(p.created_at).toLocaleString()}
                           </p>
+                          {canWithdraw(p.status) ? (
+                            <button
+                              type="button"
+                              disabled={busyId === p.id}
+                              onClick={() => withdraw('problems', p.id, 'problem report')}
+                              className="mt-3 min-h-[40px] rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400 disabled:opacity-50"
+                            >
+                              {busyId === p.id ? 'Withdrawing…' : 'Withdraw submission'}
+                            </button>
+                          ) : null}
                         </li>
                       ))}
                     </ul>
@@ -369,11 +467,18 @@ export default function AccountClient() {
                       {customs.map((c) => (
                         <li
                           key={c.id}
-                          className="card-alive rounded-xl border border-white/10 border-l-4 border-l-brand-gold bg-brand-card p-4"
+                          className="rounded-xl border border-white/10 border-l-4 border-l-brand-gold bg-brand-card p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
-                            <h3 className="font-semibold text-white">{c.sector}</h3>
-                            <span className="text-xs text-gray-500">{c.contact}</span>
+                            <h3 className="font-semibold text-white">{c.sector || 'Custom R&D'}</h3>
+                            <span
+                              className={
+                                'rounded-full border px-2.5 py-1 text-xs font-semibold ' +
+                                statusColor(c.status)
+                              }
+                            >
+                              {statusLabel(c.status)}
+                            </span>
                           </div>
                           <p className="mt-1 text-sm text-gray-300">
                             <span className="text-gray-500">Why: </span>
@@ -386,6 +491,16 @@ export default function AccountClient() {
                           <p className="mt-2 text-xs text-gray-600">
                             {new Date(c.created_at).toLocaleString()}
                           </p>
+                          {canWithdraw(c.status) ? (
+                            <button
+                              type="button"
+                              disabled={busyId === c.id}
+                              onClick={() => withdraw('custom_requests', c.id, 'R&D request')}
+                              className="mt-3 min-h-[40px] rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400 disabled:opacity-50"
+                            >
+                              {busyId === c.id ? 'Withdrawing…' : 'Withdraw submission'}
+                            </button>
+                          ) : null}
                         </li>
                       ))}
                     </ul>
@@ -396,6 +511,24 @@ export default function AccountClient() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function EmptyState({ icon, title, text }: { icon: string; title: string; text: string }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-white/15 bg-brand-card/50 px-6 py-16 text-center">
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 text-3xl">
+        {icon}
+      </div>
+      <h2 className="text-xl font-semibold text-white">{title}</h2>
+      <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">{text}</p>
+      <Link
+        href="/#solutions"
+        className="mt-6 inline-flex min-h-[48px] items-center rounded-full bg-brand-green px-6 py-3 text-base font-bold text-black transition hover:opacity-90 active:scale-[0.98]"
+      >
+        Browse solutions
+      </Link>
     </div>
   );
 }
