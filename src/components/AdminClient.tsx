@@ -10,48 +10,12 @@ import Navbar from '@/components/Navbar';
 
 type Tab = 'overview' | 'quotes' | 'problems' | 'custom' | 'contact';
 
-type QuoteRow = {
-  id: string;
-  product_name: string;
-  product_price: string | null;
-  sector: string | null;
-  quantity: string | null;
-  notes: string | null;
-  contact_phone: string | null;
-  user_email: string | null;
-  status: string | null;
-  created_at: string;
-};
-
-type ProblemRow = {
-  id: string;
-  title: string;
-  description: string;
-  sector: string | null;
-  user_email: string | null;
-  status: string | null;
-  created_at: string;
-};
-
-type CustomRow = {
-  id: string;
-  reason: string;
-  parameters: string;
-  contact: string | null;
-  sector: string | null;
-  user_email: string | null;
-  status: string | null;
-  created_at: string;
-};
-
-type ContactRow = {
-  id: string;
-  name: string;
-  email: string;
-  subject: string | null;
-  message: string;
-  status: string | null;
-  created_at: string;
+type AnyRow = Record<string, unknown> & {
+  id: string | number;
+  created_at?: string;
+  status?: string | null;
+  sector?: string | null;
+  user_email?: string | null;
 };
 
 const STATUS_OPTIONS = ['pending', 'contacted', 'in_progress', 'resolved', 'closed'] as const;
@@ -63,44 +27,62 @@ function statusColor(status: string | null | undefined) {
   return 'bg-brand-gold/15 text-brand-gold border-brand-gold/30';
 }
 
-function formatDate(iso: string) {
+function formatDate(iso?: string) {
+  if (!iso) return '—';
   try {
-    return new Date(iso).toLocaleString(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
+    return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
   } catch {
     return iso;
   }
 }
 
-function BarChart({
-  data,
-  color = '#10B981',
-}: {
-  data: { label: string; value: number }[];
-  color?: string;
-}) {
+function str(v: unknown) {
+  if (v == null) return '';
+  return String(v);
+}
+
+function downloadCsv(filename: string, rows: AnyRow[]) {
+  if (!rows.length) return;
+  const keys = Array.from(
+    rows.reduce((set, r) => {
+      Object.keys(r).forEach((k) => set.add(k));
+      return set;
+    }, new Set<string>())
+  );
+  const esc = (v: unknown) => {
+    const s = v == null ? '' : String(v);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  };
+  const lines = [keys.join(',')].concat(rows.map((r) => keys.map((k) => esc(r[k])).join(',')));
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function BarChart({ data, color = '#10B981' }: { data: { label: string; value: number }[]; color?: string }) {
   const max = Math.max(...data.map((d) => d.value), 1);
-  if (data.length === 0) {
-    return <p className="py-6 text-center text-sm text-gray-500">No data yet</p>;
-  }
+  if (!data.length) return <p className="py-6 text-center text-sm text-gray-500">No data yet</p>;
   return (
     <div className="space-y-2.5">
       {data.map((d) => (
         <div key={d.label} className="flex items-center gap-3">
-          <span className="w-24 shrink-0 truncate text-xs text-gray-400 sm:w-28">{d.label}</span>
+          <span className="w-24 shrink-0 truncate text-xs text-gray-400 sm:w-32" title={d.label}>
+            {d.label}
+          </span>
           <div className="h-7 flex-1 overflow-hidden rounded-lg bg-white/5">
             <div
-              className="flex h-full items-center rounded-lg px-2 transition-all duration-500"
+              className="flex h-full min-w-0 items-center rounded-lg px-2 transition-all duration-500"
               style={{
-                width: `${Math.max((d.value / max) * 100, d.value > 0 ? 8 : 0)}%`,
+                width: `${Math.max((d.value / max) * 100, d.value > 0 ? 10 : 0)}%`,
                 backgroundColor: color,
               }}
             >
-              {d.value > 0 ? (
-                <span className="text-xs font-bold text-black">{d.value}</span>
-              ) : null}
+              {d.value > 0 ? <span className="text-xs font-bold text-black">{d.value}</span> : null}
             </div>
           </div>
         </div>
@@ -115,14 +97,19 @@ export default function AdminClient() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('overview' as Tab);
 
-  const [quotes, setQuotes] = useState([] as QuoteRow[]);
-  const [problems, setProblems] = useState([] as ProblemRow[]);
-  const [customs, setCustoms] = useState([] as CustomRow[]);
-  const [contacts, setContacts] = useState([] as ContactRow[]);
+  const [quotes, setQuotes] = useState([] as AnyRow[]);
+  const [problems, setProblems] = useState([] as AnyRow[]);
+  const [customs, setCustoms] = useState([] as AnyRow[]);
+  const [contacts, setContacts] = useState([] as AnyRow[]);
   const [dataLoading, setDataLoading] = useState(false);
   const [error, setError] = useState('');
+  const [tableErrors, setTableErrors] = useState({} as Record<string, string>);
   const [updatingId, setUpdatingId] = useState('');
   const [toast, setToast] = useState('');
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [expandedId, setExpandedId] = useState('');
+  const [noteDraft, setNoteDraft] = useState({} as Record<string, string>);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -139,40 +126,30 @@ export default function AdminClient() {
   const loadAll = useCallback(async () => {
     setDataLoading(true);
     setError('');
+    setTableErrors({});
+
+    // select * is more resilient if columns differ across environments
     const [q, p, c, m] = await Promise.all([
-      supabase
-        .from('quote_requests')
-        .select(
-          'id, product_name, product_price, sector, quantity, notes, contact_phone, user_email, status, created_at'
-        )
-        .order('created_at', { ascending: false })
-        .limit(200),
-      supabase
-        .from('problems')
-        .select('id, title, description, sector, user_email, status, created_at')
-        .order('created_at', { ascending: false })
-        .limit(200),
-      supabase
-        .from('custom_requests')
-        .select('id, reason, parameters, contact, sector, user_email, status, created_at')
-        .order('created_at', { ascending: false })
-        .limit(200),
-      supabase
-        .from('contact_messages')
-        .select('id, name, email, subject, message, status, created_at')
-        .order('created_at', { ascending: false })
-        .limit(200),
+      supabase.from('quote_requests').select('*').order('created_at', { ascending: false }).limit(300),
+      supabase.from('problems').select('*').order('created_at', { ascending: false }).limit(300),
+      supabase.from('custom_requests').select('*').order('created_at', { ascending: false }).limit(300),
+      supabase.from('contact_messages').select('*').order('created_at', { ascending: false }).limit(300),
     ]);
 
-    const errs = [q.error, p.error, c.error, m.error].filter(Boolean);
-    if (errs.length) {
-      setError(errs.map((e) => e!.message).join(' · '));
-    }
+    const errs: Record<string, string> = {};
+    if (q.error) errs.quotes = q.error.message;
+    if (p.error) errs.problems = p.error.message;
+    if (c.error) errs.custom = c.error.message;
+    if (m.error) errs.contact = m.error.message;
+    setTableErrors(errs);
 
-    setQuotes((q.data as QuoteRow[]) || []);
-    setProblems((p.data as ProblemRow[]) || []);
-    setCustoms((c.data as CustomRow[]) || []);
-    setContacts((m.data as ContactRow[]) || []);
+    const allMsgs = Object.values(errs);
+    if (allMsgs.length) setError(allMsgs.join(' · '));
+
+    setQuotes((q.data as AnyRow[]) || []);
+    setProblems((p.data as AnyRow[]) || []);
+    setCustoms((c.data as AnyRow[]) || []);
+    setContacts((m.data as AnyRow[]) || []);
     setDataLoading(false);
   }, []);
 
@@ -182,30 +159,55 @@ export default function AdminClient() {
 
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(() => setToast(''), 2800);
+    const t = setTimeout(() => setToast(''), 3000);
     return () => clearTimeout(t);
   }, [toast]);
 
-  const updateStatus = async (
+  const refreshSession = async () => {
+    const { error: err } = await supabase.auth.refreshSession();
+    if (err) {
+      setToast('Session refresh failed — sign out and sign in again');
+      return;
+    }
+    setToast('Session refreshed');
+    await loadAll();
+  };
+
+  const updateField = async (
     table: 'quote_requests' | 'problems' | 'custom_requests' | 'contact_messages',
-    id: string,
-    status: string
+    id: string | number,
+    patch: Record<string, unknown>
   ) => {
-    setUpdatingId(id);
-    const { error: err } = await supabase.from(table).update({ status }).eq('id', id);
+    setUpdatingId(String(id));
+    const { error: err } = await supabase.from(table).update(patch).eq('id', id);
     setUpdatingId('');
     if (err) {
       setToast('Update failed: ' + err.message);
       return;
     }
-    setToast('Status updated to ' + status);
+    setToast('Saved');
     await loadAll();
   };
 
+  const filterRows = (rows: AnyRow[]) => {
+    const q = search.trim().toLowerCase();
+    return rows.filter((r) => {
+      const st = str(r.status || 'pending').toLowerCase();
+      if (statusFilter !== 'all' && st !== statusFilter) return false;
+      if (!q) return true;
+      return JSON.stringify(r).toLowerCase().includes(q);
+    });
+  };
+
+  const filteredQuotes = useMemo(() => filterRows(quotes), [quotes, search, statusFilter]);
+  const filteredProblems = useMemo(() => filterRows(problems), [problems, search, statusFilter]);
+  const filteredCustoms = useMemo(() => filterRows(customs), [customs, search, statusFilter]);
+  const filteredContacts = useMemo(() => filterRows(contacts), [contacts, search, statusFilter]);
+
   const sectorCounts = useMemo(() => {
     const map: Record<string, number> = {};
-    const bump = (s: string | null | undefined) => {
-      const key = s?.trim() || 'Unknown';
+    const bump = (s: unknown) => {
+      const key = str(s).trim() || 'Unknown';
       map[key] = (map[key] || 0) + 1;
     };
     quotes.forEach((r) => bump(r.sector));
@@ -213,29 +215,35 @@ export default function AdminClient() {
     customs.forEach((r) => bump(r.sector));
     return Object.entries(map)
       .map(([label, value]) => ({ label, value }))
-      .sort((a, b) => b.value - a.value);
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 12);
   }, [quotes, problems, customs]);
 
-  const quoteStatusCounts = useMemo(() => {
+  const typeCounts = useMemo(
+    () => [
+      { label: 'Orders', value: quotes.length },
+      { label: 'Problems', value: problems.length },
+      { label: 'Custom R&D', value: customs.length },
+      { label: 'Contact', value: contacts.length },
+    ],
+    [quotes, problems, customs, contacts]
+  );
+
+  const statusBreakdown = useMemo(() => {
     const map: Record<string, number> = {};
-    quotes.forEach((r) => {
-      const s = (r.status || 'pending').toLowerCase();
+    [...quotes, ...problems, ...customs, ...contacts].forEach((r) => {
+      const s = str(r.status || 'pending').toLowerCase();
       map[s] = (map[s] || 0) + 1;
     });
     return Object.entries(map)
       .map(([label, value]) => ({ label, value }))
       .sort((a, b) => b.value - a.value);
-  }, [quotes]);
+  }, [quotes, problems, customs, contacts]);
 
-  const pendingQuotes = quotes.filter(
-    (q) => !q.status || q.status.toLowerCase() === 'pending'
-  ).length;
-  const pendingProblems = problems.filter(
-    (p) => !p.status || p.status.toLowerCase() === 'pending'
-  ).length;
-  const pendingCustom = customs.filter(
-    (c) => !c.status || c.status.toLowerCase() === 'pending'
-  ).length;
+  const pendingTotal =
+    [...quotes, ...problems, ...customs, ...contacts].filter(
+      (r) => !r.status || str(r.status).toLowerCase() === 'pending'
+    ).length;
 
   if (loading || !user) {
     return (
@@ -254,6 +262,13 @@ export default function AdminClient() {
     { id: 'contact', label: 'Contact', count: contacts.length },
   ];
 
+  const isJwtClock =
+    error.toLowerCase().includes('jwt') ||
+    error.toLowerCase().includes('issued at future') ||
+    Object.values(tableErrors).some(
+      (m) => m.toLowerCase().includes('jwt') || m.toLowerCase().includes('issued at future')
+    );
+
   return (
     <div className="min-h-screen bg-brand-dark text-white">
       <Navbar />
@@ -269,7 +284,7 @@ export default function AdminClient() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Admin dashboard</h1>
             <p className="mt-1 text-sm text-gray-400">
-              Live submissions · signed in as {user.email}
+              {pendingTotal} pending · signed in as {user.email}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -277,13 +292,20 @@ export default function AdminClient() {
               type="button"
               onClick={loadAll}
               disabled={dataLoading}
-              className="min-h-[44px] rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:bg-white/10 disabled:opacity-50"
+              className="min-h-[44px] rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-white/10 disabled:opacity-50"
             >
               {dataLoading ? 'Refreshing…' : 'Refresh'}
             </button>
+            <button
+              type="button"
+              onClick={refreshSession}
+              className="min-h-[44px] rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-white/10"
+            >
+              Fix session
+            </button>
             <Link
               href="/"
-              className="inline-flex min-h-[44px] items-center rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:bg-white/10"
+              className="inline-flex min-h-[44px] items-center rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-white/10"
             >
               ← Portal
             </Link>
@@ -292,21 +314,73 @@ export default function AdminClient() {
 
         {error ? (
           <div className="mb-6 rounded-xl border border-brand-gold/30 bg-brand-gold/10 p-4 text-sm text-brand-gold">
-            {error}
-            <p className="mt-2 text-xs text-gray-400">
-              If status updates fail, add a <code className="text-gray-300">status text</code> column
-              on problems / custom_requests / contact_messages in Supabase.
-            </p>
+            <p className="font-semibold">{isJwtClock ? 'Phone clock / session issue' : 'Load error'}</p>
+            <p className="mt-1 text-brand-gold/90">{error}</p>
+            {isJwtClock ? (
+              <ol className="mt-3 list-decimal space-y-1 pl-5 text-xs text-gray-300">
+                <li>Set phone Date &amp; Time to <strong>Automatic</strong>.</li>
+                <li>Tap <strong>Fix session</strong> above, or sign out and sign in again.</li>
+                <li>Then tap Refresh.</li>
+              </ol>
+            ) : (
+              <p className="mt-2 text-xs text-gray-400">
+                Check Supabase Table Editor — if rows exist there but not here, RLS may block reads.
+              </p>
+            )}
           </div>
         ) : null}
 
-        {/* Tabs */}
+        {/* Search + status filter (list tabs) */}
+        {tab !== 'overview' ? (
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search email, product, sector, notes…"
+              className="min-h-[44px] flex-1 rounded-xl border border-white/15 bg-black/30 px-4 text-sm text-white outline-none placeholder:text-gray-500 focus:border-brand-gold"
+            />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="min-h-[44px] rounded-xl border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-brand-gold"
+            >
+              <option value="all">All statuses</option>
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s.replace('_', ' ')}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => {
+                const map: Record<Tab, AnyRow[]> = {
+                  overview: [],
+                  quotes: filteredQuotes,
+                  problems: filteredProblems,
+                  custom: filteredCustoms,
+                  contact: filteredContacts,
+                };
+                downloadCsv(`ft-admin-${tab}.csv`, map[tab]);
+              }}
+              className="min-h-[44px] rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 text-sm font-semibold text-brand-green"
+            >
+              Export CSV
+            </button>
+          </div>
+        ) : null}
+
         <div className="mb-6 flex gap-1 overflow-x-auto border-b border-white/10 pb-px">
           {tabs.map((t) => (
             <button
               key={t.id}
               type="button"
-              onClick={() => setTab(t.id)}
+              onClick={() => {
+                setTab(t.id);
+                setSearch('');
+                setStatusFilter('all');
+              }}
               className={
                 'min-h-[44px] shrink-0 border-b-2 px-3 py-2.5 text-sm font-semibold transition sm:px-4 ' +
                 (tab === t.id
@@ -324,286 +398,191 @@ export default function AdminClient() {
           ))}
         </div>
 
-        {/* OVERVIEW */}
         {tab === 'overview' && (
           <div className="space-y-6 animate-fade-up">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <StatCard
-                label="Quote orders"
-                value={quotes.length}
-                sub={pendingQuotes + ' pending'}
-                accent="text-brand-green"
-                onClick={() => setTab('quotes')}
-              />
-              <StatCard
-                label="Problems"
-                value={problems.length}
-                sub={pendingProblems + ' pending'}
-                accent="text-red-400"
-                onClick={() => setTab('problems')}
-              />
-              <StatCard
-                label="Custom R&D"
-                value={customs.length}
-                sub={pendingCustom + ' pending'}
-                accent="text-brand-gold"
-                onClick={() => setTab('custom')}
-              />
-              <StatCard
-                label="Contact msgs"
-                value={contacts.length}
-                sub="inbox"
-                accent="text-blue-400"
-                onClick={() => setTab('contact')}
-              />
+              <StatCard label="Orders" value={quotes.length} sub="quote requests" accent="text-brand-green" onClick={() => setTab('quotes')} />
+              <StatCard label="Problems" value={problems.length} sub={tableErrors.problems ? 'load error' : 'field reports'} accent="text-red-400" onClick={() => setTab('problems')} />
+              <StatCard label="Custom R&D" value={customs.length} sub="consultation requests" accent="text-brand-gold" onClick={() => setTab('custom')} />
+              <StatCard label="Contact" value={contacts.length} sub="inbox" accent="text-blue-400" onClick={() => setTab('contact')} />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-brand-card p-5">
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">
-                  Activity by sector
-                </h2>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-5 lg:col-span-1">
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">By type</h2>
+                <BarChart data={typeCounts} color="#3B82F6" />
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-5 lg:col-span-1">
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">By sector</h2>
                 <BarChart data={sectorCounts} color="#10B981" />
               </div>
-              <div className="rounded-2xl border border-white/10 bg-brand-card p-5">
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">
-                  Quote status breakdown
-                </h2>
-                <BarChart data={quoteStatusCounts} color="#D4AF37" />
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-5 lg:col-span-1">
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">By status</h2>
+                <BarChart data={statusBreakdown} color="#D4AF37" />
               </div>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-brand-card p-5">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">
-                Recent activity
-              </h2>
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">Recent activity</h2>
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadCsv('ft-admin-all.csv', [
+                      ...quotes.map((r) => ({ ...r, _type: 'order' })),
+                      ...problems.map((r) => ({ ...r, _type: 'problem' })),
+                      ...customs.map((r) => ({ ...r, _type: 'custom' })),
+                      ...contacts.map((r) => ({ ...r, _type: 'contact' })),
+                    ])
+                  }
+                  className="text-xs font-semibold text-brand-green"
+                >
+                  Export all CSV
+                </button>
+              </div>
               <RecentFeed quotes={quotes} problems={problems} customs={customs} contacts={contacts} />
             </div>
           </div>
         )}
 
-        {/* QUOTES / ORDERS */}
         {tab === 'quotes' && (
-          <ListShell loading={dataLoading} empty={quotes.length === 0} emptyLabel="No quote requests yet">
-            {quotes.map((row) => (
-              <article
-                key={row.id}
-                className="rounded-2xl border border-white/10 border-l-4 border-l-brand-green bg-brand-card p-4 sm:p-5"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-semibold text-white sm:text-lg">{row.product_name}</h3>
-                    <p className="mt-0.5 text-sm text-gray-400">
-                      {row.sector || '—'} · Qty {row.quantity || '1'}
-                      {row.product_price ? ' · ' + row.product_price : ''}
-                    </p>
-                  </div>
-                  <span
-                    className={
-                      'shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ' +
-                      statusColor(row.status)
-                    }
-                  >
-                    {row.status || 'pending'}
-                  </span>
-                </div>
-                {row.notes ? <p className="mt-2 text-sm text-gray-300">{row.notes}</p> : null}
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                  <span>{formatDate(row.created_at)}</span>
-                  {row.user_email ? <span>{row.user_email}</span> : null}
-                  {row.contact_phone ? <span>{row.contact_phone}</span> : null}
-                </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <StatusSelect
-                    value={row.status || 'pending'}
-                    disabled={updatingId === row.id}
-                    onChange={(s) => updateStatus('quote_requests', row.id, s)}
-                  />
-                  {row.contact_phone ? (
-                    <a
-                      href={'tel:' + row.contact_phone}
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-gray-200"
-                    >
-                      Call
-                    </a>
-                  ) : null}
-                  {row.contact_phone ? (
-                    <a
-                      href={
-                        'https://wa.me/' +
-                        row.contact_phone.replace(/[^0-9+]/g, '').replace(/^\+/, '')
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-lg border border-brand-green/30 bg-brand-green/10 px-3 py-2 text-xs font-semibold text-brand-green"
-                    >
-                      WhatsApp
-                    </a>
-                  ) : null}
-                  {row.user_email ? (
-                    <a
-                      href={'mailto:' + row.user_email}
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-gray-200"
-                    >
-                      Email
-                    </a>
-                  ) : null}
-                </div>
-              </article>
-            ))}
-          </ListShell>
-        )}
-
-        {/* PROBLEMS */}
-        {tab === 'problems' && (
-          <ListShell loading={dataLoading} empty={problems.length === 0} emptyLabel="No problems reported">
-            {problems.map((row) => (
-              <article
-                key={row.id}
-                className="rounded-2xl border border-white/10 border-l-4 border-l-red-500 bg-brand-card p-4 sm:p-5"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-semibold text-white sm:text-lg">{row.title}</h3>
-                    <p className="mt-0.5 text-sm text-gray-400">{row.sector || '—'}</p>
-                  </div>
-                  <span
-                    className={
-                      'shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ' +
-                      statusColor(row.status)
-                    }
-                  >
-                    {row.status || 'pending'}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-gray-300">{row.description}</p>
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                  <span>{formatDate(row.created_at)}</span>
-                  {row.user_email ? <span>{row.user_email}</span> : null}
-                </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <StatusSelect
-                    value={row.status || 'pending'}
-                    disabled={updatingId === row.id}
-                    onChange={(s) => updateStatus('problems', row.id, s)}
-                  />
-                  {row.user_email ? (
-                    <a
-                      href={'mailto:' + row.user_email + '?subject=Re: ' + encodeURIComponent(row.title)}
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-gray-200"
-                    >
-                      Email customer
-                    </a>
-                  ) : null}
-                </div>
-              </article>
-            ))}
-          </ListShell>
-        )}
-
-        {/* CUSTOM R&D */}
-        {tab === 'custom' && (
-          <ListShell loading={dataLoading} empty={customs.length === 0} emptyLabel="No custom R&D requests">
-            {customs.map((row) => (
-              <article
-                key={row.id}
-                className="rounded-2xl border border-white/10 border-l-4 border-l-brand-gold bg-brand-card p-4 sm:p-5"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-semibold text-white sm:text-lg">
-                      {row.sector || 'Custom R&D'}
-                    </h3>
-                    <p className="mt-0.5 text-sm text-gray-400">{row.contact || row.user_email || '—'}</p>
-                  </div>
-                  <span
-                    className={
-                      'shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ' +
-                      statusColor(row.status)
-                    }
-                  >
-                    {row.status || 'pending'}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-gray-300">
-                  <span className="text-gray-500">Why: </span>
-                  {row.reason}
-                </p>
-                <p className="mt-1 text-sm text-gray-400">
-                  <span className="text-gray-500">Params: </span>
-                  {row.parameters}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                  <span>{formatDate(row.created_at)}</span>
-                  {row.user_email ? <span>{row.user_email}</span> : null}
-                </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <StatusSelect
-                    value={row.status || 'pending'}
-                    disabled={updatingId === row.id}
-                    onChange={(s) => updateStatus('custom_requests', row.id, s)}
-                  />
-                  {row.contact || row.user_email ? (
-                    <a
-                      href={'mailto:' + (row.user_email || row.contact)}
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-gray-200"
-                    >
-                      Email
-                    </a>
-                  ) : null}
-                </div>
-              </article>
-            ))}
-          </ListShell>
-        )}
-
-        {/* CONTACT */}
-        {tab === 'contact' && (
-          <ListShell loading={dataLoading} empty={contacts.length === 0} emptyLabel="No contact messages">
-            {contacts.map((row) => (
-              <article
-                key={row.id}
-                className="rounded-2xl border border-white/10 border-l-4 border-l-blue-400 bg-brand-card p-4 sm:p-5"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-semibold text-white sm:text-lg">{row.name}</h3>
-                    <p className="mt-0.5 text-sm text-gray-400">{row.email}</p>
-                    {row.subject ? (
-                      <p className="mt-1 text-sm font-medium text-blue-300">{row.subject}</p>
-                    ) : null}
-                  </div>
-                  <span
-                    className={
-                      'shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ' +
-                      statusColor(row.status)
-                    }
-                  >
-                    {row.status || 'pending'}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-gray-300">{row.message}</p>
-                <p className="mt-3 text-xs text-gray-500">{formatDate(row.created_at)}</p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <StatusSelect
-                    value={row.status || 'pending'}
-                    disabled={updatingId === row.id}
-                    onChange={(s) => updateStatus('contact_messages', row.id, s)}
-                  />
-                  <a
-                    href={
-                      'mailto:' +
-                      row.email +
-                      (row.subject ? '?subject=Re: ' + encodeURIComponent(row.subject) : '')
-                    }
-                    className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-gray-200"
-                  >
-                    Reply by email
+          <RowList
+            loading={dataLoading}
+            rows={filteredQuotes}
+            empty="No quote requests match"
+            accent="border-l-brand-green"
+            title={(r) => str(r.product_name) || 'Order'}
+            subtitle={(r) =>
+              [str(r.sector), r.quantity ? 'Qty ' + str(r.quantity) : '', str(r.product_price)]
+                .filter(Boolean)
+                .join(' · ')
+            }
+            body={(r) => str(r.notes)}
+            meta={(r) => [formatDate(str(r.created_at)), str(r.user_email), str(r.contact_phone)].filter(Boolean)}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            updatingId={updatingId}
+            noteDraft={noteDraft}
+            setNoteDraft={setNoteDraft}
+            onStatus={(id, s) => updateField('quote_requests', id, { status: s })}
+            onSaveNote={(id, note) => updateField('quote_requests', id, { admin_notes: note })}
+            actions={(r) => (
+              <>
+                {r.contact_phone ? (
+                  <a href={'tel:' + str(r.contact_phone)} className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold">
+                    Call
                   </a>
-                </div>
-              </article>
-            ))}
-          </ListShell>
+                ) : null}
+                {r.contact_phone ? (
+                  <a
+                    href={'https://wa.me/' + str(r.contact_phone).replace(/[^0-9+]/g, '').replace(/^\+/, '')}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-lg border border-brand-green/30 bg-brand-green/10 px-3 py-2 text-xs font-semibold text-brand-green"
+                  >
+                    WhatsApp
+                  </a>
+                ) : null}
+                {r.user_email ? (
+                  <a href={'mailto:' + str(r.user_email)} className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold">
+                    Email
+                  </a>
+                ) : null}
+              </>
+            )}
+          />
+        )}
+
+        {tab === 'problems' && (
+          <RowList
+            loading={dataLoading}
+            rows={filteredProblems}
+            empty={tableErrors.problems ? 'Could not load problems: ' + tableErrors.problems : 'No problems match'}
+            accent="border-l-red-500"
+            title={(r) => str(r.title) || 'Problem'}
+            subtitle={(r) => str(r.sector)}
+            body={(r) => str(r.description)}
+            meta={(r) => [formatDate(str(r.created_at)), str(r.user_email)].filter(Boolean)}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            updatingId={updatingId}
+            noteDraft={noteDraft}
+            setNoteDraft={setNoteDraft}
+            onStatus={(id, s) => updateField('problems', id, { status: s })}
+            onSaveNote={(id, note) => updateField('problems', id, { admin_notes: note })}
+            actions={(r) =>
+              r.user_email ? (
+                <a
+                  href={'mailto:' + str(r.user_email) + '?subject=Re: ' + encodeURIComponent(str(r.title))}
+                  className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold"
+                >
+                  Email customer
+                </a>
+              ) : null
+            }
+          />
+        )}
+
+        {tab === 'custom' && (
+          <RowList
+            loading={dataLoading}
+            rows={filteredCustoms}
+            empty="No custom R&D match"
+            accent="border-l-brand-gold"
+            title={(r) => str(r.sector) || 'Custom R&D'}
+            subtitle={(r) => str(r.contact) || str(r.user_email)}
+            body={(r) => 'Why: ' + str(r.reason) + '\nParams: ' + str(r.parameters)}
+            meta={(r) => [formatDate(str(r.created_at)), str(r.user_email)].filter(Boolean)}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            updatingId={updatingId}
+            noteDraft={noteDraft}
+            setNoteDraft={setNoteDraft}
+            onStatus={(id, s) => updateField('custom_requests', id, { status: s })}
+            onSaveNote={(id, note) => updateField('custom_requests', id, { admin_notes: note })}
+            actions={(r) =>
+              r.user_email || r.contact ? (
+                <a
+                  href={'mailto:' + str(r.user_email || r.contact)}
+                  className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold"
+                >
+                  Email
+                </a>
+              ) : null
+            }
+          />
+        )}
+
+        {tab === 'contact' && (
+          <RowList
+            loading={dataLoading}
+            rows={filteredContacts}
+            empty="No contact messages match"
+            accent="border-l-blue-400"
+            title={(r) => str(r.name) || 'Message'}
+            subtitle={(r) => [str(r.email), str(r.subject)].filter(Boolean).join(' · ')}
+            body={(r) => str(r.message)}
+            meta={(r) => [formatDate(str(r.created_at))].filter(Boolean)}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            updatingId={updatingId}
+            noteDraft={noteDraft}
+            setNoteDraft={setNoteDraft}
+            onStatus={(id, s) => updateField('contact_messages', id, { status: s })}
+            onSaveNote={(id, note) => updateField('contact_messages', id, { admin_notes: note })}
+            actions={(r) => (
+              <a
+                href={
+                  'mailto:' +
+                  str(r.email) +
+                  (r.subject ? '?subject=Re: ' + encodeURIComponent(str(r.subject)) : '')
+                }
+                className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold"
+              >
+                Reply by email
+              </a>
+            )}
+          />
         )}
       </div>
     </div>
@@ -636,53 +615,126 @@ function StatCard({
   );
 }
 
-function StatusSelect({
-  value,
-  onChange,
-  disabled,
-}: {
-  value: string;
-  onChange: (s: string) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <select
-      value={value}
-      disabled={disabled}
-      onChange={(e) => onChange(e.target.value)}
-      className="min-h-[36px] rounded-lg border border-white/15 bg-black/40 px-2.5 py-1.5 text-xs font-medium text-white outline-none focus:border-brand-gold disabled:opacity-50"
-    >
-      {STATUS_OPTIONS.map((s) => (
-        <option key={s} value={s}>
-          {s.replace('_', ' ')}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-function ListShell({
+function RowList({
   loading,
+  rows,
   empty,
-  emptyLabel,
-  children,
+  accent,
+  title,
+  subtitle,
+  body,
+  meta,
+  actions,
+  expandedId,
+  setExpandedId,
+  updatingId,
+  noteDraft,
+  setNoteDraft,
+  onStatus,
+  onSaveNote,
 }: {
   loading: boolean;
-  empty: boolean;
-  emptyLabel: string;
-  children: React.ReactNode;
+  rows: AnyRow[];
+  empty: string;
+  accent: string;
+  title: (r: AnyRow) => string;
+  subtitle: (r: AnyRow) => string;
+  body: (r: AnyRow) => string;
+  meta: (r: AnyRow) => string[];
+  actions?: (r: AnyRow) => React.ReactNode;
+  expandedId: string;
+  setExpandedId: (id: string) => void;
+  updatingId: string;
+  noteDraft: Record<string, string>;
+  setNoteDraft: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  onStatus: (id: string | number, s: string) => void;
+  onSaveNote: (id: string | number, note: string) => void;
 }) {
-  if (loading) {
-    return <p className="py-16 text-center text-gray-400">Loading…</p>;
-  }
-  if (empty) {
+  if (loading) return <p className="py-16 text-center text-gray-400">Loading…</p>;
+  if (!rows.length)
     return (
-      <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center">
-        <p className="text-gray-500">{emptyLabel}</p>
+      <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-gray-500">
+        {empty}
       </div>
     );
-  }
-  return <div className="space-y-3 animate-fade-up">{children}</div>;
+
+  return (
+    <div className="space-y-3 animate-fade-up">
+      {rows.map((row) => {
+        const id = String(row.id);
+        const open = expandedId === id;
+        const noteVal = noteDraft[id] ?? str(row.admin_notes);
+        return (
+          <article
+            key={id}
+            className={'rounded-2xl border border-white/10 border-l-4 bg-brand-card p-4 sm:p-5 ' + accent}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <button type="button" className="min-w-0 flex-1 text-left" onClick={() => setExpandedId(open ? '' : id)}>
+                <h3 className="text-base font-semibold text-white sm:text-lg">{title(row)}</h3>
+                <p className="mt-0.5 text-sm text-gray-400">{subtitle(row)}</p>
+              </button>
+              <span className={'shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ' + statusColor(str(row.status))}>
+                {str(row.status) || 'pending'}
+              </span>
+            </div>
+            {body(row) ? (
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-gray-300">{body(row)}</p>
+            ) : null}
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+              {meta(row).map((m, i) => (
+                <span key={i}>{m}</span>
+              ))}
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <select
+                value={str(row.status) || 'pending'}
+                disabled={updatingId === id}
+                onChange={(e) => onStatus(row.id, e.target.value)}
+                className="min-h-[36px] rounded-lg border border-white/15 bg-black/40 px-2.5 py-1.5 text-xs font-medium text-white outline-none focus:border-brand-gold disabled:opacity-50"
+              >
+                {STATUS_OPTIONS.map((s) => (
+                  <option key={s} value={s}>
+                    {s.replace('_', ' ')}
+                  </option>
+                ))}
+              </select>
+              {actions?.(row)}
+              <button
+                type="button"
+                onClick={() => setExpandedId(open ? '' : id)}
+                className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-gray-300"
+              >
+                {open ? 'Hide notes' : 'Admin notes'}
+              </button>
+            </div>
+            {open ? (
+              <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
+                <textarea
+                  value={noteVal}
+                  onChange={(e) => setNoteDraft((d) => ({ ...d, [id]: e.target.value }))}
+                  rows={3}
+                  placeholder="Internal admin notes (customer won’t see these)…"
+                  className="w-full rounded-xl border border-white/15 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-brand-gold"
+                />
+                <button
+                  type="button"
+                  disabled={updatingId === id}
+                  onClick={() => onSaveNote(row.id, noteVal)}
+                  className="rounded-lg bg-brand-gold px-4 py-2 text-xs font-bold text-black disabled:opacity-50"
+                >
+                  Save notes
+                </button>
+                <pre className="max-h-40 overflow-auto rounded-lg bg-black/40 p-2 text-[10px] text-gray-500">
+                  {JSON.stringify(row, null, 2)}
+                </pre>
+              </div>
+            ) : null}
+          </article>
+        );
+      })}
+    </div>
+  );
 }
 
 function RecentFeed({
@@ -691,48 +743,46 @@ function RecentFeed({
   customs,
   contacts,
 }: {
-  quotes: QuoteRow[];
-  problems: ProblemRow[];
-  customs: CustomRow[];
-  contacts: ContactRow[];
+  quotes: AnyRow[];
+  problems: AnyRow[];
+  customs: AnyRow[];
+  contacts: AnyRow[];
 }) {
   type Item = { id: string; kind: string; title: string; at: string; color: string };
   const items: Item[] = [
-    ...quotes.slice(0, 5).map((r) => ({
+    ...quotes.slice(0, 8).map((r) => ({
       id: 'q-' + r.id,
       kind: 'Order',
-      title: r.product_name,
-      at: r.created_at,
+      title: str(r.product_name),
+      at: str(r.created_at),
       color: 'text-brand-green',
     })),
-    ...problems.slice(0, 5).map((r) => ({
+    ...problems.slice(0, 8).map((r) => ({
       id: 'p-' + r.id,
       kind: 'Problem',
-      title: r.title,
-      at: r.created_at,
+      title: str(r.title),
+      at: str(r.created_at),
       color: 'text-red-400',
     })),
-    ...customs.slice(0, 5).map((r) => ({
+    ...customs.slice(0, 8).map((r) => ({
       id: 'c-' + r.id,
       kind: 'R&D',
-      title: r.sector || 'Custom request',
-      at: r.created_at,
+      title: str(r.sector) || 'Custom',
+      at: str(r.created_at),
       color: 'text-brand-gold',
     })),
-    ...contacts.slice(0, 5).map((r) => ({
+    ...contacts.slice(0, 8).map((r) => ({
       id: 'm-' + r.id,
       kind: 'Contact',
-      title: r.subject || r.name,
-      at: r.created_at,
+      title: str(r.subject) || str(r.name),
+      at: str(r.created_at),
       color: 'text-blue-400',
     })),
   ]
-    .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
-    .slice(0, 10);
+    .sort((a, b) => new Date(b.at || 0).getTime() - new Date(a.at || 0).getTime())
+    .slice(0, 12);
 
-  if (items.length === 0) {
-    return <p className="text-sm text-gray-500">No submissions yet.</p>;
-  }
+  if (!items.length) return <p className="text-sm text-gray-500">No submissions yet.</p>;
 
   return (
     <ul className="divide-y divide-white/5">
@@ -740,7 +790,7 @@ function RecentFeed({
         <li key={item.id} className="flex items-center justify-between gap-3 py-2.5">
           <div className="min-w-0">
             <span className={'mr-2 text-xs font-semibold ' + item.color}>{item.kind}</span>
-            <span className="text-sm text-gray-200">{item.title}</span>
+            <span className="text-sm text-gray-200">{item.title || '—'}</span>
           </div>
           <span className="shrink-0 text-xs text-gray-600">{formatDate(item.at)}</span>
         </li>
