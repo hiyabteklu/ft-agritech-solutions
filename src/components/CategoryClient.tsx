@@ -703,52 +703,44 @@ function Modal({ children, onClose, accent }: ModalProps) {
     };
     document.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
-    const prevTouch = document.body.style.touchAction;
     document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
-      document.body.style.touchAction = prevTouch;
     };
   }, [onClose]);
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4"
-      style={{ background: 'rgba(0,0,0,0.75)' }}
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      style={{
+        background: 'rgba(0,0,0,0.75)',
+        paddingTop: 'max(16px, env(safe-area-inset-top))',
+        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+      }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
-      {/* Panel: bottom sheet on mobile, centered card on desktop — hard max height */}
       <div
         className={
-          'relative flex w-full flex-col border bg-brand-card shadow-2xl ' +
-          'max-h-[70vh] rounded-t-2xl sm:max-h-[80vh] sm:max-w-md sm:rounded-2xl ' +
+          'relative flex w-full max-w-md flex-col overflow-hidden rounded-2xl border bg-brand-card shadow-2xl ' +
+          'max-h-[min(85vh,640px)] ' +
           borderClass
         }
-        style={{
-          paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
-        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Drag handle + close — always in view */}
-        <div className="flex shrink-0 items-center justify-between px-3 pt-2 pb-1">
-          <div className="mx-auto h-1 w-10 rounded-full bg-white/25 sm:hidden" aria-hidden />
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="absolute right-2 top-2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-base font-bold text-white active:bg-white/25"
-          >
-            ✕
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-2 top-2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-base font-bold text-white active:bg-white/25"
+        >
+          ✕
+        </button>
 
-        {/* Scrollable body only */}
         <div
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-1 sm:px-6"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-5 pt-12 sm:px-6"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {children}
