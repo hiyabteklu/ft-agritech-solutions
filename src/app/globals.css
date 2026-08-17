@@ -14,7 +14,6 @@ body {
   perspective: 1200px;
 }
 
-/* Seamless horizontal marquee for partners */
 @keyframes marquee {
   0% {
     transform: translateX(0);
@@ -32,7 +31,15 @@ body {
   animation-play-state: paused;
 }
 
-/* Entrance */
+/* Core values continuous slide left */
+.values-marquee {
+  animation: marquee 45s linear infinite;
+}
+
+.values-marquee:hover {
+  animation-play-state: paused;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -76,7 +83,6 @@ body {
   }
 }
 
-/* Subtle float loops — different phases so cards feel alive, not synced */
 @keyframes float-a {
   0%,
   100% {
@@ -132,15 +138,6 @@ body {
   }
 }
 
-@keyframes orbit-soft {
-  0% {
-    transform: rotate(0deg) translateX(6px) rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg) translateX(6px) rotate(-360deg);
-  }
-}
-
 .animate-fade-up {
   animation: fade-up 0.55s ease-out both;
 }
@@ -176,10 +173,6 @@ body {
   animation-delay: 0.3s;
 }
 
-/*
-  Universal card life: 3D space, floating, depth on hover
-  Apply .card-alive anywhere a card surface exists
-*/
 .card-alive {
   transform-style: preserve-3d;
   will-change: transform;
@@ -205,12 +198,12 @@ body {
 .card-alive:hover {
   animation-play-state: paused;
   transform: translateY(-10px) scale(1.02) rotateX(2deg) rotateY(-2deg);
-  box-shadow: 0 22px 50px -14px rgba(16, 185, 129, 0.28), 0 0 0 1px rgba(16, 185, 129, 0.12) inset;
+  box-shadow: 0 22px 50px -14px rgba(16, 185, 129, 0.28),
+    0 0 0 1px rgba(16, 185, 129, 0.12) inset;
   border-color: rgba(16, 185, 129, 0.35);
   z-index: 2;
 }
 
-/* Solution / image tiles that are buttons or links */
 .tile-3d {
   transform-style: preserve-3d;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease,
@@ -223,7 +216,6 @@ body {
   box-shadow: 0 28px 56px -18px rgba(16, 185, 129, 0.35);
 }
 
-/* Lifecycle framework */
 .lifecycle-connector {
   background: linear-gradient(
     180deg,
@@ -238,11 +230,6 @@ body {
   animation: node-pulse 2.8s ease-in-out infinite;
 }
 
-.lifecycle-branch {
-  transform-origin: left center;
-}
-
-/* Modal */
 .modal-backdrop {
   animation: fade-in 0.25s ease-out both;
 }
@@ -265,6 +252,7 @@ html {
   .card-alive,
   .card-alive:nth-child(n),
   .marquee-track,
+  .values-marquee,
   .lifecycle-connector,
   .lifecycle-node {
     animation: none !important;
