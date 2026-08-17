@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
 import type { Sector, Product } from '@/data/sectors';
 import { productImagePath } from '@/data/sectors';
 import { supabase } from '@/lib/supabase';
@@ -8,20 +9,47 @@ import { supabase } from '@/lib/supabase';
 type CatalogType = 'local' | 'imported' | null;
 
 export default function CategoryClient({ sector }: { sector: Sector }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [catalog, setCatalog] = useState<CatalogType>(null);
   const [problemOpen, setProblemOpen] = useState(false);
   const [customOpen, setCustomOpen] = useState(false);
 
-  // Problem form
   const [probTitle, setProbTitle] = useState('');
   const [probDesc, setProbDesc] = useState('');
   const [probAlert, setProbAlert] = useState<{ msg: string; ok: boolean } | null>(null);
 
-  // Custom form
   const [customReason, setCustomReason] = useState('');
   const [customParams, setCustomParams] = useState('');
   const [customContact, setCustomContact] = useState('');
   const [customAlert, setCustomAlert] = useState<{ msg: string; ok: boolean } | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const requireAuth = async (): Promise<boolean> => {
+    if (user) return true;
+    const confirmed = window.confirm(
+      'You need to sign in with Google to submit requests.\n\nContinue to login?'
+    );
+    if (confirmed) {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.href },
+      });
+    }
+    return false;
+  };
 
   const openCatalog = (type: 'local' | 'imported') => {
     setCatalog(type);
@@ -33,13 +61,34 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const openProblemModal = async () => {
+    if (!(await requireAuth())) return;
+    setProbAlert(null);
+    setProblemOpen(true);
+  };
+
+  const openCustomModal = async () => {
+    if (!(await requireAuth())) return;
+    setCustomAlert(null);
+    setCustomOpen(true);
+  };
+
   const submitProblem = async () => {
+    if (!user) {
+      setProbAlert({ msg: 'Please sign in before submitting.', ok: false });
+      return;
+    }
     if (!probTitle.trim() || !probDesc.trim()) {
       setProbAlert({ msg: 'Please provide both a problem title and description.', ok: false });
       return;
     }
     const { error } = await supabase.from('problems').insert([
-      { title: probTitle.trim(), description: probDesc.trim(), sector: sector.title },
+      {
+        title: probTitle.trim(),
+        description: probDesc.trim(),
+        sector: sector.title,
+        user_email: user.email ?? null,
+      },
     ]);
     if (error) {
       setProbAlert({ msg: error.message, ok: false });
@@ -51,6 +100,10 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
   };
 
   const submitCustom = async () => {
+    if (!user) {
+      setCustomAlert({ msg: 'Please sign in before submitting.', ok: false });
+      return;
+    }
     if (!customReason.trim() || !customParams.trim() || !customContact.trim()) {
       setCustomAlert({ msg: 'Please complete all custom request fields.', ok: false });
       return;
@@ -61,6 +114,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
         parameters: customParams.trim(),
         contact: customContact.trim(),
         sector: sector.title,
+        user_email: user.email ?? null,
       },
     ]);
     if (error) {
@@ -75,7 +129,6 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
   return (
     <>
-      {/* Header */}
       <section className="px-4 pb-6 pt-12 sm:px-6">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-3 text-4xl font-bold tracking-tight text-brand-gold sm:text-5xl">
@@ -87,7 +140,6 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
       {catalog === null ? (
         <div>
-          {/* Background & Scope */}
           <section className="px-4 py-8 sm:px-6">
             <div className="mx-auto max-w-7xl">
               <h2 className="mb-4 border-b border-brand-gold/30 pb-2 text-2xl font-bold text-white">
@@ -99,7 +151,6 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
             </div>
           </section>
 
-          {/* Problems */}
           <section className="px-4 py-8 sm:px-6">
             <div className="mx-auto max-w-7xl">
               <h2 className="mb-6 border-b border-red-500/30 pb-2 text-2xl font-bold text-white">
@@ -123,19 +174,19 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 </p>
                 <button
                   type="button"
-                  onClick={() => {
-                    setProbAlert(null);
-                    setProblemOpen(true);
-                  }}
-                  className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-500"
+                  onClick={openProblemModal}
+                  disabled={authLoading}
+                  className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-500 disabled:opacity-50"
                 >
                   + Report New Problem
                 </button>
+                {!user && !authLoading && (
+                  <p className="mt-2 text-xs text-gray-500">Sign in required to submit</p>
+                )}
               </div>
             </div>
           </section>
 
-          {/* Solution type cards */}
           <section className="px-4 py-8 pb-16 sm:px-6">
             <div className="mx-auto max-w-7xl">
               <h2 className="mb-6 border-b border-brand-green/30 pb-2 text-2xl font-bold text-white">
@@ -184,10 +235,7 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setCustomAlert(null);
-                    setCustomOpen(true);
-                  }}
+                  onClick={openCustomModal}
                   className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:scale-[1.02]"
                 >
                   <img
@@ -209,21 +257,16 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
           </section>
         </div>
       ) : (
-        <CatalogView
-          sector={sector}
-          type={catalog}
-          onBack={closeCatalog}
-        />
+        <CatalogView sector={sector} type={catalog} onBack={closeCatalog} />
       )}
 
-      {/* Report Problem Modal */}
       {problemOpen && (
         <Modal onClose={() => setProblemOpen(false)} accent="red">
           <div className="mb-4 text-center">
             <span className="text-3xl">⚙️</span>
             <h3 className="mt-2 text-xl font-bold text-red-400">Report an Engineering Problem</h3>
             <p className="mt-1 text-sm text-gray-400">
-              Submit the parameters below so our engineering team can analyze a solution.
+              Signed in as {user?.email}. Submit so R&amp;D can analyze a solution.
             </p>
           </div>
           <input
@@ -258,15 +301,13 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
         </Modal>
       )}
 
-      {/* Custom R&D Modal */}
       {customOpen && (
         <Modal onClose={() => setCustomOpen(false)} accent="gold">
           <div className="mb-4 text-center">
             <span className="text-3xl">🔬</span>
             <h3 className="mt-2 text-xl font-bold text-brand-gold">Custom R&amp;D Request</h3>
             <p className="mt-1 text-sm text-gray-400">
-              If our existing local or imported solutions do not fit your parameters, our
-              engineering team can design a custom architecture.
+              Signed in as {user?.email}. Tell us what a custom solution must do.
             </p>
           </div>
           <p className="mb-1 text-left text-xs text-gray-400">
@@ -326,7 +367,6 @@ function CatalogView({
   onBack: () => void;
 }) {
   const products = sector.products[type];
-  const accent = type === 'local' ? 'brand-green' : 'blue-400';
   const label = type === 'local' ? 'Locally Developed' : 'Imported Solutions';
 
   return (
@@ -355,7 +395,6 @@ function CatalogView({
             <ProductCard key={prod.name} product={prod} type={type} />
           ))}
 
-          {/* Coming soon placeholder */}
           <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-transparent p-8 text-center opacity-50">
             <div className="mb-3 text-4xl">⚙️</div>
             <h3 className="mb-2 text-lg font-semibold text-white">Further Developments</h3>
@@ -397,8 +436,7 @@ function ProductCard({ product, type }: { product: Product; type: 'local' | 'imp
           </span>
         </div>
         <p className="mb-2 text-sm text-gray-400">
-          <strong>Solves:</strong>{' '}
-          <span className="text-red-400">{product.solves}</span>
+          <strong>Solves:</strong> <span className="text-red-400">{product.solves}</span>
         </p>
         <p className="mb-4 text-sm leading-relaxed text-gray-200">{product.desc}</p>
       </div>
@@ -416,9 +454,7 @@ function ProductCard({ product, type }: { product: Product; type: 'local' | 'imp
         </div>
         <button
           type="button"
-          onClick={() =>
-            alert('Procurement Gateway Offline: Pending backend integration.')
-          }
+          onClick={() => alert('Procurement Gateway Offline: Pending backend integration.')}
           className={`w-full rounded-lg py-3 text-sm font-bold transition hover:opacity-90 ${btnBg}`}
         >
           Configure &amp; Order
