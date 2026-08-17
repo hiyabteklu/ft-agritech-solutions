@@ -26,6 +26,18 @@ type CustomRow = {
   created_at: string;
 };
 
+type QuoteRow = {
+  id: string;
+  product_name: string;
+  product_price: string | null;
+  sector: string | null;
+  quantity: string | null;
+  notes: string | null;
+  contact_phone: string | null;
+  status: string | null;
+  created_at: string;
+};
+
 export default function AccountClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,6 +50,7 @@ export default function AccountClient() {
   const [tab, setTab] = useState(initialTab as Tab);
   const [problems, setProblems] = useState([] as ProblemRow[]);
   const [customs, setCustoms] = useState([] as CustomRow[]);
+  const [quotes, setQuotes] = useState([] as QuoteRow[]);
   const [dataLoading, setDataLoading] = useState(false);
 
   useEffect(() => {
@@ -77,7 +90,7 @@ export default function AccountClient() {
 
     const load = async () => {
       setDataLoading(true);
-      const [probRes, customRes] = await Promise.all([
+      const [probRes, customRes, quoteRes] = await Promise.all([
         supabase
           .from('problems')
           .select('id, title, description, sector, created_at')
@@ -88,11 +101,19 @@ export default function AccountClient() {
           .select('id, reason, parameters, contact, sector, created_at')
           .eq('user_email', user.email)
           .order('created_at', { ascending: false }),
+        supabase
+          .from('quote_requests')
+          .select(
+            'id, product_name, product_price, sector, quantity, notes, contact_phone, status, created_at'
+          )
+          .eq('user_email', user.email)
+          .order('created_at', { ascending: false }),
       ]);
 
       if (!cancelled) {
         setProblems((probRes.data as ProblemRow[]) || []);
         setCustoms((customRes.data as CustomRow[]) || []);
+        setQuotes((quoteRes.data as QuoteRow[]) || []);
         setDataLoading(false);
       }
     };
@@ -142,7 +163,6 @@ export default function AccountClient() {
       <Navbar />
 
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-        {/* Header card */}
         <div className="mb-8 overflow-hidden rounded-2xl border border-white/10 bg-brand-card">
           <div className="h-20 bg-gradient-to-r from-brand-green/30 via-brand-gold/10 to-transparent sm:h-24" />
           <div className="-mt-10 flex flex-col gap-4 px-5 pb-6 sm:flex-row sm:items-end sm:px-8">
@@ -167,7 +187,6 @@ export default function AccountClient() {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="mb-6 flex gap-2 overflow-x-auto border-b border-white/10 pb-px">
           {(
             [
@@ -201,10 +220,10 @@ export default function AccountClient() {
             >
               <div className="mb-3 text-2xl">📦</div>
               <h2 className="font-semibold text-white">My Orders</h2>
-              <p className="mt-1 text-sm text-gray-400">
-                Track equipment and deployment orders.
+              <p className="mt-1 text-sm text-gray-400">Quote requests you submitted.</p>
+              <p className="mt-3 text-xs text-brand-green">
+                {dataLoading ? 'Loading…' : quotes.length + ' quote(s)'}
               </p>
-              <p className="mt-3 text-xs text-brand-green">Coming online with procurement →</p>
             </button>
 
             <button
@@ -241,21 +260,54 @@ export default function AccountClient() {
         )}
 
         {tab === 'orders' && (
-          <div className="rounded-2xl border border-dashed border-white/15 bg-brand-card/50 px-6 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-3xl">
-              📦
-            </div>
-            <h2 className="text-xl font-semibold text-white">No orders yet</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">
-              When the procurement gateway goes live, your equipment orders and deployment
-              status will appear here.
-            </p>
-            <Link
-              href="/#solutions"
-              className="mt-6 inline-block rounded-full bg-brand-green px-5 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
-            >
-              Browse solutions
-            </Link>
+          <div>
+            {dataLoading ? (
+              <p className="text-center text-gray-400">Loading quotes…</p>
+            ) : quotes.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-white/15 bg-brand-card/50 px-6 py-16 text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-3xl">
+                  📦
+                </div>
+                <h2 className="text-xl font-semibold text-white">No quote requests yet</h2>
+                <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">
+                  Open a product and tap <strong>Configure &amp; Order</strong> to request a quote.
+                  Your requests will appear here.
+                </p>
+                <Link
+                  href="/#solutions"
+                  className="mt-6 inline-block rounded-full bg-brand-green px-5 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
+                >
+                  Browse solutions
+                </Link>
+              </div>
+            ) : (
+              <ul className="space-y-3">
+                {quotes.map((q) => (
+                  <li
+                    key={q.id}
+                    className="rounded-xl border border-white/10 border-l-4 border-l-brand-green bg-brand-card p-4"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <h3 className="font-semibold text-white">{q.product_name}</h3>
+                      <span className="rounded bg-brand-green/15 px-2 py-0.5 text-xs font-medium text-brand-green">
+                        {q.status || 'pending'}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm text-gray-400">
+                      {q.sector} · Qty {q.quantity || '1'}
+                      {q.product_price ? ' · ' + q.product_price : ''}
+                    </p>
+                    {q.notes ? (
+                      <p className="mt-1 text-sm text-gray-500">{q.notes}</p>
+                    ) : null}
+                    <p className="mt-2 text-xs text-gray-600">
+                      {new Date(q.created_at).toLocaleString()}
+                      {q.contact_phone ? ' · ' + q.contact_phone : ''}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 
