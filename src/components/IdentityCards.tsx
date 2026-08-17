@@ -25,10 +25,10 @@ export default function IdentityCards() {
   return (
     <section id="identity" className="px-4 py-12 sm:px-6 sm:py-16">
       <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card) => (
+        {cards.map((card, i) => (
           <div
             key={card.title}
-            className={`rounded-2xl border p-6 transition hover:border-brand-green/40 ${
+            className={`card-alive rounded-2xl border p-6 animate-fade-up stagger-${Math.min(i + 1, 6)} ${
               card.highlight
                 ? 'border-brand-green/50 bg-brand-green/10'
                 : 'border-white/10 bg-brand-card'

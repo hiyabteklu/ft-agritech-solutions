@@ -33,7 +33,7 @@ export default function SolutionsGrid() {
   return (
     <section id="solutions" className="px-4 py-12 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-7xl">
-        <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2 className="mb-6 animate-fade-up text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
           Our Solutions
         </h2>
 
@@ -44,39 +44,44 @@ export default function SolutionsGrid() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search solutions (e.g. honey, poultry, teff)..."
-              className="w-full rounded-full border border-white/15 bg-white/5 py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-400 outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+              className="w-full rounded-full border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-base text-white placeholder-gray-400 outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/40"
             />
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base text-gray-400">
               🔍
             </span>
           </div>
         </div>
 
         {filtered.length === 0 ? (
-          <p className="py-12 text-center text-gray-400">
+          <p className="py-12 text-center text-base text-gray-400">
             No solutions found matching &ldquo;{query}&rdquo;.
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((item) => (
+            {filtered.map((item, i) => (
               <Link
                 key={item.slug}
                 href={`/category/${item.slug}`}
-                className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 transition-transform duration-300 hover:scale-[1.02]"
+                className={
+                  'group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 transition duration-500 hover:scale-[1.03] hover:border-brand-green/35 hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.4)] animate-fade-up stagger-' +
+                  Math.min(i + 1, 6)
+                }
               >
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="text-xl font-semibold text-white">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+                  <h3 className="text-xl font-semibold text-white sm:text-2xl">
                     {item.id} | {item.title}
                   </h3>
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="h-2 w-2 animate-pulse rounded-full bg-brand-green shadow-[0_0_8px_#10B981]" />
-                    <span className="text-sm text-brand-green">Explore Solutions</span>
+                  <div className="mt-3 flex items-center gap-2.5">
+                    <span className="h-2.5 w-2.5 animate-soft-pulse rounded-full bg-brand-green shadow-[0_0_10px_#10B981]" />
+                    <span className="text-sm font-medium text-brand-green sm:text-base">
+                      Explore Solutions
+                    </span>
                   </div>
                 </div>
               </Link>
