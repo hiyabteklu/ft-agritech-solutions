@@ -2,15 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState(null as User | null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const menuRef = useRef(null as HTMLDivElement | null);
 
   useEffect(() => {
@@ -37,6 +39,32 @@ export default function Navbar() {
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
+
+  const emitSearch = (value: string) => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('ft-search', { detail: { query: value } })
+      );
+    }
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    if (pathname === '/') {
+      emitSearch(value);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pathname !== '/') {
+      router.push('/#solutions');
+      setTimeout(() => emitSearch(search), 300);
+    } else {
+      emitSearch(search);
+      document.getElementById('solutions')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleLogin = async () => {
     await supabase.auth.signInWithOAuth({
@@ -76,16 +104,25 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-3">
-          <div className="relative hidden sm:block">
+          <form onSubmit={handleSearchSubmit} className="relative hidden sm:block">
             <input
-              type="text"
+              type="search"
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search solutions..."
               className="w-44 rounded-full border border-white/15 bg-white/5 py-1.5 pl-9 pr-3 text-sm text-white placeholder-gray-400 outline-none transition focus:border-brand-green focus:ring-1 focus:ring-brand-green md:w-56"
             />
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
               🔍
             </span>
-          </div>
+          </form>
+
+          <Link
+            href="/contact"
+            className="hidden rounded-full border border-white/15 px-3 py-1.5 text-sm text-gray-300 transition hover:bg-white/5 md:inline-block"
+          >
+            Contact
+          </Link>
 
           {!loading && !user && (
             <button
@@ -167,7 +204,7 @@ export default function Navbar() {
                       </span>
                       <span>
                         <span className="block font-medium text-white">My Orders</span>
-                        <span className="block text-xs text-gray-500">Track deployments</span>
+                        <span className="block text-xs text-gray-500">Quotes & requests</span>
                       </span>
                     </Link>
 
@@ -182,6 +219,20 @@ export default function Navbar() {
                       <span>
                         <span className="block font-medium text-white">My Requests</span>
                         <span className="block text-xs text-gray-500">Problems & custom R&D</span>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/contact"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200 transition hover:bg-white/5"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm">
+                        ✉️
+                      </span>
+                      <span>
+                        <span className="block font-medium text-white">Contact</span>
+                        <span className="block text-xs text-gray-500">Reach the team</span>
                       </span>
                     </Link>
                   </div>
