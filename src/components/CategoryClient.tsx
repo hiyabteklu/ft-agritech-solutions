@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import type { Sector, Product } from '@/data/sectors';
 import { productImagePath } from '@/data/sectors';
@@ -49,12 +49,66 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Sync catalog with URL hash so browser / phone back goes one step
+  const syncCatalogFromHash = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const h = window.location.hash;
+    if (h === '#catalog-local') setCatalog('local');
+    else if (h === '#catalog-imported') setCatalog('imported');
+    else setCatalog(null);
+  }, []);
+
+  useEffect(() => {
+    syncCatalogFromHash();
+    const onPop = () => syncCatalogFromHash();
+    window.addEventListener('popstate', onPop);
+    window.addEventListener('hashchange', onPop);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      window.removeEventListener('hashchange', onPop);
+    };
+  }, [syncCatalogFromHash]);
+
+  // Auto-dismiss error alerts only (success stays until user closes)
+  useEffect(() => {
+    if (quoteAlert && !quoteAlert.ok) {
+      const t = setTimeout(() => setQuoteAlert(null), 4500);
+      return () => clearTimeout(t);
+    }
+  }, [quoteAlert]);
+
+  useEffect(() => {
+    if (probAlert && !probAlert.ok) {
+      const t = setTimeout(() => setProbAlert(null), 4500);
+      return () => clearTimeout(t);
+    }
+  }, [probAlert]);
+
+  useEffect(() => {
+    if (customAlert && !customAlert.ok) {
+      const t = setTimeout(() => setCustomAlert(null), 4500);
+      return () => clearTimeout(t);
+    }
+  }, [customAlert]);
+
   const openCatalog = (type: 'local' | 'imported') => {
     setCatalog(type);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const hash = type === 'local' ? '#catalog-local' : '#catalog-imported';
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ catalog: type }, '', hash);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const closeCatalog = () => {
+    if (typeof window !== 'undefined') {
+      const h = window.location.hash;
+      if (h === '#catalog-local' || h === '#catalog-imported') {
+        window.history.back();
+        return;
+      }
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
     setCatalog(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -100,7 +154,10 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
   const submitQuote = async () => {
     if (!user || !quoteProduct) return;
     if (!quotePhone.trim()) {
-      setQuoteAlert({ msg: 'Please add a phone or WhatsApp number so we can reach you.', ok: false });
+      setQuoteAlert({
+        msg: 'Please add a phone or WhatsApp number so we can reach you.',
+        ok: false,
+      });
       return;
     }
     setQuoteSending(true);
@@ -191,9 +248,9 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
   };
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <section className="px-4 pb-6 pt-12 sm:px-6">
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="mx-auto max-w-4xl text-center animate-fade-up">
           <h1 className="mb-3 text-4xl font-bold tracking-tight text-brand-gold sm:text-5xl">
             {sector.title}
           </h1>
@@ -204,26 +261,29 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
       {catalog === null ? (
         <div>
           <section className="px-4 py-8 sm:px-6">
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-7xl animate-fade-up stagger-1">
               <h2 className="mb-4 border-b border-brand-gold/30 pb-2 text-2xl font-bold text-white">
                 Background & Scope in Ethiopia
               </h2>
-              <div className="rounded-2xl border border-white/10 bg-brand-card p-6">
+              <div className="card-alive rounded-2xl border border-white/10 bg-brand-card p-6">
                 <p className="leading-relaxed text-gray-300">{sector.scope}</p>
               </div>
             </div>
           </section>
 
           <section className="px-4 py-8 sm:px-6">
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-7xl animate-fade-up stagger-2">
               <h2 className="mb-6 border-b border-red-500/30 pb-2 text-2xl font-bold text-white">
                 Problems Identified
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                {sector.problems.map((p) => (
+                {sector.problems.map((p, i) => (
                   <div
                     key={p.title}
-                    className="rounded-2xl border border-white/10 border-t-4 border-t-red-500 bg-brand-card p-5"
+                    className={
+                      'card-alive rounded-2xl border border-white/10 border-t-4 border-t-red-500 bg-brand-card p-5 animate-fade-up stagger-' +
+                      Math.min(i + 1, 6)
+                    }
                   >
                     <h3 className="mb-2 font-semibold text-red-400">{p.title}</h3>
                     <p className="text-sm leading-relaxed text-gray-300">{p.text}</p>
@@ -232,26 +292,26 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
               </div>
 
               <div className="mt-10 border-t border-dashed border-white/10 pt-8 text-center">
-                <p className="mb-4 text-gray-400">
+                <p className="mb-5 text-gray-400">
                   Have you identified an unlisted inefficiency in the field?
                 </p>
                 <button
                   type="button"
                   onClick={openProblemModal}
                   disabled={authLoading}
-                  className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-500 disabled:opacity-50"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-red-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-red-900/30 transition hover:bg-red-500 hover:shadow-red-800/40 active:scale-[0.98] disabled:opacity-50"
                 >
                   + Report New Problem
                 </button>
                 {!user && !authLoading ? (
-                  <p className="mt-2 text-xs text-gray-500">Sign in required to submit</p>
+                  <p className="mt-3 text-sm text-gray-500">Sign in required to submit</p>
                 ) : null}
               </div>
             </div>
           </section>
 
           <section className="px-4 py-8 pb-16 sm:px-6">
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-7xl animate-fade-up stagger-3">
               <h2 className="mb-6 border-b border-brand-green/30 pb-2 text-2xl font-bold text-white">
                 Solutions Available
               </h2>
@@ -259,19 +319,23 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 <button
                   type="button"
                   onClick={() => openCatalog('local')}
-                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:scale-[1.02]"
+                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition duration-500 hover:scale-[1.02] hover:border-brand-green/40 hover:shadow-[0_0_40px_-8px_rgba(16,185,129,0.35)]"
                 >
                   <img
                     src={'/assets/images/' + sector.imgPrefix + '_hand.jpg'}
                     alt="Locally Developed"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                  <div className="absolute bottom-0 p-5">
-                    <h3 className="text-xl font-semibold text-white">Locally Developed</h3>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-brand-green shadow-[0_0_8px_#10B981]" />
-                      <span className="text-sm text-brand-green">Ready to Deploy</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+                  <div className="absolute bottom-0 p-5 sm:p-6">
+                    <h3 className="text-xl font-semibold text-white sm:text-2xl">
+                      Locally Developed
+                    </h3>
+                    <div className="mt-3 flex items-center gap-2.5">
+                      <span className="h-2.5 w-2.5 animate-soft-pulse rounded-full bg-brand-green shadow-[0_0_10px_#10B981]" />
+                      <span className="text-sm font-medium text-brand-green sm:text-base">
+                        Ready to Deploy
+                      </span>
                     </div>
                   </div>
                 </button>
@@ -279,19 +343,23 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 <button
                   type="button"
                   onClick={() => openCatalog('imported')}
-                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:scale-[1.02]"
+                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition duration-500 hover:scale-[1.02] hover:border-blue-400/40 hover:shadow-[0_0_40px_-8px_rgba(96,165,250,0.35)]"
                 >
                   <img
                     src={'/assets/images/' + sector.imgPrefix + '_import.jpg'}
                     alt="Imported Solutions"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                  <div className="absolute bottom-0 p-5">
-                    <h3 className="text-xl font-semibold text-white">Imported Solutions</h3>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-blue-400 shadow-[0_0_8px_#60A5FA]" />
-                      <span className="text-sm text-blue-400">Global Sourcing</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+                  <div className="absolute bottom-0 p-5 sm:p-6">
+                    <h3 className="text-xl font-semibold text-white sm:text-2xl">
+                      Imported Solutions
+                    </h3>
+                    <div className="mt-3 flex items-center gap-2.5">
+                      <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-blue-400 shadow-[0_0_10px_#60A5FA]" />
+                      <span className="text-sm font-medium text-blue-400 sm:text-base">
+                        Global Sourcing
+                      </span>
                     </div>
                   </div>
                 </button>
@@ -299,19 +367,23 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
                 <button
                   type="button"
                   onClick={openCustomModal}
-                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition hover:scale-[1.02]"
+                  className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 text-left transition duration-500 hover:scale-[1.02] hover:border-brand-gold/40 hover:shadow-[0_0_40px_-8px_rgba(212,175,55,0.35)]"
                 >
                   <img
                     src="/assets/images/custom_design_lab.jpg"
                     alt="Request Custom Design"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                  <div className="absolute bottom-0 p-5">
-                    <h3 className="text-xl font-semibold text-white">Request Custom Design</h3>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-brand-gold" />
-                      <span className="text-sm text-brand-gold">Custom R&D Request</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+                  <div className="absolute bottom-0 p-5 sm:p-6">
+                    <h3 className="text-xl font-semibold text-white sm:text-2xl">
+                      Request Custom Design
+                    </h3>
+                    <div className="mt-3 flex items-center gap-2.5">
+                      <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-brand-gold shadow-[0_0_10px_#D4AF37]" />
+                      <span className="text-sm font-medium text-brand-gold sm:text-base">
+                        Custom R&D Request
+                      </span>
                     </div>
                   </div>
                 </button>
@@ -325,12 +397,12 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
       {authPromptOpen ? (
         <Modal onClose={() => setAuthPromptOpen(false)} accent="gold">
-          <div className="mb-5 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gold/15 text-2xl">
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-gold/15 text-3xl">
               🔐
             </div>
-            <h3 className="text-xl font-bold text-white">Sign in required</h3>
-            <p className="mt-2 text-sm leading-relaxed text-gray-400">
+            <h3 className="text-2xl font-bold text-white">Sign in required</h3>
+            <p className="mt-3 text-base leading-relaxed text-gray-400">
               Sign in with Google to request quotes, report problems, or submit custom R&amp;D.
             </p>
           </div>
@@ -338,14 +410,14 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
             <button
               type="button"
               onClick={() => setAuthPromptOpen(false)}
-              className="w-full rounded-lg border border-white/15 px-4 py-3 text-sm font-medium text-gray-300 transition hover:bg-white/5"
+              className="min-h-[48px] w-full rounded-xl border border-white/20 px-5 py-3.5 text-base font-semibold text-gray-200 transition hover:bg-white/10 active:scale-[0.98]"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={continueToLogin}
-              className="w-full rounded-lg bg-brand-gold px-4 py-3 text-sm font-semibold text-black transition hover:opacity-90"
+              className="min-h-[48px] w-full rounded-xl bg-brand-gold px-5 py-3.5 text-base font-bold text-black shadow-lg shadow-brand-gold/20 transition hover:opacity-90 active:scale-[0.98]"
             >
               Continue with Google
             </button>
@@ -355,159 +427,182 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
       {quoteProduct ? (
         <Modal onClose={() => setQuoteProduct(null)} accent="gold">
-          <div className="mb-4 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-green/15 text-2xl">
+          <div className="mb-5 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green/15 text-3xl">
               📦
             </div>
-            <h3 className="text-xl font-bold text-white">Request a quote</h3>
-            <p className="mt-1 text-sm text-gray-400">{quoteProduct.name}</p>
-            <p className="text-sm font-semibold text-brand-gold">{quoteProduct.price}</p>
+            <h3 className="text-2xl font-bold text-white">Request a quote</h3>
+            <p className="mt-2 text-base text-gray-400">{quoteProduct.name}</p>
+            <p className="text-base font-semibold text-brand-gold">{quoteProduct.price}</p>
           </div>
-          <label className="mb-3 block text-left">
-            <span className="mb-1 block text-xs text-gray-400">Quantity</span>
-            <input
-              value={quoteQty}
-              onChange={(e) => setQuoteQty(e.target.value)}
-              className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
-              placeholder="1"
+
+          {quoteAlert?.ok ? (
+            <AlertBanner
+              ok
+              msg={quoteAlert.msg}
+              onDismiss={() => {
+                setQuoteAlert(null);
+                setQuoteProduct(null);
+              }}
             />
-          </label>
-          <label className="mb-3 block text-left">
-            <span className="mb-1 block text-xs text-gray-400">Phone / WhatsApp</span>
-            <input
-              value={quotePhone}
-              onChange={(e) => setQuotePhone(e.target.value)}
-              className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
-              placeholder="+251..."
-            />
-          </label>
-          <label className="mb-4 block text-left">
-            <span className="mb-1 block text-xs text-gray-400">Notes (optional)</span>
-            <textarea
-              value={quoteNotes}
-              onChange={(e) => setQuoteNotes(e.target.value)}
-              rows={3}
-              className="w-full resize-none rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
-              placeholder="Site location, timeline, special requirements..."
-            />
-          </label>
-          <button
-            type="button"
-            onClick={submitQuote}
-            disabled={quoteSending}
-            className="w-full rounded-lg bg-brand-green py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:opacity-50"
-          >
-            {quoteSending ? 'Sending…' : 'Submit quote request'}
-          </button>
-          {quoteAlert ? (
-            <p
-              className={
-                'mt-3 text-center text-sm ' +
-                (quoteAlert.ok ? 'text-brand-green' : 'text-brand-gold')
-              }
-            >
-              {quoteAlert.msg}
-            </p>
-          ) : null}
+          ) : (
+            <>
+              <label className="mb-4 block text-left">
+                <span className="mb-1.5 block text-sm text-gray-400">Quantity</span>
+                <input
+                  value={quoteQty}
+                  onChange={(e) => setQuoteQty(e.target.value)}
+                  className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30"
+                  placeholder="1"
+                />
+              </label>
+              <label className="mb-4 block text-left">
+                <span className="mb-1.5 block text-sm text-gray-400">Phone / WhatsApp</span>
+                <input
+                  value={quotePhone}
+                  onChange={(e) => setQuotePhone(e.target.value)}
+                  className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30"
+                  placeholder="+251..."
+                />
+              </label>
+              <label className="mb-5 block text-left">
+                <span className="mb-1.5 block text-sm text-gray-400">Notes (optional)</span>
+                <textarea
+                  value={quoteNotes}
+                  onChange={(e) => setQuoteNotes(e.target.value)}
+                  rows={3}
+                  className="w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30"
+                  placeholder="Site location, timeline, special requirements..."
+                />
+              </label>
+              <button
+                type="button"
+                onClick={submitQuote}
+                disabled={quoteSending}
+                className="min-h-[52px] w-full rounded-xl bg-brand-green py-3.5 text-base font-bold text-black shadow-lg shadow-brand-green/20 transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+              >
+                {quoteSending ? 'Sending…' : 'Submit quote request'}
+              </button>
+              {quoteAlert && !quoteAlert.ok ? (
+                <AlertBanner ok={false} msg={quoteAlert.msg} onDismiss={() => setQuoteAlert(null)} />
+              ) : null}
+            </>
+          )}
         </Modal>
       ) : null}
 
       {problemOpen ? (
         <Modal onClose={() => setProblemOpen(false)} accent="red">
-          <div className="mb-4 text-center">
-            <span className="text-3xl">⚙️</span>
-            <h3 className="mt-2 text-xl font-bold text-red-400">Report an Engineering Problem</h3>
-            <p className="mt-1 text-sm text-gray-400">
+          <div className="mb-5 text-center">
+            <span className="text-4xl">⚙️</span>
+            <h3 className="mt-3 text-2xl font-bold text-red-400">Report an Engineering Problem</h3>
+            <p className="mt-2 text-base text-gray-400">
               Signed in as {user?.email}. Submit so R&amp;D can analyze a solution.
             </p>
           </div>
-          <input
-            value={probTitle}
-            onChange={(e) => setProbTitle(e.target.value)}
-            placeholder="Problem Title (e.g., Sensor Failure)"
-            className="mb-3 w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-red-400"
-          />
-          <textarea
-            value={probDesc}
-            onChange={(e) => setProbDesc(e.target.value)}
-            placeholder="Describe the technical issue and its impact..."
-            rows={4}
-            className="mb-4 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-red-400"
-          />
-          <button
-            type="button"
-            onClick={submitProblem}
-            className="w-full rounded-lg bg-red-600 py-3 text-sm font-semibold text-white transition hover:bg-red-500"
-          >
-            Submit to R&amp;D
-          </button>
-          {probAlert ? (
-            <p
-              className={
-                probAlert.ok
-                  ? 'mt-3 text-center text-sm text-brand-green'
-                  : 'mt-3 text-center text-sm text-brand-gold'
-              }
-            >
-              {probAlert.msg}
-            </p>
-          ) : null}
+
+          {probAlert?.ok ? (
+            <AlertBanner
+              ok
+              msg={probAlert.msg}
+              onDismiss={() => {
+                setProbAlert(null);
+                setProblemOpen(false);
+              }}
+            />
+          ) : (
+            <>
+              <input
+                value={probTitle}
+                onChange={(e) => setProbTitle(e.target.value)}
+                placeholder="Problem Title (e.g., Sensor Failure)"
+                className="mb-4 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-400/30"
+              />
+              <textarea
+                value={probDesc}
+                onChange={(e) => setProbDesc(e.target.value)}
+                placeholder="Describe the technical issue and its impact..."
+                rows={4}
+                className="mb-5 w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-400/30"
+              />
+              <button
+                type="button"
+                onClick={submitProblem}
+                className="min-h-[52px] w-full rounded-xl bg-red-600 py-3.5 text-base font-bold text-white shadow-lg shadow-red-900/30 transition hover:bg-red-500 active:scale-[0.98]"
+              >
+                Submit to R&amp;D
+              </button>
+              {probAlert && !probAlert.ok ? (
+                <AlertBanner ok={false} msg={probAlert.msg} onDismiss={() => setProbAlert(null)} />
+              ) : null}
+            </>
+          )}
         </Modal>
       ) : null}
 
       {customOpen ? (
         <Modal onClose={() => setCustomOpen(false)} accent="gold">
-          <div className="mb-4 text-center">
-            <span className="text-3xl">🔬</span>
-            <h3 className="mt-2 text-xl font-bold text-brand-gold">Custom R&amp;D Request</h3>
-            <p className="mt-1 text-sm text-gray-400">
+          <div className="mb-5 text-center">
+            <span className="text-4xl">🔬</span>
+            <h3 className="mt-3 text-2xl font-bold text-brand-gold">Custom R&amp;D Request</h3>
+            <p className="mt-2 text-base text-gray-400">
               Signed in as {user?.email}. Tell us what a custom solution must do.
             </p>
           </div>
-          <p className="mb-1 text-left text-xs text-gray-400">
-            1. Why are the standard solutions insufficient?
-          </p>
-          <textarea
-            value={customReason}
-            onChange={(e) => setCustomReason(e.target.value)}
-            placeholder="e.g., The standard pumps cannot handle our high-sediment water..."
-            rows={3}
-            className="mb-3 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
-          />
-          <p className="mb-1 text-left text-xs text-gray-400">
-            2. What exact parameters must the new solution meet?
-          </p>
-          <textarea
-            value={customParams}
-            onChange={(e) => setCustomParams(e.target.value)}
-            placeholder="e.g., Must run on 12V solar, process 500L/hour, and cost under 15,000 ETB..."
-            rows={3}
-            className="mb-3 w-full resize-none rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
-          />
-          <input
-            value={customContact}
-            onChange={(e) => setCustomContact(e.target.value)}
-            placeholder="Engineering Lead Contact Email / Phone"
-            className="mb-4 w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
-          />
-          <button
-            type="button"
-            onClick={submitCustom}
-            className="w-full rounded-lg bg-brand-gold py-3 text-sm font-semibold text-black transition hover:opacity-90"
-          >
-            Initiate R&amp;D Consultation
-          </button>
-          {customAlert ? (
-            <p
-              className={
-                customAlert.ok
-                  ? 'mt-3 text-center text-sm text-brand-green'
-                  : 'mt-3 text-center text-sm text-brand-gold'
-              }
-            >
-              {customAlert.msg}
-            </p>
-          ) : null}
+
+          {customAlert?.ok ? (
+            <AlertBanner
+              ok
+              msg={customAlert.msg}
+              onDismiss={() => {
+                setCustomAlert(null);
+                setCustomOpen(false);
+              }}
+            />
+          ) : (
+            <>
+              <p className="mb-1.5 text-left text-sm text-gray-400">
+                1. Why are the standard solutions insufficient?
+              </p>
+              <textarea
+                value={customReason}
+                onChange={(e) => setCustomReason(e.target.value)}
+                placeholder="e.g., The standard pumps cannot handle our high-sediment water..."
+                rows={3}
+                className="mb-4 w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30"
+              />
+              <p className="mb-1.5 text-left text-sm text-gray-400">
+                2. What exact parameters must the new solution meet?
+              </p>
+              <textarea
+                value={customParams}
+                onChange={(e) => setCustomParams(e.target.value)}
+                placeholder="e.g., Must run on 12V solar, process 500L/hour, and cost under 15,000 ETB..."
+                rows={3}
+                className="mb-4 w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30"
+              />
+              <input
+                value={customContact}
+                onChange={(e) => setCustomContact(e.target.value)}
+                placeholder="Engineering Lead Contact Email / Phone"
+                className="mb-5 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3.5 text-base text-white outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/30"
+              />
+              <button
+                type="button"
+                onClick={submitCustom}
+                className="min-h-[52px] w-full rounded-xl bg-brand-gold py-3.5 text-base font-bold text-black shadow-lg shadow-brand-gold/20 transition hover:opacity-90 active:scale-[0.98]"
+              >
+                Initiate R&amp;D Consultation
+              </button>
+              {customAlert && !customAlert.ok ? (
+                <AlertBanner
+                  ok={false}
+                  msg={customAlert.msg}
+                  onDismiss={() => setCustomAlert(null)}
+                />
+              ) : null}
+            </>
+          )}
         </Modal>
       ) : null}
     </div>
@@ -526,33 +621,42 @@ function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
   const label = type === 'local' ? 'Locally Developed' : 'Imported Solutions';
 
   return (
-    <section className="px-4 py-8 pb-16 sm:px-6">
+    <section className="animate-fade-up px-4 py-8 pb-16 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <button
           type="button"
           onClick={onBack}
-          className="mb-6 rounded-full border border-brand-gold bg-transparent px-4 py-2 text-sm font-medium text-brand-gold transition hover:bg-brand-gold/10"
+          className="mb-8 inline-flex min-h-[48px] items-center gap-2 rounded-full border-2 border-brand-gold bg-brand-gold/10 px-6 py-3 text-base font-semibold text-brand-gold shadow-md shadow-brand-gold/10 transition hover:bg-brand-gold/20 active:scale-[0.98]"
         >
-          ← Back to Dashboard
+          <span className="text-xl leading-none" aria-hidden>
+            ←
+          </span>
+          Back to Dashboard
         </button>
 
-        <h2 className="mb-2 border-b border-brand-green/30 pb-2 text-3xl font-bold text-white">
+        <h2 className="mb-2 border-b border-brand-green/30 pb-3 text-3xl font-bold text-white">
           <span className={type === 'local' ? 'text-brand-green' : 'text-blue-400'}>
             {label}
           </span>
           {' // '}
           {sector.title}
         </h2>
-        <p className="mb-8 text-gray-400">
+        <p className="mb-8 text-base text-gray-400">
           Select an engineering intervention to view deployment specifications and pricing.
         </p>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((prod) => (
-            <ProductCard key={prod.name} product={prod} type={type} onOrder={() => onOrder(prod)} />
+          {products.map((prod, i) => (
+            <ProductCard
+              key={prod.name}
+              product={prod}
+              type={type}
+              onOrder={() => onOrder(prod)}
+              index={i}
+            />
           ))}
 
-          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-transparent p-8 text-center opacity-50">
+          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/15 bg-transparent p-8 text-center opacity-60">
             <div className="mb-3 text-4xl">⚙️</div>
             <h3 className="mb-2 text-lg font-semibold text-white">Further Developments</h3>
             <p className="text-sm text-gray-400">
@@ -570,10 +674,12 @@ function ProductCard({
   product,
   type,
   onOrder,
+  index,
 }: {
   product: Product;
   type: 'local' | 'imported';
   onOrder: () => void;
+  index: number;
 }) {
   const accentBg = type === 'local' ? 'bg-brand-green text-black' : 'bg-blue-400 text-black';
   const borderTop = type === 'local' ? 'border-t-brand-green' : 'border-t-blue-400';
@@ -582,7 +688,9 @@ function ProductCard({
   return (
     <div
       className={
-        'flex flex-col justify-between rounded-2xl border border-white/10 border-t-4 bg-brand-card p-6 ' +
+        'card-alive flex flex-col justify-between rounded-2xl border border-white/10 border-t-4 bg-brand-card p-6 animate-fade-up stagger-' +
+        Math.min(index + 1, 6) +
+        ' ' +
         borderTop
       }
     >
@@ -591,7 +699,7 @@ function ProductCard({
           <img
             src={productImagePath(product.name)}
             alt={product.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition duration-500 hover:scale-105"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
             }}
@@ -599,7 +707,7 @@ function ProductCard({
         </div>
         <div className="mb-3 flex items-start justify-between gap-2 border-b border-white/10 pb-3">
           <h3 className="text-lg font-semibold text-white">{product.name}</h3>
-          <span className={'shrink-0 rounded px-2 py-0.5 text-xs font-bold ' + accentBg}>
+          <span className={'shrink-0 rounded-md px-2.5 py-1 text-xs font-bold ' + accentBg}>
             {product.status}
           </span>
         </div>
@@ -610,7 +718,7 @@ function ProductCard({
       </div>
 
       <div>
-        <div className="mb-4 flex items-center justify-between rounded-lg bg-black/30 p-3">
+        <div className="mb-4 flex items-center justify-between rounded-xl bg-black/30 p-3.5">
           <div>
             <p className="text-xs text-gray-500">Unit Pricing</p>
             <p className="text-lg font-bold text-brand-gold">{product.price}</p>
@@ -623,7 +731,10 @@ function ProductCard({
         <button
           type="button"
           onClick={onOrder}
-          className={'w-full rounded-lg py-3 text-sm font-bold transition hover:opacity-90 ' + btnBg}
+          className={
+            'min-h-[48px] w-full rounded-xl py-3.5 text-base font-bold shadow-md transition hover:opacity-90 active:scale-[0.98] ' +
+            btnBg
+          }
         >
           Configure & Order
         </button>
@@ -641,14 +752,28 @@ type ModalProps = {
 function Modal({ children, onClose, accent }: ModalProps) {
   const borderClass = accent === 'red' ? 'border-red-500/40' : 'border-brand-gold/40';
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      className="modal-backdrop fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4 backdrop-blur-md"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
     >
       <div
         className={
-          'relative w-full max-w-lg rounded-2xl border bg-brand-card p-6 shadow-2xl ' +
+          'modal-panel relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border bg-brand-card p-6 pt-14 shadow-2xl sm:p-8 sm:pt-16 ' +
           borderClass
         }
         onClick={(e) => e.stopPropagation()}
@@ -656,12 +781,51 @@ function Modal({ children, onClose, accent }: ModalProps) {
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 transition hover:text-white"
+          aria-label="Close"
+          className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg font-bold text-white transition hover:bg-white/20 hover:text-white active:scale-95 sm:right-4 sm:top-4"
         >
           ✕
         </button>
         {children}
       </div>
+    </div>
+  );
+}
+
+function AlertBanner({
+  ok,
+  msg,
+  onDismiss,
+}: {
+  ok: boolean;
+  msg: string;
+  onDismiss: () => void;
+}) {
+  return (
+    <div
+      className={
+        'mt-4 animate-scale-in rounded-xl border p-4 ' +
+        (ok
+          ? 'border-brand-green/40 bg-brand-green/10'
+          : 'border-brand-gold/40 bg-brand-gold/10')
+      }
+    >
+      <p
+        className={
+          'text-center text-base font-medium ' + (ok ? 'text-brand-green' : 'text-brand-gold')
+        }
+      >
+        {msg}
+      </p>
+      {ok ? (
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="mt-4 min-h-[44px] w-full rounded-xl border border-brand-green/50 bg-brand-green/20 py-2.5 text-base font-semibold text-brand-green transition hover:bg-brand-green/30 active:scale-[0.98]"
+        >
+          Close
+        </button>
+      ) : null}
     </div>
   );
 }
