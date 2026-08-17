@@ -13,8 +13,6 @@ type AlertState = {
   ok: boolean;
 };
 
-type PendingAction = 'problem' | 'custom' | null;
-
 export default function CategoryClient({ sector }: { sector: Sector }) {
   const [user, setUser] = useState(null as User | null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -22,9 +20,12 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
   const [problemOpen, setProblemOpen] = useState(false);
   const [customOpen, setCustomOpen] = useState(false);
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
-  const [pendingAction, setPendingAction] = useState(null as PendingAction);
-  const [noticeOpen, setNoticeOpen] = useState(false);
-  const [noticeMsg, setNoticeMsg] = useState('');
+  const [quoteProduct, setQuoteProduct] = useState(null as Product | null);
+  const [quoteQty, setQuoteQty] = useState('1');
+  const [quoteNotes, setQuoteNotes] = useState('');
+  const [quotePhone, setQuotePhone] = useState('');
+  const [quoteAlert, setQuoteAlert] = useState(null as AlertState | null);
+  const [quoteSending, setQuoteSending] = useState(false);
 
   const [probTitle, setProbTitle] = useState('');
   const [probDesc, setProbDesc] = useState('');
@@ -60,7 +61,6 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
   const openProblemModal = () => {
     if (!user) {
-      setPendingAction('problem');
       setAuthPromptOpen(true);
       return;
     }
@@ -70,12 +70,23 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
 
   const openCustomModal = () => {
     if (!user) {
-      setPendingAction('custom');
       setAuthPromptOpen(true);
       return;
     }
     setCustomAlert(null);
     setCustomOpen(true);
+  };
+
+  const openQuote = (product: Product) => {
+    if (!user) {
+      setAuthPromptOpen(true);
+      return;
+    }
+    setQuoteProduct(product);
+    setQuoteQty('1');
+    setQuoteNotes('');
+    setQuotePhone('');
+    setQuoteAlert(null);
   };
 
   const continueToLogin = async () => {
@@ -86,14 +97,40 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
     });
   };
 
-  const cancelAuthPrompt = () => {
-    setAuthPromptOpen(false);
-    setPendingAction(null);
-  };
-
-  const showNotice = (msg: string) => {
-    setNoticeMsg(msg);
-    setNoticeOpen(true);
+  const submitQuote = async () => {
+    if (!user || !quoteProduct) return;
+    if (!quotePhone.trim()) {
+      setQuoteAlert({ msg: 'Please add a phone or WhatsApp number so we can reach you.', ok: false });
+      return;
+    }
+    setQuoteSending(true);
+    const { error } = await supabase.from('quote_requests').insert([
+      {
+        product_name: quoteProduct.name,
+        product_price: quoteProduct.price,
+        sector: sector.title,
+        quantity: quoteQty.trim() || '1',
+        notes: quoteNotes.trim() || null,
+        contact_phone: quotePhone.trim(),
+        user_email: user.email ?? null,
+        status: 'pending',
+      },
+    ]);
+    setQuoteSending(false);
+    if (error) {
+      setQuoteAlert({
+        msg:
+          'Could not save quote yet. Message us on Telegram with the product name, or try again later.',
+        ok: false,
+      });
+      return;
+    }
+    setQuoteAlert({
+      msg: 'Quote request sent. We will contact you with pricing and deployment options.',
+      ok: true,
+    });
+    setQuoteQty('1');
+    setQuoteNotes('');
   };
 
   const submitProblem = async () => {
@@ -283,33 +320,24 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
           </section>
         </div>
       ) : (
-        <CatalogView
-          sector={sector}
-          type={catalog}
-          onBack={closeCatalog}
-          onOrderNotice={() =>
-            showNotice(
-              'Procurement Gateway is offline while backend integration is completed. Contact us to place an order.'
-            )
-          }
-        />
+        <CatalogView sector={sector} type={catalog} onBack={closeCatalog} onOrder={openQuote} />
       )}
 
       {authPromptOpen ? (
-        <Modal onClose={cancelAuthPrompt} accent="gold">
+        <Modal onClose={() => setAuthPromptOpen(false)} accent="gold">
           <div className="mb-5 text-center">
             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gold/15 text-2xl">
               🔐
             </div>
             <h3 className="text-xl font-bold text-white">Sign in required</h3>
             <p className="mt-2 text-sm leading-relaxed text-gray-400">
-              You need to sign in with Google to submit requests to FT Agri-Tech R&amp;D.
+              Sign in with Google to request quotes, report problems, or submit custom R&amp;D.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
-              onClick={cancelAuthPrompt}
+              onClick={() => setAuthPromptOpen(false)}
               className="w-full rounded-lg border border-white/15 px-4 py-3 text-sm font-medium text-gray-300 transition hover:bg-white/5"
             >
               Cancel
@@ -325,22 +353,62 @@ export default function CategoryClient({ sector }: { sector: Sector }) {
         </Modal>
       ) : null}
 
-      {noticeOpen ? (
-        <Modal onClose={() => setNoticeOpen(false)} accent="gold">
-          <div className="mb-5 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gold/15 text-2xl">
-              ℹ️
+      {quoteProduct ? (
+        <Modal onClose={() => setQuoteProduct(null)} accent="gold">
+          <div className="mb-4 text-center">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-green/15 text-2xl">
+              📦
             </div>
-            <h3 className="text-xl font-bold text-white">Notice</h3>
-            <p className="mt-2 text-sm leading-relaxed text-gray-400">{noticeMsg}</p>
+            <h3 className="text-xl font-bold text-white">Request a quote</h3>
+            <p className="mt-1 text-sm text-gray-400">{quoteProduct.name}</p>
+            <p className="text-sm font-semibold text-brand-gold">{quoteProduct.price}</p>
           </div>
+          <label className="mb-3 block text-left">
+            <span className="mb-1 block text-xs text-gray-400">Quantity</span>
+            <input
+              value={quoteQty}
+              onChange={(e) => setQuoteQty(e.target.value)}
+              className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
+              placeholder="1"
+            />
+          </label>
+          <label className="mb-3 block text-left">
+            <span className="mb-1 block text-xs text-gray-400">Phone / WhatsApp</span>
+            <input
+              value={quotePhone}
+              onChange={(e) => setQuotePhone(e.target.value)}
+              className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
+              placeholder="+251..."
+            />
+          </label>
+          <label className="mb-4 block text-left">
+            <span className="mb-1 block text-xs text-gray-400">Notes (optional)</span>
+            <textarea
+              value={quoteNotes}
+              onChange={(e) => setQuoteNotes(e.target.value)}
+              rows={3}
+              className="w-full resize-none rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-gold"
+              placeholder="Site location, timeline, special requirements..."
+            />
+          </label>
           <button
             type="button"
-            onClick={() => setNoticeOpen(false)}
-            className="w-full rounded-lg bg-brand-gold px-4 py-3 text-sm font-semibold text-black transition hover:opacity-90"
+            onClick={submitQuote}
+            disabled={quoteSending}
+            className="w-full rounded-lg bg-brand-green py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:opacity-50"
           >
-            Got it
+            {quoteSending ? 'Sending…' : 'Submit quote request'}
           </button>
+          {quoteAlert ? (
+            <p
+              className={
+                'mt-3 text-center text-sm ' +
+                (quoteAlert.ok ? 'text-brand-green' : 'text-brand-gold')
+              }
+            >
+              {quoteAlert.msg}
+            </p>
+          ) : null}
         </Modal>
       ) : null}
 
@@ -450,10 +518,10 @@ type CatalogViewProps = {
   sector: Sector;
   type: 'local' | 'imported';
   onBack: () => void;
-  onOrderNotice: () => void;
+  onOrder: (product: Product) => void;
 };
 
-function CatalogView({ sector, type, onBack, onOrderNotice }: CatalogViewProps) {
+function CatalogView({ sector, type, onBack, onOrder }: CatalogViewProps) {
   const products = sector.products[type];
   const label = type === 'local' ? 'Locally Developed' : 'Imported Solutions';
 
@@ -481,7 +549,7 @@ function CatalogView({ sector, type, onBack, onOrderNotice }: CatalogViewProps) 
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((prod) => (
-            <ProductCard key={prod.name} product={prod} type={type} onOrder={onOrderNotice} />
+            <ProductCard key={prod.name} product={prod} type={type} onOrder={() => onOrder(prod)} />
           ))}
 
           <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-transparent p-8 text-center opacity-50">
@@ -571,8 +639,7 @@ type ModalProps = {
 };
 
 function Modal({ children, onClose, accent }: ModalProps) {
-  const borderClass =
-    accent === 'red' ? 'border-red-500/40' : 'border-brand-gold/40';
+  const borderClass = accent === 'red' ? 'border-red-500/40' : 'border-brand-gold/40';
 
   return (
     <div
