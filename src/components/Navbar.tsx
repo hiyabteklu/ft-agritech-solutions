@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { isAdminEmail } from '@/lib/admin';
 import type { User } from '@supabase/supabase-js';
 
 export default function Navbar() {
@@ -88,6 +89,8 @@ export default function Navbar() {
 
   const avatarUrl =
     user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
+
+  const admin = isAdminEmail(user?.email);
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-xl">
@@ -235,6 +238,22 @@ export default function Navbar() {
                         <span className="block text-xs text-gray-500">Reach the team</span>
                       </span>
                     </Link>
+
+                    {admin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200 transition hover:bg-white/5"
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/15 text-sm">
+                          🛡️
+                        </span>
+                        <span>
+                          <span className="block font-medium text-white">Admin</span>
+                          <span className="block text-xs text-gray-500">All submissions</span>
+                        </span>
+                      </Link>
+                    )}
                   </div>
 
                   <div className="border-t border-white/10 p-2">
