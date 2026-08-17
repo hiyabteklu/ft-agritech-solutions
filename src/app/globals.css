@@ -11,6 +11,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  perspective: 1200px;
 }
 
 /* Seamless horizontal marquee for partners */
@@ -24,18 +25,18 @@ body {
 }
 
 .marquee-track {
-  animation: marquee 35s linear infinite;
+  animation: marquee 40s linear infinite;
 }
 
 .marquee-track:hover {
   animation-play-state: paused;
 }
 
-/* Entrance & life */
+/* Entrance */
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -63,15 +64,6 @@ body {
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
 @keyframes soft-pulse {
   0%,
   100% {
@@ -84,13 +76,68 @@ body {
   }
 }
 
-@keyframes float-y {
+/* Subtle float loops — different phases so cards feel alive, not synced */
+@keyframes float-a {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) rotateX(0deg) rotateY(0deg);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-8px) rotateX(1.2deg) rotateY(-1deg);
+  }
+}
+
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translateY(0) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotateX(-1deg) rotateY(1.2deg);
+  }
+}
+
+@keyframes float-c {
+  0%,
+  100% {
+    transform: translateY(-2px) rotateX(0.5deg);
+  }
+  50% {
+    transform: translateY(-10px) rotateX(-0.8deg) rotateY(0.6deg);
+  }
+}
+
+@keyframes glow-line {
+  0% {
+    opacity: 0.35;
+    filter: brightness(0.9);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.25);
+  }
+  100% {
+    opacity: 0.35;
+    filter: brightness(0.9);
+  }
+}
+
+@keyframes node-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes orbit-soft {
+  0% {
+    transform: rotate(0deg) translateX(6px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(6px) rotate(-360deg);
   }
 }
 
@@ -129,18 +176,73 @@ body {
   animation-delay: 0.3s;
 }
 
-/* Card hover glow */
+/*
+  Universal card life: 3D space, floating, depth on hover
+  Apply .card-alive anywhere a card surface exists
+*/
 .card-alive {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease,
-    box-shadow 0.35s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease,
+    box-shadow 0.45s ease;
+  box-shadow: 0 8px 28px -12px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.card-alive:nth-child(3n + 1) {
+  animation: float-a 7s ease-in-out infinite;
+}
+
+.card-alive:nth-child(3n + 2) {
+  animation: float-b 8.5s ease-in-out infinite;
+  animation-delay: -1.5s;
+}
+
+.card-alive:nth-child(3n + 3) {
+  animation: float-c 9s ease-in-out infinite;
+  animation-delay: -3s;
 }
 
 .card-alive:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px -12px rgba(16, 185, 129, 0.25);
+  animation-play-state: paused;
+  transform: translateY(-10px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 0 22px 50px -14px rgba(16, 185, 129, 0.28), 0 0 0 1px rgba(16, 185, 129, 0.12) inset;
+  border-color: rgba(16, 185, 129, 0.35);
+  z-index: 2;
 }
 
-/* Modal backdrop */
+/* Solution / image tiles that are buttons or links */
+.tile-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease,
+    border-color 0.35s ease;
+  box-shadow: 0 12px 36px -16px rgba(0, 0, 0, 0.7);
+}
+
+.tile-3d:hover {
+  transform: translateY(-8px) scale(1.03) rotateX(3deg);
+  box-shadow: 0 28px 56px -18px rgba(16, 185, 129, 0.35);
+}
+
+/* Lifecycle framework */
+.lifecycle-connector {
+  background: linear-gradient(
+    180deg,
+    rgba(16, 185, 129, 0.15),
+    rgba(212, 175, 55, 0.45),
+    rgba(16, 185, 129, 0.15)
+  );
+  animation: glow-line 3.5s ease-in-out infinite;
+}
+
+.lifecycle-node {
+  animation: node-pulse 2.8s ease-in-out infinite;
+}
+
+.lifecycle-branch {
+  transform-origin: left center;
+}
+
+/* Modal */
 .modal-backdrop {
   animation: fade-in 0.25s ease-out both;
 }
@@ -149,14 +251,26 @@ body {
   animation: scale-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Focus rings */
 input:focus,
 textarea:focus,
 button:focus-visible {
   outline: none;
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-alive,
+  .card-alive:nth-child(n),
+  .marquee-track,
+  .lifecycle-connector,
+  .lifecycle-node {
+    animation: none !important;
+  }
+  .card-alive:hover,
+  .tile-3d:hover {
+    transform: none;
+  }
 }
