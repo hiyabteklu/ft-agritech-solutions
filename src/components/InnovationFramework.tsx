@@ -66,30 +66,29 @@ type AccordionItemProps = {
 
 function AccordionItem({ title, items, isOpen, onToggle }: AccordionItemProps) {
   return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-brand-card">
+    <div className="card-alive overflow-hidden rounded-xl border border-white/10 bg-brand-card">
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between px-5 py-4 text-left transition hover:bg-white/5"
+        className="flex min-h-[56px] w-full items-center justify-between px-5 py-4 text-left transition hover:bg-white/5 active:scale-[0.99]"
       >
-        <span className="text-base font-semibold text-white">{title}</span>
+        <span className="text-base font-semibold text-white sm:text-lg">{title}</span>
         <span
           className={
-            isOpen
-              ? 'text-brand-green transition-transform duration-200 rotate-180'
-              : 'text-brand-green transition-transform duration-200'
+            'flex h-9 w-9 items-center justify-center rounded-full border border-brand-green/40 bg-brand-green/10 text-sm text-brand-green transition-transform duration-200 ' +
+            (isOpen ? 'rotate-180' : '')
           }
         >
           ▼
         </span>
       </button>
       {isOpen ? (
-        <div className="overflow-hidden">
+        <div className="animate-fade-up overflow-hidden">
           <ul className="flex flex-wrap gap-2 border-t border-white/5 px-5 py-4">
             {items.map((item) => (
               <li
                 key={item}
-                className="rounded-full border border-brand-green/30 bg-brand-green/10 px-3 py-1 text-xs text-brand-green"
+                className="rounded-full border border-brand-green/30 bg-brand-green/10 px-3.5 py-1.5 text-sm text-brand-green"
               >
                 {item}
               </li>
@@ -107,11 +106,11 @@ export default function InnovationFramework() {
 
   return (
     <section id="framework" className="px-4 py-12 sm:px-6 sm:py-16">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-3xl animate-fade-up">
         <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
           Innovation Framework
         </h2>
-        <p className="mb-8 text-center text-gray-400">
+        <p className="mb-8 text-center text-base text-gray-400">
           Every innovation at FT Agri-Tech follows the same process:
         </p>
 

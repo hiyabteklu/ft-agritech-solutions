@@ -78,9 +78,7 @@ export default function AccountClient() {
 
   useEffect(() => {
     if (tabParam === 'orders' || tabParam === 'requests' || tabParam === null) {
-      setTab(
-        tabParam === 'orders' || tabParam === 'requests' ? tabParam : 'overview'
-      );
+      setTab(tabParam === 'orders' || tabParam === 'requests' ? tabParam : 'overview');
     }
   }, [tabParam]);
 
@@ -162,7 +160,7 @@ export default function AccountClient() {
     <div className="min-h-screen bg-brand-dark text-white">
       <Navbar />
 
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-5xl animate-fade-up px-4 py-10 sm:px-6">
         <div className="mb-8 overflow-hidden rounded-2xl border border-white/10 bg-brand-card">
           <div className="h-20 bg-gradient-to-r from-brand-green/30 via-brand-gold/10 to-transparent sm:h-24" />
           <div className="-mt-10 flex flex-col gap-4 px-5 pb-6 sm:flex-row sm:items-end sm:px-8">
@@ -180,9 +178,12 @@ export default function AccountClient() {
             </div>
             <Link
               href="/"
-              className="rounded-full border border-white/15 px-4 py-2 text-center text-sm text-gray-300 transition hover:bg-white/5"
+              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-white/20 bg-white/5 px-5 py-2.5 text-center text-base font-semibold text-gray-200 transition hover:bg-white/10 active:scale-[0.98]"
             >
-              ← Back to portal
+              <span className="text-lg leading-none" aria-hidden>
+                ←
+              </span>
+              Back to portal
             </Link>
           </div>
         </div>
@@ -200,7 +201,7 @@ export default function AccountClient() {
               type="button"
               onClick={() => setTabAndUrl(t.id)}
               className={
-                'shrink-0 border-b-2 px-4 py-2.5 text-sm font-medium transition ' +
+                'min-h-[48px] shrink-0 border-b-2 px-5 py-3 text-base font-semibold transition ' +
                 (tab === t.id
                   ? 'border-brand-gold text-brand-gold'
                   : 'border-transparent text-gray-400 hover:text-white')
@@ -216,12 +217,12 @@ export default function AccountClient() {
             <button
               type="button"
               onClick={() => setTabAndUrl('orders')}
-              className="rounded-2xl border border-white/10 bg-brand-card p-5 text-left transition hover:border-brand-green/40"
+              className="card-alive rounded-2xl border border-white/10 bg-brand-card p-5 text-left transition hover:border-brand-green/40"
             >
               <div className="mb-3 text-2xl">📦</div>
               <h2 className="font-semibold text-white">My Orders</h2>
               <p className="mt-1 text-sm text-gray-400">Quote requests you submitted.</p>
-              <p className="mt-3 text-xs text-brand-green">
+              <p className="mt-3 text-sm font-medium text-brand-green">
                 {dataLoading ? 'Loading…' : quotes.length + ' quote(s)'}
               </p>
             </button>
@@ -229,21 +230,21 @@ export default function AccountClient() {
             <button
               type="button"
               onClick={() => setTabAndUrl('requests')}
-              className="rounded-2xl border border-white/10 bg-brand-card p-5 text-left transition hover:border-brand-gold/40"
+              className="card-alive rounded-2xl border border-white/10 bg-brand-card p-5 text-left transition hover:border-brand-gold/40"
             >
               <div className="mb-3 text-2xl">📋</div>
               <h2 className="font-semibold text-white">My Requests</h2>
               <p className="mt-1 text-sm text-gray-400">
                 Problems and custom R&D you submitted.
               </p>
-              <p className="mt-3 text-xs text-brand-gold">
+              <p className="mt-3 text-sm font-medium text-brand-gold">
                 {dataLoading
                   ? 'Loading…'
                   : problems.length + customs.length + ' submission(s)'}
               </p>
             </button>
 
-            <div className="rounded-2xl border border-white/10 bg-brand-card p-5">
+            <div className="card-alive rounded-2xl border border-white/10 bg-brand-card p-5">
               <div className="mb-3 text-2xl">🌱</div>
               <h2 className="font-semibold text-white">Explore solutions</h2>
               <p className="mt-1 text-sm text-gray-400">
@@ -251,7 +252,7 @@ export default function AccountClient() {
               </p>
               <Link
                 href="/#solutions"
-                className="mt-3 inline-block text-xs text-brand-green hover:underline"
+                className="mt-4 inline-flex min-h-[40px] items-center text-sm font-semibold text-brand-green hover:underline"
               >
                 Go to solutions →
               </Link>
@@ -275,7 +276,7 @@ export default function AccountClient() {
                 </p>
                 <Link
                   href="/#solutions"
-                  className="mt-6 inline-block rounded-full bg-brand-green px-5 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
+                  className="mt-6 inline-flex min-h-[48px] items-center rounded-full bg-brand-green px-6 py-3 text-base font-bold text-black transition hover:opacity-90 active:scale-[0.98]"
                 >
                   Browse solutions
                 </Link>
@@ -285,11 +286,11 @@ export default function AccountClient() {
                 {quotes.map((q) => (
                   <li
                     key={q.id}
-                    className="rounded-xl border border-white/10 border-l-4 border-l-brand-green bg-brand-card p-4"
+                    className="card-alive rounded-xl border border-white/10 border-l-4 border-l-brand-green bg-brand-card p-4"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <h3 className="font-semibold text-white">{q.product_name}</h3>
-                      <span className="rounded bg-brand-green/15 px-2 py-0.5 text-xs font-medium text-brand-green">
+                      <span className="rounded-md bg-brand-green/15 px-2.5 py-1 text-xs font-medium text-brand-green">
                         {q.status || 'pending'}
                       </span>
                     </div>
@@ -297,9 +298,7 @@ export default function AccountClient() {
                       {q.sector} · Qty {q.quantity || '1'}
                       {q.product_price ? ' · ' + q.product_price : ''}
                     </p>
-                    {q.notes ? (
-                      <p className="mt-1 text-sm text-gray-500">{q.notes}</p>
-                    ) : null}
+                    {q.notes ? <p className="mt-1 text-sm text-gray-500">{q.notes}</p> : null}
                     <p className="mt-2 text-xs text-gray-600">
                       {new Date(q.created_at).toLocaleString()}
                       {q.contact_phone ? ' · ' + q.contact_phone : ''}
@@ -327,7 +326,7 @@ export default function AccountClient() {
                 </p>
                 <Link
                   href="/#solutions"
-                  className="mt-6 inline-block rounded-full bg-brand-gold px-5 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
+                  className="mt-6 inline-flex min-h-[48px] items-center rounded-full bg-brand-gold px-6 py-3 text-base font-bold text-black transition hover:opacity-90 active:scale-[0.98]"
                 >
                   Explore sectors
                 </Link>
@@ -343,11 +342,11 @@ export default function AccountClient() {
                       {problems.map((p) => (
                         <li
                           key={p.id}
-                          className="rounded-xl border border-white/10 border-l-4 border-l-red-500 bg-brand-card p-4"
+                          className="card-alive rounded-xl border border-white/10 border-l-4 border-l-red-500 bg-brand-card p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <h3 className="font-semibold text-white">{p.title}</h3>
-                            <span className="rounded bg-white/5 px-2 py-0.5 text-xs text-gray-400">
+                            <span className="rounded-md bg-white/5 px-2.5 py-1 text-xs text-gray-400">
                               {p.sector}
                             </span>
                           </div>
@@ -370,7 +369,7 @@ export default function AccountClient() {
                       {customs.map((c) => (
                         <li
                           key={c.id}
-                          className="rounded-xl border border-white/10 border-l-4 border-l-brand-gold bg-brand-card p-4"
+                          className="card-alive rounded-xl border border-white/10 border-l-4 border-l-brand-gold bg-brand-card p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <h3 className="font-semibold text-white">{c.sector}</h3>
