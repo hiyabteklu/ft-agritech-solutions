@@ -1,12 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  const [user, setUser] = useState(null as User | null);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null as HTMLDivElement | null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -14,11 +19,23 @@ export default function Navbar() {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
 
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
   const handleLogin = async () => {
@@ -29,8 +46,10 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
+    setMenuOpen(false);
     await supabase.auth.signOut();
-    window.location.reload();
+    router.push('/');
+    router.refresh();
   };
 
   const displayName =
@@ -45,8 +64,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-        {/* Brand */}
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <img
             src="/ftagritech1.jpg"
             alt="FT Agri-Tech"
@@ -55,11 +73,9 @@ export default function Navbar() {
           <span className="text-lg font-semibold tracking-tight text-white">
             FT-Agri-Tech
           </span>
-        </div>
+        </Link>
 
-        {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Search - hidden on very small screens */}
           <div className="relative hidden sm:block">
             <input
               type="text"
@@ -71,40 +87,120 @@ export default function Navbar() {
             </span>
           </div>
 
-          {/* User chip */}
-          {user && (
-            <div className="flex items-center gap-2 rounded-full border border-brand-green/40 bg-brand-green/10 py-1 pl-1 pr-3">
-              <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-brand-green to-brand-green-dark text-sm font-bold text-white">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
-                ) : (
-                  displayName.charAt(0).toUpperCase()
-                )}
-              </div>
-              <div className="hidden flex-col leading-tight sm:flex">
-                <span className="text-xs font-semibold text-brand-green">{displayName}</span>
-                <span className="max-w-[120px] truncate text-[10px] text-gray-400">{user.email}</span>
-              </div>
-            </div>
+          {!loading && !user && (
+            <button
+              type="button"
+              onClick={handleLogin}
+              className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+            >
+              Register / Log In
+            </button>
           )}
 
-          {/* Auth button */}
-          {!loading && (
-            user ? (
+          {!loading && user && (
+            <div className="relative" ref={menuRef}>
               <button
-                onClick={handleLogout}
-                className="rounded-full bg-gradient-to-r from-brand-green to-brand-green-dark px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                type="button"
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center gap-2 rounded-full border border-brand-green/40 bg-brand-green/10 py-1 pl-1 pr-2 transition hover:bg-brand-green/20 sm:pr-3"
+                aria-expanded={menuOpen}
+                aria-haspopup="true"
               >
-                Log Out
+                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-brand-green to-emerald-700 text-sm font-bold text-white">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={displayName}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    displayName.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <div className="hidden flex-col leading-tight sm:flex">
+                  <span className="text-xs font-semibold text-brand-green">
+                    {displayName}
+                  </span>
+                  <span className="max-w-[120px] truncate text-[10px] text-gray-400">
+                    {user.email}
+                  </span>
+                </div>
+                <span
+                  className={
+                    'ml-0.5 text-[10px] text-brand-green transition ' +
+                    (menuOpen ? 'rotate-180' : '')
+                  }
+                >
+                  ▼
+                </span>
               </button>
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
-              >
-                Register / Log In
-              </button>
-            )
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0d] shadow-2xl shadow-black/60">
+                  <div className="border-b border-white/10 bg-gradient-to-r from-brand-green/10 to-transparent px-4 py-3">
+                    <p className="text-sm font-semibold text-white">{displayName}</p>
+                    <p className="truncate text-xs text-gray-400">{user.email}</p>
+                  </div>
+
+                  <div className="p-2">
+                    <Link
+                      href="/account"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200 transition hover:bg-white/5"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-gold/15 text-sm">
+                        👤
+                      </span>
+                      <span>
+                        <span className="block font-medium text-white">My Account</span>
+                        <span className="block text-xs text-gray-500">Profile & overview</span>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/account?tab=orders"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200 transition hover:bg-white/5"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/15 text-sm">
+                        📦
+                      </span>
+                      <span>
+                        <span className="block font-medium text-white">My Orders</span>
+                        <span className="block text-xs text-gray-500">Track deployments</span>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/account?tab=requests"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200 transition hover:bg-white/5"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/15 text-sm">
+                        📋
+                      </span>
+                      <span>
+                        <span className="block font-medium text-white">My Requests</span>
+                        <span className="block text-xs text-gray-500">Problems & custom R&D</span>
+                      </span>
+                    </Link>
+                  </div>
+
+                  <div className="border-t border-white/10 p-2">
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-400 transition hover:bg-red-500/10"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-sm">
+                        🚪
+                      </span>
+                      <span className="font-medium">Log out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
