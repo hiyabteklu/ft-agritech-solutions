@@ -2,10 +2,24 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { sectors } from '@/data/sectors';
+import { sectors as staticSectors } from '@/data/sectors';
+import { fetchAllSectors, type SectorFull } from '@/lib/catalog';
 
 export default function SolutionsGrid() {
   const [query, setQuery] = useState('');
+  const [sectors, setSectors] = useState(staticSectors as SectorFull[]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchAllSectors().then((list) => {
+      if (!cancelled && list.length) setSectors(list);
+      if (!cancelled) setLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -28,7 +42,7 @@ export default function SolutionsGrid() {
         s.id.includes(q) ||
         s.subtitle.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, sectors]);
 
   return (
     <section id="solutions" className="px-4 py-12 sm:px-6 sm:py-16">
@@ -54,7 +68,13 @@ export default function SolutionsGrid() {
 
         {filtered.length === 0 ? (
           <p className="py-12 text-center text-base text-gray-400">
-            No solutions found matching &ldquo;{query}&rdquo;.
+            {loaded ? (
+              <>
+                No solutions found matching &ldquo;{query}&rdquo;.
+              </>
+            ) : (
+              'Loading solutions…'
+            )}
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
