@@ -91,6 +91,27 @@ function BarChart({ data, color = '#10B981' }: { data: { label: string; value: n
   );
 }
 
+function DayBars({ data }: { data: { label: string; value: number }[] }) {
+  const max = Math.max(...data.map((d) => d.value), 1);
+  return (
+    <div className="flex h-36 items-end gap-1.5 sm:gap-2">
+      {data.map((d) => (
+        <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
+          <span className="text-[10px] font-semibold tabular-nums text-gray-400">{d.value || ''}</span>
+          <div className="flex w-full flex-1 items-end justify-center">
+            <div
+              className="w-full max-w-[36px] rounded-t-md bg-gradient-to-t from-brand-green to-emerald-400 transition-all duration-500"
+              style={{ height: `${Math.max((d.value / max) * 100, d.value > 0 ? 8 : 2)}%` }}
+              title={`${d.label}: ${d.value}`}
+            />
+          </div>
+          <span className="text-[10px] text-gray-500">{d.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminClient() {
   const router = useRouter();
   const [user, setUser] = useState(null as User | null);
@@ -128,7 +149,6 @@ export default function AdminClient() {
     setError('');
     setTableErrors({});
 
-    // select * is more resilient if columns differ across environments
     const [q, p, c, m] = await Promise.all([
       supabase.from('quote_requests').select('*').order('created_at', { ascending: false }).limit(300),
       supabase.from('problems').select('*').order('created_at', { ascending: false }).limit(300),
@@ -240,10 +260,34 @@ export default function AdminClient() {
       .sort((a, b) => b.value - a.value);
   }, [quotes, problems, customs, contacts]);
 
+  const last7Days = useMemo(() => {
+    const days: { key: string; label: string; value: number }[] = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      const label = d.toLocaleDateString(undefined, { weekday: 'short' });
+      days.push({ key, label, value: 0 });
+    }
+    const map = Object.fromEntries(days.map((x) => [x.key, x]));
+    const all = [...quotes, ...problems, ...customs, ...contacts];
+    all.forEach((r) => {
+      const iso = str(r.created_at);
+      if (!iso) return;
+      const key = iso.slice(0, 10);
+      if (map[key]) map[key].value += 1;
+    });
+    return days.map(({ label, value }) => ({ label, value }));
+  }, [quotes, problems, customs, contacts]);
+
   const pendingTotal =
     [...quotes, ...problems, ...customs, ...contacts].filter(
       (r) => !r.status || str(r.status).toLowerCase() === 'pending'
     ).length;
+
+  const totalSubmissions = quotes.length + problems.length + customs.length + contacts.length;
 
   if (loading || !user) {
     return (
@@ -274,20 +318,27 @@ export default function AdminClient() {
       <Navbar />
 
       {toast ? (
-        <div className="fixed bottom-4 left-1/2 z-[300] max-w-[90vw] -translate-x-1/2 rounded-full border border-brand-green/40 bg-brand-card px-5 py-3 text-sm font-medium text-brand-green shadow-xl">
+        <div className="fixed bottom-6 left-1/2 z-[10000] max-w-[90vw] -translate-x-1/2 rounded-full border border-brand-green/40 bg-brand-card px-5 py-3 text-sm font-medium text-brand-green shadow-2xl">
           {toast}
         </div>
       ) : null}
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-6xl px-3 py-6 sm:px-6 sm:py-10">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
           <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-gold">Control center</p>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Admin dashboard</h1>
             <p className="mt-1 text-sm text-gray-400">
-              {pendingTotal} pending · signed in as {user.email}
+              {pendingTotal} pending · {totalSubmissions} total · {user.email}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <Link
+              href="/admin/catalog"
+              className="inline-flex min-h-[44px] items-center rounded-full border border-brand-green/40 bg-brand-green/15 px-4 py-2 text-sm font-semibold text-brand-green hover:bg-brand-green/25"
+            >
+              Catalog
+            </Link>
             <button
               type="button"
               onClick={loadAll}
@@ -307,7 +358,7 @@ export default function AdminClient() {
               href="/"
               className="inline-flex min-h-[44px] items-center rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-white/10"
             >
-              ← Portal
+              Portal
             </Link>
           </div>
         </div>
@@ -318,8 +369,8 @@ export default function AdminClient() {
             <p className="mt-1 text-brand-gold/90">{error}</p>
             {isJwtClock ? (
               <ol className="mt-3 list-decimal space-y-1 pl-5 text-xs text-gray-300">
-                <li>Set phone Date &amp; Time to <strong>Automatic</strong>.</li>
-                <li>Tap <strong>Fix session</strong> above, or sign out and sign in again.</li>
+                <li>Set phone Date & Time to Automatic.</li>
+                <li>Tap Fix session above, or sign out and sign in again.</li>
                 <li>Then tap Refresh.</li>
               </ol>
             ) : (
@@ -330,7 +381,6 @@ export default function AdminClient() {
           </div>
         ) : null}
 
-        {/* Search + status filter (list tabs) */}
         {tab !== 'overview' ? (
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
@@ -400,6 +450,29 @@ export default function AdminClient() {
 
         {tab === 'overview' && (
           <div className="space-y-6 animate-fade-up">
+            {pendingTotal > 0 ? (
+              <div className="flex flex-col gap-3 rounded-2xl border border-brand-gold/35 bg-gradient-to-r from-brand-gold/15 to-transparent p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-brand-gold">
+                    {pendingTotal} item{pendingTotal === 1 ? '' : 's'} awaiting action
+                  </p>
+                  <p className="mt-0.5 text-xs text-gray-400">
+                    Review orders, problems, R&D, and contact messages marked pending.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTab('quotes');
+                    setStatusFilter('pending');
+                  }}
+                  className="min-h-[44px] shrink-0 rounded-full bg-brand-gold px-5 py-2 text-sm font-bold text-black"
+                >
+                  Review pending
+                </button>
+              </div>
+            ) : null}
+
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <StatCard label="Orders" value={quotes.length} sub="quote requests" accent="text-brand-green" onClick={() => setTab('quotes')} />
               <StatCard label="Problems" value={problems.length} sub={tableErrors.problems ? 'load error' : 'field reports'} accent="text-red-400" onClick={() => setTab('problems')} />
@@ -407,16 +480,43 @@ export default function AdminClient() {
               <StatCard label="Contact" value={contacts.length} sub="inbox" accent="text-blue-400" onClick={() => setTab('contact')} />
             </div>
 
+            <div className="grid gap-4 lg:grid-cols-5">
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-5 lg:col-span-3">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
+                    Activity · last 7 days
+                  </h2>
+                  <span className="text-xs text-gray-500">
+                    {last7Days.reduce((a, b) => a + b.value, 0)} new
+                  </span>
+                </div>
+                <DayBars data={last7Days} />
+              </div>
+              <Link
+                href="/admin/catalog"
+                className="flex flex-col justify-between rounded-2xl border border-brand-green/25 bg-gradient-to-br from-brand-green/15 to-brand-card p-5 transition hover:border-brand-green/50 lg:col-span-2"
+              >
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-brand-green">Products</p>
+                  <h2 className="mt-1 text-xl font-bold text-white">Catalog manager</h2>
+                  <p className="mt-2 text-sm text-gray-400">
+                    Add, edit, or delete categories, field problems, and local / imported products.
+                  </p>
+                </div>
+                <span className="mt-4 text-sm font-semibold text-brand-green">Open catalog →</span>
+              </Link>
+            </div>
+
             <div className="grid gap-4 lg:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-brand-card p-5 lg:col-span-1">
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">By type</h2>
                 <BarChart data={typeCounts} color="#3B82F6" />
               </div>
-              <div className="rounded-2xl border border-white/10 bg-brand-card p-5 lg:col-span-1">
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">By sector</h2>
                 <BarChart data={sectorCounts} color="#10B981" />
               </div>
-              <div className="rounded-2xl border border-white/10 bg-brand-card p-5 lg:col-span-1">
+              <div className="rounded-2xl border border-white/10 bg-brand-card p-5">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-400">By status</h2>
                 <BarChart data={statusBreakdown} color="#D4AF37" />
               </div>
