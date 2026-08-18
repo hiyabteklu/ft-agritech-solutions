@@ -1,8 +1,5 @@
-import { notFound } from 'next/navigation';
-import { getSectorBySlug, sectors } from '@/data/sectors';
-import CategoryClient from '@/components/CategoryClient';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import CategoryPageClient from '@/components/CategoryPageClient';
+import { sectors } from '@/data/sectors';
 
 export function generateStaticParams() {
   return sectors.map((s) => ({ slug: s.slug }));
@@ -13,7 +10,7 @@ export function generateMetadata({
 }: {
   params: { slug: string };
 }) {
-  const sector = getSectorBySlug(params.slug);
+  const sector = sectors.find((s) => s.slug === params.slug);
   if (!sector) return { title: 'Sector Not Found' };
   return {
     title: sector.title,
@@ -26,14 +23,5 @@ export default function CategoryPage({
 }: {
   params: { slug: string };
 }) {
-  const sector = getSectorBySlug(params.slug);
-  if (!sector) notFound();
-
-  return (
-    <>
-      <Navbar />
-      <CategoryClient sector={sector} />
-      <Footer />
-    </>
-  );
+  return <CategoryPageClient slug={params.slug} />;
 }
