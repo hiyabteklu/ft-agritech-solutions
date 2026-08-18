@@ -5,6 +5,9 @@ export type Product = {
   rating: string;
   status: string;
   desc: string;
+  /** Optional override from DB catalog */
+  imagePath?: string;
+  dbId?: string;
 };
 
 export type Sector = {
@@ -499,6 +502,7 @@ export function getSectorBySlug(slug: string): Sector | undefined {
   return sectors.find((s) => s.slug === slug);
 }
 
-export function productImagePath(name: string): string {
+export function productImagePath(name: string, imagePath?: string): string {
+  if (imagePath) return imagePath;
   return `/assets/images/${name.toLowerCase().replace(/\s+/g, '_')}.jpg`;
 }
