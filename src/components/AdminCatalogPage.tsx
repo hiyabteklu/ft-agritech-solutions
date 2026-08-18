@@ -29,7 +29,7 @@ export default function AdminCatalogPage() {
 
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(() => setToast(''), 3000);
+    const t = setTimeout(() => setToast(''), 3200);
     return () => clearTimeout(t);
   }, [toast]);
 
@@ -47,17 +47,18 @@ export default function AdminCatalogPage() {
       <Navbar />
 
       {toast ? (
-        <div className="fixed bottom-4 left-1/2 z-[300] max-w-[90vw] -translate-x-1/2 rounded-full border border-brand-green/40 bg-brand-card px-5 py-3 text-sm font-medium text-brand-green shadow-xl">
+        <div className="fixed bottom-6 left-1/2 z-[10000] max-w-[92vw] -translate-x-1/2 rounded-full border border-brand-green/40 bg-brand-card px-5 py-3 text-sm font-medium text-brand-green shadow-2xl">
           {toast}
         </div>
       ) : null}
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-6xl px-3 py-6 sm:px-6 sm:py-10">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
           <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-green">Admin</p>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Catalog manager</h1>
             <p className="mt-1 text-sm text-gray-400">
-              Categories · problems · products · signed in as {user.email}
+              Categories · problems · products · {user.email}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -65,13 +66,13 @@ export default function AdminCatalogPage() {
               href="/admin"
               className="inline-flex min-h-[44px] items-center rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-white/10"
             >
-              ← Submissions
+              ← Dashboard
             </Link>
             <Link
-              href="/"
-              className="inline-flex min-h-[44px] items-center rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-white/10"
+              href="/#solutions"
+              className="inline-flex min-h-[44px] items-center rounded-full border border-brand-green/30 bg-brand-green/10 px-4 py-2 text-sm font-semibold text-brand-green hover:bg-brand-green/20"
             >
-              Portal
+              View live products
             </Link>
           </div>
         </div>

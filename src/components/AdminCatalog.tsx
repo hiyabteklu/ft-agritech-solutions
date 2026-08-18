@@ -112,7 +112,8 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
     const local = products.filter((p) => p.catalog_type === 'local').length;
     const imported = products.filter((p) => p.catalog_type === 'imported').length;
     const hidden = products.filter((p) => !p.published).length;
-    return { local, imported, hidden, total: products.length };
+    const published = products.filter((p) => p.published).length;
+    return { local, imported, hidden, published, total: products.length };
   }, [products]);
 
   const productsBySector = useMemo(() => {
@@ -125,6 +126,17 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
       .map(([label, value]) => ({ label, value }))
       .sort((a, b) => b.value - a.value);
   }, [products, sectorMap]);
+
+  const problemsBySector = useMemo(() => {
+    const map: Record<string, number> = {};
+    problems.forEach((p) => {
+      const label = sectorMap[p.sector_id]?.title || 'Unknown';
+      map[label] = (map[label] || 0) + 1;
+    });
+    return Object.entries(map)
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [problems, sectorMap]);
 
   const saveProduct = async () => {
     if (!editProduct) return;
@@ -291,28 +303,38 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
 
   return (
     <div className="space-y-5 animate-fade-up">
-      {/* Catalog snapshot */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <MiniStat label="Categories" value={sectors.length} color="text-brand-gold" />
-        <MiniStat label="Products" value={catalogStats.total} color="text-brand-green" />
-        <MiniStat label="Local" value={catalogStats.local} color="text-emerald-400" />
-        <MiniStat label="Imported" value={catalogStats.imported} color="text-blue-400" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
+        <MiniStat label="Categories" value={sectors.length} color="text-brand-gold" tip="Sectors on the portal" />
+        <MiniStat label="Products" value={catalogStats.total} color="text-brand-green" tip="All SKUs" />
+        <MiniStat label="Local" value={catalogStats.local} color="text-emerald-400" tip="Locally developed" />
+        <MiniStat label="Imported" value={catalogStats.imported} color="text-blue-400" tip="Imported solutions" />
+        <MiniStat label="Published" value={catalogStats.published} color="text-white" tip={`${catalogStats.hidden} hidden`} />
       </div>
 
-      {productsBySector.length > 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-brand-card p-4 sm:p-5">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Products by category
-          </h3>
-          <MiniBars data={productsBySector} color="#10B981" />
-        </div>
-      ) : null}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {productsBySector.length > 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-brand-card p-4 sm:p-5">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Products by category
+            </h3>
+            <MiniBars data={productsBySector} color="#10B981" />
+          </div>
+        ) : null}
+        {problemsBySector.length > 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-brand-card p-4 sm:p-5">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Field problems by category
+            </h3>
+            <MiniBars data={problemsBySector} color="#F87171" />
+          </div>
+        ) : null}
+      </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-gray-400">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-white/10 bg-gradient-to-r from-brand-green/10 to-transparent p-3 sm:p-4">
+        <p className="text-sm text-gray-300">
           Manage categories, field problems, and products (local / imported).
           {catalogStats.hidden > 0 ? (
-            <span className="ml-2 text-brand-gold">{catalogStats.hidden} hidden</span>
+            <span className="ml-2 font-semibold text-brand-gold">{catalogStats.hidden} hidden from public</span>
           ) : null}
         </p>
         <button
@@ -348,7 +370,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
             type="button"
             onClick={() => setSub(t.id)}
             className={
-              'min-h-[40px] shrink-0 border-b-2 px-3 py-2 text-sm font-semibold ' +
+              'min-h-[44px] shrink-0 border-b-2 px-3 py-2 text-sm font-semibold ' +
               (sub === t.id
                 ? 'border-brand-green text-brand-green'
                 : 'border-transparent text-gray-400 hover:text-white')
@@ -365,7 +387,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
           <select
             value={sectorFilter}
             onChange={(e) => setSectorFilter(e.target.value)}
-            className="min-h-[40px] rounded-xl border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-brand-gold"
+            className="min-h-[44px] rounded-xl border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-brand-gold"
           >
             <option value="all">All categories</option>
             {sectors.map((s) => (
@@ -378,7 +400,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
             <select
               value={catalogFilter}
               onChange={(e) => setCatalogFilter(e.target.value)}
-              className="min-h-[40px] rounded-xl border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-brand-gold"
+              className="min-h-[44px] rounded-xl border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-brand-gold"
             >
               <option value="all">Local + Imported</option>
               <option value="local">Local only</option>
@@ -388,7 +410,6 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
         </div>
       ) : null}
 
-      {/* ── Products ── */}
       {sub === 'products' && (
         <div className="space-y-3">
           <button
@@ -402,7 +423,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
               )
             }
             disabled={!sectors.length}
-            className="min-h-[44px] rounded-full bg-brand-green px-5 py-2.5 text-sm font-bold text-black hover:opacity-90 disabled:opacity-40"
+            className="min-h-[48px] w-full rounded-full bg-brand-green px-5 py-2.5 text-sm font-bold text-black hover:opacity-90 disabled:opacity-40 sm:w-auto"
           >
             + Add product
           </button>
@@ -419,7 +440,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                 key={p.id}
                 className="rounded-2xl border border-white/10 border-l-4 border-l-brand-green bg-brand-card p-4"
               >
-                <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <h3 className="text-base font-semibold text-white">{p.name}</h3>
                     <p className="mt-0.5 text-sm text-gray-400">
@@ -440,7 +461,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                     <button
                       type="button"
                       onClick={() => setEditProduct({ ...p })}
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold"
+                      className="min-h-[44px] flex-1 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold sm:flex-none"
                     >
                       Edit
                     </button>
@@ -448,7 +469,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                       type="button"
                       disabled={busy === p.id}
                       onClick={() => deleteProduct(p.id)}
-                      className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400"
+                      className="min-h-[44px] flex-1 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-400 sm:flex-none"
                     >
                       Delete
                     </button>
@@ -460,14 +481,13 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
         </div>
       )}
 
-      {/* ── Problems ── */}
       {sub === 'problems' && (
         <div className="space-y-3">
           <button
             type="button"
             onClick={() => setEditProblem(emptyProblem(defaultSectorId))}
             disabled={!sectors.length}
-            className="min-h-[44px] rounded-full bg-red-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-red-500 disabled:opacity-40"
+            className="min-h-[48px] w-full rounded-full bg-red-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-red-500 disabled:opacity-40 sm:w-auto"
           >
             + Add problem
           </button>
@@ -484,7 +504,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                 key={pr.id}
                 className="rounded-2xl border border-white/10 border-l-4 border-l-red-500 bg-brand-card p-4"
               >
-                <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0 flex-1">
                     <h3 className="font-semibold text-red-400">{pr.title}</h3>
                     <p className="mt-0.5 text-xs text-gray-500">
@@ -496,7 +516,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                     <button
                       type="button"
                       onClick={() => setEditProblem({ ...pr })}
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold"
+                      className="min-h-[44px] flex-1 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold sm:flex-none"
                     >
                       Edit
                     </button>
@@ -504,7 +524,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                       type="button"
                       disabled={busy === pr.id}
                       onClick={() => deleteProblem(pr.id)}
-                      className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400"
+                      className="min-h-[44px] flex-1 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-400 sm:flex-none"
                     >
                       Delete
                     </button>
@@ -516,13 +536,12 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
         </div>
       )}
 
-      {/* ── Sectors ── */}
       {sub === 'sectors' && (
         <div className="space-y-3">
           <button
             type="button"
             onClick={() => setEditSector(emptySector())}
-            className="min-h-[44px] rounded-full bg-brand-gold px-5 py-2.5 text-sm font-bold text-black hover:opacity-90"
+            className="min-h-[48px] w-full rounded-full bg-brand-gold px-5 py-2.5 text-sm font-bold text-black hover:opacity-90 sm:w-auto"
           >
             + Add category
           </button>
@@ -539,7 +558,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                 key={s.id}
                 className="rounded-2xl border border-white/10 border-l-4 border-l-brand-gold bg-brand-card p-4"
               >
-                <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <h3 className="text-base font-semibold text-white">
                       {s.code ? s.code + ' | ' : ''}{s.title}
@@ -554,7 +573,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                     <button
                       type="button"
                       onClick={() => setEditSector({ ...s })}
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold"
+                      className="min-h-[44px] flex-1 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold sm:flex-none"
                     >
                       Edit
                     </button>
@@ -562,7 +581,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
                       type="button"
                       disabled={busy === s.id}
                       onClick={() => deleteSector(s.id)}
-                      className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400"
+                      className="min-h-[44px] flex-1 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-400 sm:flex-none"
                     >
                       Delete
                     </button>
@@ -574,7 +593,6 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
         </div>
       )}
 
-      {/* Product modal */}
       {editProduct ? (
         <FormModal
           title={editProduct.id ? 'Edit product' : 'Add product'}
@@ -702,7 +720,6 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
         </FormModal>
       ) : null}
 
-      {/* Problem modal */}
       {editProblem ? (
         <FormModal
           title={editProblem.id ? 'Edit problem' : 'Add problem'}
@@ -753,7 +770,6 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
         </FormModal>
       ) : null}
 
-      {/* Sector modal */}
       {editSector ? (
         <FormModal
           title={editSector.id ? 'Edit category' : 'Add category'}
@@ -856,27 +872,40 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
       <style jsx global>{`
         .field {
           width: 100%;
-          border-radius: 0.5rem;
+          border-radius: 0.75rem;
           border: 1px solid rgba(255, 255, 255, 0.15);
-          background: rgba(255, 255, 255, 0.05);
-          padding: 0.65rem 0.75rem;
+          background: rgba(0, 0, 0, 0.35);
+          padding: 0.75rem 0.85rem;
           font-size: 16px;
           color: white;
           outline: none;
+          -webkit-appearance: none;
         }
         .field:focus {
           border-color: #d4af37;
+          box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
         }
       `}</style>
     </div>
   );
 }
 
-function MiniStat({ label, value, color }: { label: string; value: number; color: string }) {
+function MiniStat({
+  label,
+  value,
+  color,
+  tip,
+}: {
+  label: string;
+  value: number;
+  color: string;
+  tip?: string;
+}) {
   return (
     <div className="rounded-2xl border border-white/10 bg-brand-card p-3 sm:p-4">
       <p className="text-[11px] uppercase tracking-wide text-gray-500">{label}</p>
       <p className={'mt-1 text-2xl font-bold tabular-nums ' + color}>{value}</p>
+      {tip ? <p className="mt-0.5 truncate text-[10px] text-gray-600">{tip}</p> : null}
     </div>
   );
 }
@@ -909,13 +938,17 @@ function MiniBars({ data, color }: { data: { label: string; value: number }[]; c
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="mb-2.5 block text-left">
-      <span className="mb-1 block text-xs text-gray-400">{label}</span>
+    <label className="mb-3 block text-left">
+      <span className="mb-1.5 block text-xs font-medium text-gray-400">{label}</span>
       {children}
     </label>
   );
 }
 
+/**
+ * Full-screen portal modal — always centered, scrollable, never clipped by parent.
+ * Uses margin:auto + outer overflow so tall forms work on mobile Safari.
+ */
 function FormModal({
   title,
   children,
@@ -946,79 +979,139 @@ function FormModal({
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
+    const prevOverflow = document.body.style.overflow;
+    const prevPad = document.body.style.paddingRight;
     document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPad;
     };
   }, [onClose]);
 
-  if (!mounted) return null;
+  if (!mounted || typeof document === 'undefined') return null;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[200]"
+      className="admin-modal-root"
       role="dialog"
       aria-modal="true"
       aria-label={title}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        WebkitOverflowScrolling: 'touch',
+        background: 'rgba(0,0,0,0.82)',
+        backdropFilter: 'blur(4px)',
+        padding: 'max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left))',
+      }}
+      onClick={onClose}
     >
-      {/* Backdrop */}
-      <button
-        type="button"
-        aria-label="Close"
-        className="absolute inset-0 bg-black/80 backdrop-blur-[2px]"
-        onClick={onClose}
-      />
-
-      {/* Scrollable centering shell — works on mobile Safari */}
       <div
-        className="absolute inset-0 overflow-y-auto overscroll-contain"
         style={{
-          paddingTop: 'max(1rem, env(safe-area-inset-top))',
-          paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
-          paddingLeft: 'max(0.75rem, env(safe-area-inset-left))',
-          paddingRight: 'max(0.75rem, env(safe-area-inset-right))',
+          display: 'flex',
+          minHeight: 'calc(100% - 0px)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
         }}
       >
-        <div className="flex min-h-full items-center justify-center py-4">
+        <div
+          className="animate-scale-in"
+          style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: '32rem',
+            margin: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            maxHeight: 'min(92dvh, 900px)',
+            borderRadius: '1rem',
+            border: '1px solid rgba(255,255,255,0.15)',
+            background: '#141414',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
           <div
-            className="relative z-10 flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-white/15 bg-brand-card shadow-2xl"
-            style={{ maxHeight: 'min(90dvh, 720px)' }}
-            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '0.75rem',
+              flexShrink: 0,
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+              padding: '0.85rem 1rem',
+            }}
           >
-            <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
-              <h3 className="pr-2 text-base font-bold text-white sm:text-lg">{title}</h3>
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white active:scale-95"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
-              {children}
-            </div>
-            <div className="flex shrink-0 gap-2 border-t border-white/10 p-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="min-h-[48px] flex-1 rounded-xl border border-white/20 py-2.5 text-sm font-semibold text-gray-200"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={onSave}
-                className={
-                  'min-h-[48px] flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ' + btn
-                }
-              >
-                {busy ? 'Saving…' : 'Save'}
-              </button>
-            </div>
+            <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#fff', paddingRight: '0.5rem' }}>
+              {title}
+            </h3>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              style={{
+                flexShrink: 0,
+                width: 44,
+                height: 44,
+                borderRadius: 9999,
+                border: 'none',
+                background: 'rgba(255,255,255,0.1)',
+                color: '#fff',
+                fontSize: 16,
+                cursor: 'pointer',
+              }}
+            >
+              ✕
+            </button>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              padding: '1rem',
+            }}
+          >
+            {children}
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              flexShrink: 0,
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+              padding: '0.85rem 1rem',
+              paddingBottom: 'max(0.85rem, env(safe-area-inset-bottom))',
+            }}
+          >
+            <button
+              type="button"
+              onClick={onClose}
+              className="min-h-[48px] flex-1 rounded-xl border border-white/20 py-2.5 text-sm font-semibold text-gray-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={onSave}
+              className={
+                'min-h-[48px] flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ' + btn
+              }
+            >
+              {busy ? 'Saving…' : 'Save'}
+            </button>
           </div>
         </div>
       </div>
