@@ -25,7 +25,12 @@ export default function Footer() {
           <ul className="space-y-2 text-sm text-gray-400">
             <li>
               <Link href="/#solutions" className="hover:text-brand-green">
-                Our Solutions
+                Our Products
+              </Link>
+            </li>
+            <li>
+              <Link href="/#community" className="hover:text-brand-green">
+                Community Service
               </Link>
             </li>
             <li>

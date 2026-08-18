@@ -48,7 +48,7 @@ export default function SolutionsGrid() {
     <section id="solutions" className="px-4 py-12 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-7xl">
         <h2 className="mb-6 animate-fade-up text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          Our Solutions
+          Our Products
         </h2>
 
         <div className="mb-8 flex justify-center">
@@ -57,7 +57,7 @@ export default function SolutionsGrid() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search solutions (e.g. honey, poultry, teff)..."
+              placeholder="Search products (e.g. honey, poultry, teff)..."
               className="w-full rounded-full border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-base text-white placeholder-gray-400 outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/40"
             />
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base text-gray-400">
@@ -70,10 +70,10 @@ export default function SolutionsGrid() {
           <p className="py-12 text-center text-base text-gray-400">
             {loaded ? (
               <>
-                No solutions found matching &ldquo;{query}&rdquo;.
+                No products found matching &ldquo;{query}&rdquo;.
               </>
             ) : (
-              'Loading solutions…'
+              'Loading products…'
             )}
           </p>
         ) : (
@@ -100,7 +100,7 @@ export default function SolutionsGrid() {
                   <div className="mt-3 flex items-center gap-2.5">
                     <span className="h-2.5 w-2.5 animate-soft-pulse rounded-full bg-brand-green shadow-[0_0_10px_#10B981]" />
                     <span className="text-sm font-medium text-brand-green sm:text-base">
-                      Explore Solutions
+                      Explore Products
                     </span>
                   </div>
                 </div>
