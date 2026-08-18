@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { supabase } from '@/lib/supabase';
 import {
   fetchCatalogAdmin,
@@ -106,6 +107,24 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
     if (sectorFilter === 'all') return problems;
     return problems.filter((p) => p.sector_id === sectorFilter);
   }, [problems, sectorFilter]);
+
+  const catalogStats = useMemo(() => {
+    const local = products.filter((p) => p.catalog_type === 'local').length;
+    const imported = products.filter((p) => p.catalog_type === 'imported').length;
+    const hidden = products.filter((p) => !p.published).length;
+    return { local, imported, hidden, total: products.length };
+  }, [products]);
+
+  const productsBySector = useMemo(() => {
+    const map: Record<string, number> = {};
+    products.forEach((p) => {
+      const label = sectorMap[p.sector_id]?.title || 'Unknown';
+      map[label] = (map[label] || 0) + 1;
+    });
+    return Object.entries(map)
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [products, sectorMap]);
 
   const saveProduct = async () => {
     if (!editProduct) return;
@@ -271,10 +290,30 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
     sectorFilter !== 'all' ? sectorFilter : sectors[0]?.id || '';
 
   return (
-    <div className="space-y-4 animate-fade-up">
+    <div className="space-y-5 animate-fade-up">
+      {/* Catalog snapshot */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <MiniStat label="Categories" value={sectors.length} color="text-brand-gold" />
+        <MiniStat label="Products" value={catalogStats.total} color="text-brand-green" />
+        <MiniStat label="Local" value={catalogStats.local} color="text-emerald-400" />
+        <MiniStat label="Imported" value={catalogStats.imported} color="text-blue-400" />
+      </div>
+
+      {productsBySector.length > 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-brand-card p-4 sm:p-5">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
+            Products by category
+          </h3>
+          <MiniBars data={productsBySector} color="#10B981" />
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-gray-400">
           Manage categories, field problems, and products (local / imported).
+          {catalogStats.hidden > 0 ? (
+            <span className="ml-2 text-brand-gold">{catalogStats.hidden} hidden</span>
+          ) : null}
         </p>
         <button
           type="button"
@@ -291,7 +330,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
           <p className="font-semibold">Catalog load error</p>
           <p className="mt-1">{error}</p>
           <p className="mt-2 text-xs text-gray-400">
-            Run <code className="text-brand-gold">supabase-catalog.sql</code> in the Supabase SQL Editor, then sign in as admin and reload.
+            Run <code className="text-brand-gold">supabase-catalog-reset.sql</code> in the Supabase SQL Editor, then sign in as admin and reload.
           </p>
         </div>
       ) : null}
@@ -492,7 +531,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
             <p className="py-10 text-center text-gray-500">Loading…</p>
           ) : !sectors.length ? (
             <p className="rounded-2xl border border-dashed border-white/15 py-12 text-center text-gray-500">
-              No categories. Run supabase-catalog.sql to seed, or add one here.
+              No categories. Run supabase-catalog-reset.sql to seed, or add one here.
             </p>
           ) : (
             sectors.map((s) => (
@@ -588,7 +627,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
               placeholder="Micro-Climate Volatility"
             />
           </Field>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Field label="Price">
               <input
                 className="field"
@@ -636,7 +675,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
               placeholder="/assets/images/my_product.jpg"
             />
           </Field>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Field label="Sort order">
               <input
                 className="field"
@@ -723,7 +762,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
           busy={busy === 'sector'}
           accent="gold"
         >
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Field label="Code (e.g. 01)">
               <input
                 className="field"
@@ -762,7 +801,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
               onChange={(e) => setEditSector({ ...editSector, scope: e.target.value })}
             />
           </Field>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Field label="Image prefix">
               <input
                 className="field"
@@ -787,7 +826,7 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
               placeholder="/assets/images/cat1.jpg"
             />
           </Field>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Field label="Sort order">
               <input
                 className="field"
@@ -820,8 +859,8 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
           border-radius: 0.5rem;
           border: 1px solid rgba(255, 255, 255, 0.15);
           background: rgba(255, 255, 255, 0.05);
-          padding: 0.6rem 0.75rem;
-          font-size: 0.875rem;
+          padding: 0.65rem 0.75rem;
+          font-size: 16px;
           color: white;
           outline: none;
         }
@@ -829,6 +868,41 @@ export default function AdminCatalog({ onToast }: { onToast: (msg: string) => vo
           border-color: #d4af37;
         }
       `}</style>
+    </div>
+  );
+}
+
+function MiniStat({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-brand-card p-3 sm:p-4">
+      <p className="text-[11px] uppercase tracking-wide text-gray-500">{label}</p>
+      <p className={'mt-1 text-2xl font-bold tabular-nums ' + color}>{value}</p>
+    </div>
+  );
+}
+
+function MiniBars({ data, color }: { data: { label: string; value: number }[]; color: string }) {
+  const max = Math.max(...data.map((d) => d.value), 1);
+  return (
+    <div className="space-y-2">
+      {data.map((d) => (
+        <div key={d.label} className="flex items-center gap-2">
+          <span className="w-20 shrink-0 truncate text-[11px] text-gray-400 sm:w-28" title={d.label}>
+            {d.label}
+          </span>
+          <div className="h-5 flex-1 overflow-hidden rounded-md bg-white/5">
+            <div
+              className="flex h-full items-center rounded-md px-1.5 transition-all duration-500"
+              style={{
+                width: `${Math.max((d.value / max) * 100, d.value > 0 ? 8 : 0)}%`,
+                backgroundColor: color,
+              }}
+            >
+              {d.value > 0 ? <span className="text-[10px] font-bold text-black">{d.value}</span> : null}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -857,6 +931,8 @@ function FormModal({
   busy: boolean;
   accent?: 'green' | 'red' | 'gold';
 }) {
+  const [mounted, setMounted] = useState(false);
+
   const btn =
     accent === 'red'
       ? 'bg-red-600 text-white'
@@ -865,6 +941,7 @@ function FormModal({
         : 'bg-brand-green text-black';
 
   useEffect(() => {
+    setMounted(true);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -877,47 +954,75 @@ function FormModal({
     };
   }, [onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.75)' }}
-      onClick={onClose}
+      className="fixed inset-0 z-[200]"
       role="dialog"
       aria-modal="true"
+      aria-label={title}
     >
+      {/* Backdrop */}
+      <button
+        type="button"
+        aria-label="Close"
+        className="absolute inset-0 bg-black/80 backdrop-blur-[2px]"
+        onClick={onClose}
+      />
+
+      {/* Scrollable centering shell — works on mobile Safari */}
       <div
-        className="relative flex max-h-[min(90vh,720px)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-white/15 bg-brand-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
+        className="absolute inset-0 overflow-y-auto overscroll-contain"
+        style={{
+          paddingTop: 'max(1rem, env(safe-area-inset-top))',
+          paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+          paddingLeft: 'max(0.75rem, env(safe-area-inset-left))',
+          paddingRight: 'max(0.75rem, env(safe-area-inset-right))',
+        }}
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-          <h3 className="text-lg font-bold text-white">{title}</h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white"
+        <div className="flex min-h-full items-center justify-center py-4">
+          <div
+            className="relative z-10 flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-white/15 bg-brand-card shadow-2xl"
+            style={{ maxHeight: 'min(90dvh, 720px)' }}
+            onClick={(e) => e.stopPropagation()}
           >
-            ✕
-          </button>
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">{children}</div>
-        <div className="flex gap-2 border-t border-white/10 p-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="min-h-[44px] flex-1 rounded-xl border border-white/20 py-2.5 text-sm font-semibold text-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={onSave}
-            className={'min-h-[44px] flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ' + btn}
-          >
-            {busy ? 'Saving…' : 'Save'}
-          </button>
+            <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
+              <h3 className="pr-2 text-base font-bold text-white sm:text-lg">{title}</h3>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white active:scale-95"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+              {children}
+            </div>
+            <div className="flex shrink-0 gap-2 border-t border-white/10 p-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="min-h-[48px] flex-1 rounded-xl border border-white/20 py-2.5 text-sm font-semibold text-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={onSave}
+                className={
+                  'min-h-[48px] flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ' + btn
+                }
+              >
+                {busy ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
