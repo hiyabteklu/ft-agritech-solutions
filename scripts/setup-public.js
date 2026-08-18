@@ -1,9 +1,13 @@
 /**
- * Copies static assets from the GitHub Pages root layout into /public
- * so Next.js can serve them at the same URLs (/assets/..., /yorda.mp4, etc.).
+ * Copies static media into /public so Next.js can serve them at stable URLs
+ * (/assets/..., /yorda.mp4, /ftagritech1.jpg, /GridArt_*.png).
  *
- * Run once after clone:  npm run setup:public
+ * Run after clone or before build:
+ *   npm run setup:public
  * Safe to re-run (overwrites).
+ *
+ * Vercel Build Command should be:
+ *   npm run setup:public && next build
  */
 const fs = require('fs');
 const path = require('path');
@@ -28,19 +32,17 @@ function copyIfExists(src, dest) {
 console.log('Setting up public/ for Next.js...');
 ensureDir(pub);
 
-// Core brand + media at site root
-[
-  'ftagritech1.jpg',
-  'yorda.mp4',
-  'CNAME',
-].forEach((f) => copyIfExists(path.join(root, f), path.join(pub, f)));
+// Brand + hero media at site root
+['ftagritech1.jpg', 'yorda.mp4'].forEach((f) =>
+  copyIfExists(path.join(root, f), path.join(pub, f))
+);
 
-// Partner logos (GridArt_*.png)
+// Partner logos
 fs.readdirSync(root)
   .filter((f) => f.startsWith('GridArt_') && f.endsWith('.png'))
   .forEach((f) => copyIfExists(path.join(root, f), path.join(pub, f)));
 
-// assets/ tree (images + videos)
+// Product / category images
 copyIfExists(path.join(root, 'assets'), path.join(pub, 'assets'));
 
-console.log('Done. Next.js can now serve /assets/*, logos, and video from public/.');
+console.log('Done. Next.js can serve /assets/*, logos, and video from public/.');
