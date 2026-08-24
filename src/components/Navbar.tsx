@@ -255,6 +255,22 @@ export default function Navbar() {
 
                     {admin && (
                       <Link
+                        href="/admin/people"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex min-h-[52px] items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200 transition hover:bg-white/5"
+                      >
+                        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-fuchsia-500/15 text-base">
+                          👥
+                        </span>
+                        <span>
+                          <span className="block font-medium text-white">People</span>
+                          <span className="block text-xs text-gray-500">Users, admins & history</span>
+                        </span>
+                      </Link>
+                    )}
+
+                    {admin && (
+                      <Link
                         href="/admin/catalog"
                         onClick={() => setMenuOpen(false)}
                         className="flex min-h-[52px] items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200 transition hover:bg-white/5"
