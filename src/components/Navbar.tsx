@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isAdminEmail } from '@/lib/admin';
+import { upsertProfile } from '@/lib/profiles';
 import type { User } from '@supabase/supabase-js';
 
 export default function Navbar() {
@@ -18,14 +19,18 @@ export default function Navbar() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      const u = session?.user ?? null;
+      setUser(u);
       setLoading(false);
+      if (u) void upsertProfile(u);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) void upsertProfile(u);
     });
 
     return () => subscription.unsubscribe();
